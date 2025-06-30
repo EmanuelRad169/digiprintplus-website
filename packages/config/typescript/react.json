@@ -1,0 +1,13 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "es6"],
+    "paths": {
+      "@workspace/ui": ["../../ui/src"],
+      "@workspace/utils": ["../../utils/src"],
+      "@workspace/hooks": ["../../hooks/src"],
+      "@workspace/types": ["../../types/src"]
+    }
+  }
+}

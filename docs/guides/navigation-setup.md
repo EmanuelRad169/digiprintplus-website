@@ -1,10 +1,10 @@
 ---
-title: "Navigation Setup Guide"
-description: "Configure site navigation, mega menus, and product categories in Sanity Studio"
-category: "guides"
-tags: ["navigation", "sanity", "menu", "categories"]
-last_updated: "2025-06-30"
-audience: "admin"
+title: 'Navigation Setup Guide'
+description: 'Configure site navigation, mega menus, and product categories in Sanity Studio'
+category: 'guides'
+tags: ['navigation', 'sanity', 'menu', 'categories']
+last_updated: '2025-06-30'
+audience: 'admin'
 ---
 
 # Navigation & Category Structure Guide

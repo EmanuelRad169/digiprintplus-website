@@ -1,0 +1,12 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2022",
+    "lib": ["es2022"],
+    "paths": {
+      "@workspace/utils": ["../../utils/src"],
+      "@workspace/types": ["../../types/src"]
+    }
+  }
+}

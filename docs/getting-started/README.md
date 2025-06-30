@@ -1,9 +1,9 @@
 ---
-title: "Getting Started with DigiPrintPlus"
-description: "Essential setup and onboarding information"
-category: "getting-started"
-last_updated: "2025-06-30"
-audience: "developer"
+title: 'Getting Started with DigiPrintPlus'
+description: 'Essential setup and onboarding information'
+category: 'getting-started'
+last_updated: '2025-06-30'
+audience: 'developer'
 ---
 
 # 🚀 Getting Started
@@ -20,23 +20,27 @@ Welcome to DigiPrintPlus 2.0! This section provides everything you need to get u
 ## 🎯 Quick Start
 
 1. **Clone the repository**
+
    ```bash
    git clone [repository-url]
    cd FredCMs
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your configuration
    ```
 
 4. **Start development server**
+
    ```bash
    npm run dev
    ```
@@ -48,14 +52,17 @@ Welcome to DigiPrintPlus 2.0! This section provides everything you need to get u
 ## 📚 Next Steps
 
 ### For Developers
+
 - [**Installation Guide**](installation.md) - Detailed setup instructions
 - [**Development Workflow**](development.md) - Best practices and tools
 
 ### For Content Managers
+
 - [**Studio Overview**](../studio/README.md) - Content management introduction
 - [**Product Seeding**](../studio/product-seeding.md) - Initial data setup
 
 ### For Deployment
+
 - [**Production Readiness**](../guides/production-readiness.md) - Pre-deployment checklist
 - [**Deployment Guide**](deployment.md) - Production deployment steps
 
@@ -135,6 +142,7 @@ npm run prettier            # Format code
 ---
 
 Ready to dive deeper? Choose your path:
+
 - **Developer**: Continue to [Installation Guide](installation.md)
 - **Content Manager**: Jump to [Studio Overview](../studio/README.md)
 - **Deployer**: Review [Production Readiness](../guides/production-readiness.md)

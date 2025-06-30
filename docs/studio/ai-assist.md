@@ -1,10 +1,10 @@
 ---
-title: "AI Assist Features"
-description: "Using Sanity AI Assist for content generation in DigiPrintPlus Studio"
-category: "studio"
-tags: ["ai", "content", "sanity", "automation"]
-last_updated: "2025-06-30"
-audience: "admin"
+title: 'AI Assist Features'
+description: 'Using Sanity AI Assist for content generation in DigiPrintPlus Studio'
+category: 'studio'
+tags: ['ai', 'content', 'sanity', 'automation']
+last_updated: '2025-06-30'
+audience: 'admin'
 ---
 
 # 🤖 AI Assist Features
@@ -14,16 +14,20 @@ Sanity AI Assist integrates OpenAI's language models into Sanity Studio, allowin
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - OpenAI API key
 - Sanity Studio access
 
 ### Setup
+
 1. Add your OpenAI API key to `/apps/studio/.env.local`:
+
    ```bash
    OPENAI_API_KEY=your_openai_api_key_here
    ```
 
 2. Restart Sanity Studio:
+
    ```bash
    npm run dev:studio
    ```
@@ -33,9 +37,11 @@ Sanity AI Assist integrates OpenAI's language models into Sanity Studio, allowin
 ## 📝 Content Generation
 
 ### Supported Fields
+
 AI Assist works with these document types and fields:
 
 #### Products
+
 - **Description** - Short product descriptions (50-160 characters)
 - **Long Description** - Detailed product descriptions with rich text
 - **Specifications** - Technical specifications and features
@@ -43,12 +49,14 @@ AI Assist works with these document types and fields:
 - **SEO Metadata** - Meta titles and descriptions
 
 #### Product Categories
+
 - **Description** - Category descriptions and overviews
 - **Marketing Content** - Category-specific marketing copy
 
 ### Best Practices
 
 #### 1. Product Category Tagging
+
 Always tag all relevant product categories before generating content:
 
 1. Set the primary category in the main `category` field
@@ -58,11 +66,13 @@ Always tag all relevant product categories before generating content:
 #### 2. Effective Prompting
 
 **Product Description Example:**
+
 ```
 Write a concise product description for [Product Name], suitable for [Category 1], [Category 2]. Highlight quality, materials, and key benefits. Keep it 120-160 characters for SEO.
 ```
 
 **Long Description Example:**
+
 ```
 Create a detailed product description for [Product Name] targeting [target audience]. Include:
 - Key features and benefits
@@ -74,6 +84,7 @@ Keep it engaging and informative, around 200-300 words.
 ```
 
 **FAQ Example:**
+
 ```
 Generate 5 frequently asked questions and answers for [Product Name]. Cover:
 - Ordering process
@@ -85,6 +96,7 @@ Make answers helpful and professional.
 ```
 
 **SEO Metadata Example:**
+
 ```
 Create SEO-optimized meta title (50-60 characters) and meta description (150-160 characters) for [Product Name] in [Category]. Include relevant keywords for digital printing services.
 ```
@@ -109,21 +121,23 @@ Create SEO-optimized meta title (50-60 characters) and meta description (150-160
 ## 🔧 Technical Implementation
 
 ### Configuration
+
 The AI Assist plugin is configured in `sanity.config.ts`:
 
 ```typescript
-import { assist } from '@sanity/assist'
+import { assist } from '@sanity/assist';
 
 export default defineConfig({
   // ... other config
   plugins: [
     assist(),
     // ... other plugins
-  ]
-})
+  ],
+});
 ```
 
 ### Environment Variables
+
 Required environment variables in `/apps/studio/.env.local`:
 
 ```bash
@@ -136,6 +150,7 @@ OPENAI_MAX_TOKENS=500
 ```
 
 ### Document Schema Integration
+
 AI Assist automatically works with text fields, but can be enhanced with custom configurations:
 
 ```typescript
@@ -194,4 +209,4 @@ AI Assist automatically works with text fields, but can be enhanced with custom 
 
 ---
 
-*AI Assist helps accelerate content creation while maintaining quality and consistency across your digital print shop's product catalog.*
+_AI Assist helps accelerate content creation while maintaining quality and consistency across your digital print shop's product catalog._
