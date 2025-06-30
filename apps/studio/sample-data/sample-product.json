@@ -1,0 +1,92 @@
+{
+  "_type": "product",
+  "title": "Business Cards - Premium",
+  "slug": {
+    "_type": "slug",
+    "current": "business-cards-premium"
+  },
+  "productDetails": [
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "Our premium business cards are meticulously crafted to make a lasting impression. Each card is printed on high-quality stock with precision and care, ensuring your brand is represented in the best possible light."
+        }
+      ],
+      "markDefs": []
+    },
+    {
+      "_type": "block",
+      "style": "h3",
+      "children": [
+        {
+          "_type": "span",
+          "text": "Key Features"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "• Premium 350gsm cardstock\n• Full-color printing on both sides\n• Multiple finishing options\n• Professional design services available\n• Fast turnaround time"
+        }
+      ]
+    }
+  ],
+  "specifications": [
+    {
+      "name": "Card Size",
+      "value": "3.5 x 2 inches",
+      "unit": "(standard)"
+    },
+    {
+      "name": "Paper Weight",
+      "value": "350",
+      "unit": "gsm"
+    },
+    {
+      "name": "Print Quality",
+      "value": "300",
+      "unit": "DPI"
+    },
+    {
+      "name": "Sides",
+      "value": "Double",
+      "unit": "sided"
+    },
+    {
+      "name": "Finishing Options",
+      "value": "Matte, Gloss, Spot UV",
+      "unit": ""
+    }
+  ],
+  "template": {
+    "hasTemplate": true,
+    "description": "Our business card template is designed to help you create a professional and impactful business card. The template includes guides for safe zones, bleed areas, and recommended text placement.",
+    "htmlEmbed": "<div style='padding: 20px; border: 2px solid #e2e8f0; border-radius: 8px; background: #f8fafc;'><h3 style='color: #1e293b; margin: 0 0 10px 0;'>Business Card Template Preview</h3><p style='color: #64748b; margin: 0;'>Template includes bleed lines, safe zones, and recommended text placement guides.</p></div>"
+  },
+  "faq": [
+    {
+      "question": "What file formats do you accept?",
+      "answer": "We accept PDF, AI, EPS, PSD, and high-resolution JPG files. For best results, we recommend using PDF format with embedded fonts and images."
+    },
+    {
+      "question": "What's your turnaround time?",
+      "answer": "Standard turnaround time is 2-3 business days. Rush orders can be completed in 24 hours for an additional fee."
+    },
+    {
+      "question": "Do you offer design services?",
+      "answer": "Yes, our professional design team can create a custom business card design for you. Design services start at $50 and include two rounds of revisions."
+    },
+    {
+      "question": "What's the minimum order quantity?",
+      "answer": "Our minimum order is 100 cards. We offer volume discounts for orders of 500 cards or more."
+    }
+  ],
+  "status": "active"
+}

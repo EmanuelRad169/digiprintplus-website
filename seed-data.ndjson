@@ -1,0 +1,3 @@
+{"_type": "siteSettings", "_id": "siteSettings", "title": "DigiPrintPlus", "logo": null, "gaMeasurementId": "", "gtmId": ""}
+{"_type": "productCategory", "_id": "cat_businessCards", "title": "Business Cards", "slug": {"_type": "slug", "current": "business-cards"}}
+{"_type": "product", "_id": "prod_standardBc", "title": "Standard Business Cards", "slug": {"_type": "slug", "current": "standard-business-cards"}, "category": {"_type": "reference", "_ref": "cat_businessCards"}, "description": "Premium 16-pt business cards."}
