@@ -25,7 +25,10 @@
       "@lib/*": ["lib/*"],
       "@hooks/*": ["hooks/*"],
       "@utils/*": ["lib/utils.ts"]
-    }
+    },
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts", "**/*.tsx"]

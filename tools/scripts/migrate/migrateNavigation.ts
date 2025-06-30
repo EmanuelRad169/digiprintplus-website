@@ -1,13 +1,5 @@
 // scripts/migrateNavigation.ts
-import {createClient} from '@sanity/client'
-
-const client = createClient({
-  projectId: 'as5tildt',
-  dataset: 'development',
-  token: 'sk4iHYpe9SjzzFPx6uHU4ilpBX9yJLyVMC1y6idPZ8kWrjN2bXGXjd8BAICuiLyNuI5sI6Yz2QLMu1YubsIjw0YiE0OsgEVlft9ujpgDCkbSxbF5kKdlUYXUH6xilfWnjcNPZIo5gqbIutcsN0ctk25bS5UXIFa6Z70xDqzt3DACB1VXvJkE',
-  useCdn: false,
-  apiVersion: '2023-05-03',
-})
+import { sanityClient as client } from '../../sanityClient'
 
 const fetchDocuments = () =>
   client.fetch(
