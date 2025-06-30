@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getProducts, getProductCategories } from '@/lib/sanity/fetchers'
+import { handleCors, handleOptions } from '../cors'
+
+// Handle preflight requests
+export async function OPTIONS() {
+  return handleOptions()
+}
 
 // API handler for products
 export async function GET(request) {
@@ -11,15 +17,18 @@ export async function GET(request) {
     const products = await getProducts(category)
     const categories = await getProductCategories()
     
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       products, 
       categories
     })
+    
+    return handleCors(response)
   } catch (error) {
     console.error('Error fetching products:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch products' },
+    const errorResponse = NextResponse.json(
+      { error: 'Failed to fetch products' }, 
       { status: 500 }
     )
+    return handleCors(errorResponse)
   }
 }

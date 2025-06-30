@@ -22,7 +22,7 @@ export default (S: StructureBuilder) =>
             ])
         ),
 
-      // � Site Content Group
+      // 📝 Site Content Group
       S.listItem()
         .title('📝 Site Content')
         .child(
@@ -54,9 +54,9 @@ export default (S: StructureBuilder) =>
             ])
         ),
 
-      // � Requests & Users
+      // 📊 Requests & Users
       S.listItem()
-        .title('� Requests & Users')
+        .title('📊 Requests & Users')
         .child(
           S.list()
             .title('Data')

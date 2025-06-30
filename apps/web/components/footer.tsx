@@ -29,7 +29,6 @@ export function Footer() {
     try {
       const settings = await getSiteSettings()
       if (settings) {
-        console.log('Loaded site settings:', settings)
         setSiteSettings(settings)
       }
     } catch (error) {
@@ -49,7 +48,6 @@ export function Footer() {
     
     try {
       footerSubscription = subscribeToFooterUpdates(() => {
-        console.log('Footer updated, reloading...')
         loadFooterData()
       })
     } catch (error) {
@@ -69,7 +67,6 @@ export function Footer() {
     
     try {
       siteSettingsSubscription = subscribeToSiteSettings(() => {
-        console.log('Site settings updated, reloading...')
         loadSiteSettings()
       })
     } catch (error) {

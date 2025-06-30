@@ -4,7 +4,7 @@ const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   useCdn: false,
-  apiVersion: '2023-05-03'
+  apiVersion: '2024-01-01'
 })
 
 // Export the client for use by other modules

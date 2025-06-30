@@ -1,15 +1,18 @@
-import dynamic from 'next/dynamic'
+import { HeroSanity } from '@/components/sections/hero-sanity'
 import { FeaturedServicesServerSection } from '@/components/sections/services-grid-server'
+import FeaturedProducts from '@/components/sections/featured-products'
+import { AboutSanity } from '@/components/sections/about-sanity'
+import { CallToActionSanity } from '@/components/sections/call-to-action-sanity'
 
-// Use dynamic imports with SSR disabled for client components
-const HeroSanity = dynamic(() => import('@/components/sections/hero-sanity').then(mod => ({ default: mod.HeroSanity })), { ssr: true })
-const AboutSanity = dynamic(() => import('@/components/sections/about-sanity').then(mod => ({ default: mod.AboutSanity })), { ssr: true })
-const CallToActionSanity = dynamic(() => import('@/components/sections/call-to-action-sanity').then(mod => ({ default: mod.CallToActionSanity })), { ssr: true })
+// Mark page as server component
+export const dynamic = 'force-dynamic'
+export const revalidate = 60 // Revalidate every 60 seconds
 
 export default function HomePage() {
   return (
     <>
       <HeroSanity />
+      <FeaturedProducts />
       <FeaturedServicesServerSection />
       <AboutSanity />
       <CallToActionSanity sectionId="homepage-cta" />

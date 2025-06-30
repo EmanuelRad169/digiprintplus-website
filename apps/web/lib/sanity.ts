@@ -7,7 +7,7 @@ const createSanityClient = (useToken = false) => {
     dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
     token: useToken ? process.env.SANITY_API_TOKEN : undefined, // Only use token on server-side
     useCdn: false, // Disable CDN for immediate updates from CMS
-    apiVersion: '2023-05-03',
+    apiVersion: '2024-01-01',
     perspective: 'published',
     stega: {
       enabled: false

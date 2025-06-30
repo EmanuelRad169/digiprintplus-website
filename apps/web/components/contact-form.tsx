@@ -23,8 +23,8 @@ export function ContactForm() {
   } = useForm<ContactFormData>({ resolver: zodResolver(contactFormSchema) });
 
   const onSubmit = (data: ContactFormData) => {
-    console.log(data);
-    // Form submission logic
+    // TODO: Implement form submission logic
+    // Send data to API endpoint for processing
   };
 
   const renderError = (error: FieldError | undefined) => {
