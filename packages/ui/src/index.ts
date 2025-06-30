@@ -1,3 +1,7 @@
+// Import type augmentations
+import './types/radix-augmentation';
+import './types/radix-bypass';
+
 // Re-export all UI components
 export * from './components/accordion';
 export * from './components/alert-dialog';
