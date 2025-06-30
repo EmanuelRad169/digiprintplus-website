@@ -1,5 +1,5 @@
 // Cleanup script to remove duplicate/broken documents
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 
 async function cleanupData() {
   console.log('🧹 Starting data cleanup...\n')

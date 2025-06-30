@@ -1,5 +1,5 @@
 // Use the existing sanity client from the web app
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 
 async function verifyNavigation() {
   try {

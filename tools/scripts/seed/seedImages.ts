@@ -1,5 +1,5 @@
 // Image upload utility for Sanity
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 import * as fs from 'fs'
 import * as path from 'path'
 

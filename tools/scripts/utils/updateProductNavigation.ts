@@ -1,5 +1,5 @@
 // Script to update product navigation items
-import { sanityClient } from '../apps/web/lib/sanity';
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity';
 import type { NavigationMenu, NavigationItem, NavigationSubItem, MegaMenuSection, MegaMenuLink } from './types';
 
 async function updateProductNavigation() {

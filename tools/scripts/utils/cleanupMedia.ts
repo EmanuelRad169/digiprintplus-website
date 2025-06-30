@@ -1,5 +1,5 @@
 // Cleanup media library script
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 
 async function cleanupMediaLibrary() {
   console.log('🧹 Starting media library cleanup...')

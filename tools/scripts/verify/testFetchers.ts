@@ -1,4 +1,4 @@
-import { getAboutPage, getPageBySlug, getProductBySlug, getProductCategories, getProductsByCategory, getFeaturedProducts } from '../apps/web/lib/sanity/fetchers'
+import { getAboutPage, getPageBySlug, getProductBySlug, getProductCategories, getProductsByCategory, getFeaturedProducts } from '../..//Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity/fetchers'
 import type { Category, Product } from './types'
 
 interface FetchedCategory {

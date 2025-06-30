@@ -1,5 +1,5 @@
 // Additional content seeding for Sanity CMS
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 
 // Additional Product Categories
 const additionalCategories = [

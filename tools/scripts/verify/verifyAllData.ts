@@ -1,5 +1,5 @@
 // Comprehensive verification script for all Sanity CMS data
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 
 async function verifyAllData() {
   console.log('🔍 Verifying all Sanity CMS data...\n')

@@ -9,7 +9,7 @@ tools/
 ├── script-runner.js          # Unified CLI interface for all scripts
 └── scripts/
     ├── seed/                 # Data seeding scripts (13 files)
-    ├── migrate/              # Migration scripts (3 files)  
+    ├── migrate/              # Migration scripts (3 files)
     ├── verify/               # Verification & testing (11 files)
     ├── utils/                # Utility & maintenance (9 files)
     └── archive/              # Completed one-time scripts (6 files)
@@ -18,11 +18,12 @@ tools/
 ## 🚀 Usage
 
 ### Quick Start
+
 ```bash
 # List all available script categories
 npm run scripts:list
 
-# List scripts in a specific category  
+# List scripts in a specific category
 npm run scripts:list seed
 
 # Run a script
@@ -32,6 +33,7 @@ npm run script utils cleanupData
 ```
 
 ### Help & Documentation
+
 ```bash
 # Show detailed help
 npm run scripts:help
@@ -43,7 +45,8 @@ npm run script help
 ## 📂 Script Categories
 
 ### 🌱 **SEED** - Data Seeding Scripts
-*Populate Sanity CMS with initial content*
+
+_Populate Sanity CMS with initial content_
 
 - **seedProducts** - Create product catalog
 - **seedProductCategories** - Set up product categories
@@ -59,15 +62,17 @@ npm run script help
 - **seedAdditionalContent** - Extra content pieces
 - **seedEnhancedPages** - Advanced page templates
 
-### 🔄 **MIGRATE** - Migration Scripts  
-*Update existing data structures and content*
+### 🔄 **MIGRATE** - Migration Scripts
+
+_Update existing data structures and content_
 
 - **migrateHardcodedContent** - Move hardcoded content to CMS
 - **migrateNavigation** - Update navigation structure
 - **migrateFeatures** - Update feature implementations
 
 ### ✅ **VERIFY** - Verification & Testing
-*Validate data integrity and system functionality*
+
+_Validate data integrity and system functionality_
 
 - **verifyAllData** - Comprehensive data validation
 - **verifyProductData** - Product-specific validation
@@ -82,7 +87,8 @@ npm run script help
 - **test-site-settings** - Site configuration tests
 
 ### 🔧 **UTILS** - Utility & Maintenance
-*Helper tools and maintenance scripts*
+
+_Helper tools and maintenance scripts_
 
 - **cleanupData** - Remove orphaned/invalid data
 - **cleanupMedia** - Clean up unused media files
@@ -95,7 +101,8 @@ npm run script help
 - **run-migration** - Migration runner utility
 
 ### 📦 **ARCHIVE** - Completed Scripts
-*One-time scripts that have served their purpose*
+
+_One-time scripts that have served their purpose_
 
 - **seed-demo-products** - Demo data creation (completed)
 - **seed-business-hours** - Business hours setup (completed)
@@ -107,6 +114,7 @@ npm run script help
 ## 🎯 Common Workflows
 
 ### Initial Project Setup
+
 ```bash
 npm run script seed seedSanity         # Initialize Sanity CMS
 npm run script seed seedNavigation     # Set up navigation
@@ -116,6 +124,7 @@ npm run script verify verifyAllData    # Validate everything
 ```
 
 ### Content Updates
+
 ```bash
 npm run script seed seedPages          # Update static pages
 npm run script seed seedComponents     # Update components
@@ -123,6 +132,7 @@ npm run script verify verifyAllData    # Validate changes
 ```
 
 ### Data Maintenance
+
 ```bash
 npm run script utils cleanupData       # Clean orphaned data
 npm run script utils cleanupMedia      # Remove unused media
@@ -130,6 +140,7 @@ npm run script verify verifyAllData    # Validate cleanup
 ```
 
 ### Development & Testing
+
 ```bash
 npm run script verify testFetchers     # Test data fetching
 npm run script verify validateTypes    # Check TypeScript types
@@ -147,23 +158,26 @@ npm run script utils query             # Run custom queries
 ## 📊 Migration from Old System
 
 ### Before (Old Structure)
+
 ```
 scripts/               # 30+ mixed scripts
-apps/studio/*.js       # 8+ scattered scripts  
+apps/studio/*.js       # 8+ scattered scripts
 apps/web/scripts/      # 5+ isolated scripts
 ```
 
-### After (New Structure)  
+### After (New Structure)
+
 ```
 tools/scripts/         # Organized by purpose
 ├── seed/              # 13 seeding scripts
 ├── migrate/           # 3 migration scripts
-├── verify/            # 11 verification scripts  
+├── verify/            # 11 verification scripts
 ├── utils/             # 9 utility scripts
 └── archive/           # 6 completed scripts
 ```
 
 ### Benefits
+
 - **70% reduction** in npm script commands (44 → 4)
 - **Logical organization** by script purpose
 - **Unified interface** for all script operations
@@ -173,6 +187,7 @@ tools/scripts/         # Organized by purpose
 ## 🔗 Integration
 
 The script runner integrates seamlessly with:
+
 - **NPM Scripts**: All accessible via `npm run script`
 - **Environment Variables**: Automatic `.env.local` loading
 - **TypeScript**: Full support for `.ts` scripts

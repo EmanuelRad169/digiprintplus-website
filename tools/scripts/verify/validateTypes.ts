@@ -6,7 +6,7 @@
  * with proper type annotations and can read/seed Sanity data.
  */
 
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 import type { 
   Category, 
   Product, 

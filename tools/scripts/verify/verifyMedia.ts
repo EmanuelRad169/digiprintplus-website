@@ -1,5 +1,5 @@
 // Verify media seeding results
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 
 async function verifyMediaData() {
   console.log('🔍 Verifying media library data...\n')

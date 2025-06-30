@@ -1,5 +1,5 @@
 // Enhanced content seeding for About and Contact pages
-import { sanityClient } from '../apps/web/lib/sanity'
+import { sanityClient } from '/Applications/MAMP/htdocs/FredCMs/apps/web/lib/sanity'
 
 async function seedEnhancedPages() {
   console.log('📄 Seeding enhanced page content...\n')

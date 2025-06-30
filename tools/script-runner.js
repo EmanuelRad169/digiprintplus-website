@@ -29,7 +29,7 @@ function listScripts(category) {
     }));
 }
 
-function runScript(category, scriptName) {
+function runScript(category, scriptName, additionalArgs = []) {
   const scripts = listScripts(category);
   const script = scripts.find(s => s.name === scriptName);
   
@@ -43,9 +43,10 @@ function runScript(category, scriptName) {
   console.log('');
   
   try {
+    const argsStr = additionalArgs.length > 0 ? ` ${additionalArgs.join(' ')}` : '';
     const command = script.file.endsWith('.ts') 
-      ? `npx tsx --env-file=apps/web/.env.local "${script.path}"`
-      : `node "${script.path}"`;
+      ? `npx tsx --tsconfig tsconfig.base.json --env-file=apps/web/.env.local "${script.path}"${argsStr}`
+      : `node "${script.path}"${argsStr}`;
     
     execSync(command, { 
       stdio: 'inherit',
@@ -121,6 +122,7 @@ const args = process.argv.slice(2);
 const command = args[0];
 const category = args[1];
 const scriptName = args[2];
+const additionalArgs = args.slice(3);
 
 if (!command || command === 'help') {
   showHelp();
@@ -134,12 +136,12 @@ if (command === 'list') {
 
 // Run a script
 if (command && category && scriptName) {
-  runScript(command, category);
+  runScript(command, category, additionalArgs);
   process.exit(0);
 }
 
 if (command && category) {
-  runScript(command, category);
+  runScript(command, category, additionalArgs);
   process.exit(0);
 }
 
