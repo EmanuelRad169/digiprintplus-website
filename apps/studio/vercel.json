@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "name": "digiprintplus-studio",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/$1"
+    }
+  ],
+  "env": {
+    "SANITY_STUDIO_PROJECT_ID": "@sanity_studio_project_id",
+    "SANITY_STUDIO_DATASET": "@sanity_studio_dataset",
+    "SANITY_AUTH_TOKEN": "@sanity_auth_token"
+  },
+  "build": {
+    "env": {
+      "SANITY_STUDIO_PROJECT_ID": "@sanity_studio_project_id",
+      "SANITY_STUDIO_DATASET": "@sanity_studio_dataset",
+      "SANITY_AUTH_TOKEN": "@sanity_auth_token"
+    }
+  }
+}

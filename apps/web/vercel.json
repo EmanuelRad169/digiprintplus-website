@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "name": "digiprintplus-web",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_SANITY_PROJECT_ID": "@next_public_sanity_project_id",
+    "NEXT_PUBLIC_SANITY_DATASET": "@next_public_sanity_dataset",
+    "SANITY_AUTH_TOKEN": "@sanity_auth_token"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_SANITY_PROJECT_ID": "@next_public_sanity_project_id",
+      "NEXT_PUBLIC_SANITY_DATASET": "@next_public_sanity_dataset",
+      "SANITY_AUTH_TOKEN": "@sanity_auth_token"
+    }
+  }
+}

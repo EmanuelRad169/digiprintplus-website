@@ -1,0 +1,26 @@
+{
+  "extends": "./packages/config/typescript/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@workspace/ui": ["./packages/ui/src"],
+      "@workspace/ui/*": ["./packages/ui/src/*"],
+      "@workspace/utils": ["./packages/utils/src"],
+      "@workspace/hooks": ["./packages/hooks/src"],
+      "@workspace/types": ["./packages/types/src"],
+      "@workspace/config/*": ["./packages/config/*"],
+      "@/*": ["./tools/*"]
+    }
+  },
+  "include": ["packages/**/*", "apps/**/*", "tools/**/*"],
+  "exclude": ["node_modules", "dist", ".next", ".turbo"],
+  "references": [
+    { "path": "./packages/ui" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/hooks" },
+    { "path": "./packages/types" },
+    { "path": "./apps/web" },
+    { "path": "./apps/studio" },
+    { "path": "./tools" }
+  ]
+}

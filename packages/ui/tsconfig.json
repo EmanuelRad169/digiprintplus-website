@@ -5,7 +5,7 @@
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "./src",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@workspace/utils": ["../utils/src"]
     }
