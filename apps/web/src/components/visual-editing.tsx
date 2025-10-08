@@ -1,6 +1,5 @@
 'use client'
 
-import { VisualEditing as SanityVisualEditing } from '@sanity/visual-editing/react'
 import { useEffect, useState } from 'react'
 
 export function VisualEditing() {
@@ -65,6 +64,6 @@ export function VisualEditing() {
     }
   }, [])
 
-  // Only render the Sanity Visual Editing component when in draft mode
-  return isDraftMode ? <SanityVisualEditing portal={true} /> : null
+  // Return null for now since visual editing is not essential for basic functionality
+  return null
 }
