@@ -47,7 +47,7 @@ export default async function ContactPage() {
                     <h3 className="text-2xl font-bold text-gray-900 mb-4">Get in Touch</h3>
                     <p className="text-gray-600 leading-relaxed">
                       Whether you need business cards, brochures, banners, or custom printing solutions, 
-                      we're here to bring your vision to life.
+                      we&apos;re here to bring your vision to life.
                     </p>
                   </div>
 
@@ -115,7 +115,7 @@ export default async function ContactPage() {
               <div className="lg:col-span-2 p-8 lg:p-12">
                 <div className="mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-3">Send us a message</h2>
-                  <p className="text-gray-600">Fill out the form below and we'll get back to you within 24 hours.</p>
+                  <p className="text-gray-600">Fill out the form below and we&apos;ll get back to you within 24 hours.</p>
                 </div>
                 <ContactForm />
               </div>
