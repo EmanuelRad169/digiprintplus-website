@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { sanityClient } from '@/lib/sanity'
 
 interface SitemapUrl {
@@ -8,16 +8,18 @@ interface SitemapUrl {
   priority: number
 }
 
-// Get base URL from environment or request
-function getBaseUrl(request: NextRequest): string {
-  const host = request.headers.get('host') || 'localhost:3000'
-  const protocol = request.headers.get('x-forwarded-proto') || 'http'
-  return `${protocol}://${host}`
+// Get base URL from environment variable
+function getBaseUrl(): string {
+  // Use environment variable or fallback to production URL
+  return process.env.NEXT_PUBLIC_SITE_URL || 
+         process.env.NEXTAUTH_URL || 
+         process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
+         'https://digiprintplus.vercel.app'
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const baseUrl = getBaseUrl(request)
+    const baseUrl = getBaseUrl()
     const urls: SitemapUrl[] = []
 
     console.log('🗺️ Generating sitemap from Sanity...')
@@ -163,8 +165,8 @@ ${urls.map(url => `  <url>
   }
 }
 
-// Also support robots.txt at /api/sitemap/robots.txt if needed
-export async function HEAD(request: NextRequest) {
+// Also support HEAD requests for caching
+export async function HEAD() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -173,3 +175,7 @@ export async function HEAD(request: NextRequest) {
     },
   })
 }
+
+// Mark route as dynamic to allow runtime generation
+export const dynamic = 'force-dynamic'
+export const revalidate = 3600 // Revalidate every hour
