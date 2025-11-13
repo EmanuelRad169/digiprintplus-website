@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
 import { sanityClient } from '@/lib/sanity'
 
+// Force this route to be dynamic
+export const dynamic = 'force-dynamic'
+export const revalidate = 0 // Don't cache at build time
+
 interface SitemapUrl {
   url: string
   lastModified: string
@@ -175,7 +179,3 @@ export async function HEAD() {
     },
   })
 }
-
-// Mark route as dynamic to allow runtime generation
-export const dynamic = 'force-dynamic'
-export const revalidate = 3600 // Revalidate every hour
