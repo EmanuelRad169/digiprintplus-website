@@ -54,7 +54,7 @@
     "sonner": "^1.7.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.1",
-    "@workspace/utils": "*"
+    "@workspace/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.2.79",
