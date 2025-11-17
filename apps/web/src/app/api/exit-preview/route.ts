@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { draftMode } from 'next/headers'
 
 export async function GET() {
-  console.log('🔒 Exiting draft/preview mode')
-  
   // Disable draft mode
-  (await draftMode()).disable()
+  const draft = await draftMode()
+  draft.disable()
+  
+  console.log('🔒 Exiting draft/preview mode')
 
   const response = NextResponse.json({ 
     message: 'Draft mode disabled',

@@ -52,7 +52,8 @@ export async function GET(request: NextRequest) {
   }
 
   // Enable draft mode for Next.js 14
-  (await draftMode()).enable()
+  const draft = await draftMode()
+  draft.enable()
 
   // If this is a request from the visual editing overlay (has perspective param),
   // return JSON response instead of redirect
