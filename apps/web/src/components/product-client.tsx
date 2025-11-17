@@ -1,6 +1,6 @@
 'use client'
 
-import { useLiveQuery } from '@sanity/preview-kit'
+import { useLiveQuery } from 'next-sanity/preview'
 import { Product } from '@/types/product'
 import ProductTabs from '@/components/product-tabs'
 import { SanityProductImage } from '@/components/ui/sanity-image'

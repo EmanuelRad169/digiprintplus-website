@@ -1,11 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm -w -F digiprintplus-web run build",
+  "installCommand": "pnpm -w install --frozen-lockfile --prefer-offline --no-optional",
+  "buildCommand": "cd apps/web && pnpm run build",
   "devCommand": "pnpm -w -F digiprintplus-web run dev",
   "framework": "nextjs",
   "outputDirectory": "apps/web/.next",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./apps/web",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [

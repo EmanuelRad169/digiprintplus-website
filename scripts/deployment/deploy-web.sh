@@ -31,7 +31,7 @@ else
     echo -e "${YELLOW}⚠️  Preview deployment mode (use --prod for production)${NC}"
 fi
 
-# Navigate to web directory
+# Navigate to web directory for env checks
 cd "$WEB_DIR"
 
 # Check if .env.production exists
@@ -40,11 +40,12 @@ if [ ! -f ".env.production" ]; then
     exit 1
 fi
 
-echo -e "${BLUE}📦 Installing dependencies...${NC}"
-npm install
+echo -e "${BLUE}📦 Installing dependencies with pnpm workspace...${NC}"
+cd "$PROJECT_ROOT"
+pnpm -w install --frozen-lockfile
 
 echo -e "${BLUE}🔨 Building locally to catch errors...${NC}"
-npm run build
+pnpm -w -F digiprintplus-web run build
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Local build failed. Please fix errors before deploying.${NC}"
@@ -56,6 +57,9 @@ echo ""
 
 # Read environment variables from .env.production
 echo -e "${BLUE}🔐 Loading environment variables...${NC}"
+
+# Return to web directory for Vercel CLI (needs .vercel scope)
+cd "$WEB_DIR"
 
 # Deploy with Vercel CLI
 echo -e "${BLUE}🚀 Deploying to Vercel...${NC}"

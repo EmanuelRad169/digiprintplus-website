@@ -1,0 +1,285 @@
+{
+  "cleanupReport": {
+    "date": "2025-11-17",
+    "summary": {
+      "totalFilesAnalyzed": 450,
+      "safeToDelete": 23,
+      "needsReview": 18,
+      "kept": 409
+    },
+    "categories": {
+      "safeToDelete": {
+        "backups": [
+          {
+            "path": "apps/studio/backup-production-20250926-121013.tar.gz",
+            "size": "~5MB",
+            "reason": "Old production backup from Sept 26, 2025 - outdated",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "apps/studio/development-backup.tar.gz",
+            "size": "~4MB",
+            "reason": "Development backup - redundant with version control",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "apps/studio/development-export-20250926-121340.tar.gz",
+            "size": "~4MB",
+            "reason": "Old export from Sept 26 - outdated",
+            "action": "move_to_junk"
+          }
+        ],
+        "logs": [
+          {
+            "path": "apps/studio/sanity.log",
+            "reason": "Runtime log file - regenerates on every run",
+            "action": "delete_and_gitignore"
+          }
+        ],
+        "duplicateScripts": [
+          {
+            "path": "scripts/maintenance/export-products.js",
+            "duplicate_of": "scripts/data-management/export-products.js",
+            "reason": "Exact duplicate - kept in data-management folder",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "scripts/maintenance/export-products-csv.js",
+            "duplicate_of": "scripts/data-management/export-products-csv.js",
+            "reason": "Exact duplicate - kept in data-management folder",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "scripts/maintenance/export-sanity-dump.js",
+            "duplicate_of": "scripts/data-management/export-sanity-dump.js",
+            "reason": "Exact duplicate - kept in data-management folder",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "scripts/maintenance/sync-products-from-excel.js",
+            "duplicate_of": "scripts/data-management/sync-products-from-excel.js",
+            "reason": "Exact duplicate - kept in data-management folder",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "scripts/maintenance/sync-products-from-excel-auto.js",
+            "duplicate_of": "scripts/data-management/sync-products-from-excel-auto.js",
+            "reason": "Exact duplicate - kept in data-management folder",
+            "action": "move_to_junk"
+          }
+        ],
+        "oldDocs": [
+          {
+            "path": "apps/studio/DEPENDENCY_CLEANUP.md",
+            "reason": "Historical cleanup report from Nov 13 - outdated, warnings suppressed",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "apps/studio/BLOG_SEEDING_README.md",
+            "reason": "Old blog seeding instructions - blog already seeded",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "docs/AUTOMATED_DEPLOYMENT.md",
+            "reason": "Deployment docs moved to VERCEL_DEPLOYMENT.md",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "docs/DEPLOYMENT_PROTECTION.md",
+            "reason": "Redundant with VERCEL_DEPLOYMENT.md",
+            "action": "move_to_junk"
+          },
+          {
+            "path": "docs/VERCEL_DEPLOYMENT_GUIDE.md",
+            "reason": "Replaced by root VERCEL_DEPLOYMENT.md",
+            "action": "move_to_junk"
+          }
+        ]
+      },
+      "needsReview": {
+        "studioScripts": [
+          {
+            "path": "apps/studio/check-site-settings.js",
+            "reason": "One-time check script - verify if still needed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/check-visual-editing.sh",
+            "reason": "One-time check script - verify if still needed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/create-navigation.js",
+            "reason": "One-time setup script - navigation already created",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/setup-navigation.js",
+            "reason": "Duplicate of create-navigation - verify which is current",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/setup-navigation-and-categories.js",
+            "reason": "One-time setup script - already completed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/link-templates-to-products.js",
+            "reason": "One-time migration script - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/update-template-status.js",
+            "reason": "One-time update script - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/publish-products.js",
+            "reason": "One-time publish script - products already published",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/publish-demo-products.js",
+            "reason": "Demo data script - likely completed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/restore-mega-menu.js",
+            "reason": "One-time restore script - verify if needed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/update-navigation.js",
+            "reason": "Update script - verify if still used",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/update-product-tabs.js",
+            "reason": "One-time update - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/run-migration.sh",
+            "reason": "Migration runner - verify if migrations complete",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/test-ai-assist.sh",
+            "reason": "Test script - verify if still needed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/websocket-test.js",
+            "reason": "Test script - verify if still needed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/websocket-dev-override.js",
+            "reason": "Development override - verify if still needed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "apps/studio/seed-blog-content.ts",
+            "reason": "Blog seeding script - blog already seeded per README",
+            "action": "review_then_move"
+          }
+        ],
+        "maintenanceScripts": [
+          {
+            "path": "scripts/maintenance/fix-types.js",
+            "reason": "One-time type fix - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "scripts/maintenance/fix-radix-types.js",
+            "reason": "One-time type fix - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "scripts/maintenance/fix-import-paths.js",
+            "reason": "One-time import fix - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "scripts/maintenance/migrate-imports.js",
+            "reason": "One-time migration - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "scripts/maintenance/migrate-app-imports.js",
+            "reason": "One-time migration - verify completion",
+            "action": "review_then_move"
+          },
+          {
+            "path": "scripts/maintenance/analyze-files.js",
+            "reason": "Analysis script - verify if still needed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "scripts/development/clean-old-data.js",
+            "reason": "Cleanup script - verify if completed",
+            "action": "review_then_move"
+          },
+          {
+            "path": "scripts/development/refactor-structure.sh",
+            "reason": "One-time refactor script - verify completion",
+            "action": "review_then_move"
+          }
+        ]
+      },
+      "kept": {
+        "activeConfigs": [
+          "vercel.json",
+          "apps/web/vercel.json",
+          "apps/studio/vercel.json",
+          "package.json",
+          "pnpm-workspace.yaml",
+          "tsconfig.json",
+          "turbo.json"
+        ],
+        "activeScripts": [
+          "scripts/create-git-backup.sh",
+          "scripts/data-management/*.js (5 files)",
+          "scripts/deployment/build-analysis.js",
+          "scripts/development/*.js (active tools)",
+          "scripts/verify/*.js (validation scripts)",
+          "apps/web/scripts/*.js (page generation)"
+        ],
+        "activeDocs": [
+          "README.md",
+          "VERCEL_DEPLOYMENT.md",
+          "docs/blog-seo-guide.md"
+        ],
+        "sourceCode": [
+          "All .ts/.tsx files in src/ directories",
+          "All .ts/.tsx files in packages/",
+          "All schema and config files",
+          "All component files"
+        ]
+      }
+    },
+    "recommendations": {
+      "immediate": [
+        "Move all backup .tar.gz files to junk/ (3 files, ~13MB recovered)",
+        "Delete or gitignore sanity.log",
+        "Move duplicate scripts from maintenance/ to junk/ (5 files)",
+        "Move old docs to junk/ (5 files)"
+      ],
+      "afterReview": [
+        "Review 17 one-time studio scripts - move completed ones to junk/",
+        "Review 8 maintenance/migration scripts - archive completed ones",
+        "Consolidate deployment documentation into single source"
+      ],
+      "ongoing": [
+        "Add *.log to .gitignore",
+        "Add *.tar.gz to .gitignore",
+        "Document which scripts are one-time vs reusable in scripts/README.md"
+      ]
+    },
+    "estimatedSavings": {
+      "diskSpace": "~15MB",
+      "files": "23 immediate + 25 after review = 48 files",
+      "mentalLoad": "Reduced clutter in studio/ and scripts/ directories"
+    }
+  }
+}

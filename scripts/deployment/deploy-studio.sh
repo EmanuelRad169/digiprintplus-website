@@ -31,7 +31,7 @@ else
     echo -e "${YELLOW}⚠️  Preview deployment mode (use --prod for production)${NC}"
 fi
 
-# Navigate to studio directory
+# Navigate to studio directory for env checks
 cd "$STUDIO_DIR"
 
 # Check if .env.production exists
@@ -40,11 +40,12 @@ if [ ! -f ".env.production" ]; then
     exit 1
 fi
 
-echo -e "${BLUE}📦 Installing dependencies...${NC}"
-npm install
+echo -e "${BLUE}📦 Installing dependencies with pnpm workspace...${NC}"
+cd "$PROJECT_ROOT"
+pnpm -w install --frozen-lockfile
 
 echo -e "${BLUE}🔨 Building locally to catch errors...${NC}"
-npm run build
+pnpm -w -F digiprintplus-studio run build
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Local build failed. Please fix errors before deploying.${NC}"
@@ -53,6 +54,9 @@ fi
 
 echo -e "${GREEN}✅ Local build successful${NC}"
 echo ""
+
+# Return to studio directory for Vercel CLI scope
+cd "$STUDIO_DIR"
 
 # Deploy with Vercel CLI
 echo -e "${BLUE}🚀 Deploying to Vercel...${NC}"
@@ -83,6 +87,6 @@ read -p "$(echo -e ${YELLOW}❓ Also deploy to Sanity hosting? [y/N]: ${NC})" -n
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${BLUE}🎨 Deploying to Sanity...${NC}"
-    npm run deploy
+    pnpm -w -F digiprintplus-studio run deploy
     echo -e "${GREEN}✅ Sanity deployment complete${NC}"
 fi
