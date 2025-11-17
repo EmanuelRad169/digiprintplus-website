@@ -39,7 +39,7 @@ const portableTextComponents = {
 }
 
 export default async function PrivacyPage() {
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   const page = await getPageBySlug('privacy', isEnabled)
 
   if (!page) {

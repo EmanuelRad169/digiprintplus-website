@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 
 export async function GET() {
   // Disable Draft Mode
-  draftMode().disable()
+  (await draftMode()).disable()
 
   // Redirect to the home page
   redirect('/')

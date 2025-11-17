@@ -94,7 +94,7 @@ function ProductCard({ product }: { product: Product }) {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = params
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   
   // Get category info and products
   const currentCategory = await getCategoryBySlug(category, isEnabled)

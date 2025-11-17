@@ -88,7 +88,7 @@ async function getFinishingPage(isPreview = false) {
 }
 
 export default async function FinishingPage() {
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   const page = await getFinishingPage(isEnabled)
 
   if (!page || !page.isActive) {

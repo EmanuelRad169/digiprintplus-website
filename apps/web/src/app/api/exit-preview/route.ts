@@ -5,7 +5,7 @@ export async function GET() {
   console.log('🔒 Exiting draft/preview mode')
   
   // Disable draft mode
-  draftMode().disable()
+  (await draftMode()).disable()
 
   const response = NextResponse.json({ 
     message: 'Draft mode disabled',

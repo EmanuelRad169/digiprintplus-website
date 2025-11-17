@@ -12,7 +12,7 @@ import { CallToActionSanity } from '@/components/sections/call-to-action-sanity'
 export const revalidate = 60
 
 export default async function AboutPage() {
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   const [pageData, enhancedData] = await Promise.all([
     getAboutPage('about', isEnabled),
     getAboutPageData()

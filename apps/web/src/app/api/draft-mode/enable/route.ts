@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
   })
 
   // Enable Draft Mode by setting the cookie
-  draftMode().enable()
+  (await draftMode()).enable()
 
   // If this is a request from the visual editing overlay (has perspective param),
   // return JSON response instead of redirect

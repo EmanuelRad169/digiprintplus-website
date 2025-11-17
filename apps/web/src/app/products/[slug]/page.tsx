@@ -21,7 +21,7 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = params
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   
   const [product, siteSettings] = await Promise.all([
     getProductBySlug(slug, isEnabled),

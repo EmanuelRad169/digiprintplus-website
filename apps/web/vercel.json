@@ -1,18 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "pnpm -w install --frozen-lockfile",
-  "buildCommand": "pnpm -w -F digiprintplus-web run build",
-  "devCommand": "pnpm -w -F digiprintplus-web run dev",
   "framework": "nextjs",
-  "outputDirectory": ".next",
-  "ignoreCommand": "echo 'no ignore'",
   "cleanUrls": true,
-  "trailingSlash": false,
-  "env": {
-    "NEXT_PUBLIC_SANITY_PROJECT_ID": "@sanity_project_id",
-    "NEXT_PUBLIC_SANITY_DATASET": "@sanity_dataset",
-    "NEXT_PUBLIC_SANITY_API_VERSION": "@sanity_api_version",
-    "SANITY_API_TOKEN": "@sanity_api_token"
-  }
+  "trailingSlash": false
 }

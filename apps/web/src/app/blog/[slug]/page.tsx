@@ -17,7 +17,7 @@ interface BlogPostPageProps {
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   const post = await getBlogPostBySlug(params.slug, isEnabled)
 
   if (!post) {

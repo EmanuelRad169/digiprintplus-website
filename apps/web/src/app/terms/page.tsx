@@ -39,7 +39,7 @@ const portableTextComponents = {
 }
 
 export default async function TermsPage() {
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   const page = await getPageBySlug('terms', isEnabled)
 
   if (!page) {

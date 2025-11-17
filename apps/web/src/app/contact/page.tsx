@@ -7,7 +7,7 @@ import { draftMode } from 'next/headers'
 export const revalidate = 60;
 
 export default async function ContactPage() {
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   const [pageData, siteSettings] = await Promise.all([
     getPageBySlug('contact', isEnabled),
     getSiteSettings()

@@ -40,7 +40,7 @@ type TeamMember = {
 
 export default async function Page({ params }: PageProps) {
   const { slug } = params
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   
   // Try to fetch as an "about" page first, then fallback to generic "page"
   let pageData = await getAboutPage(slug, isEnabled)

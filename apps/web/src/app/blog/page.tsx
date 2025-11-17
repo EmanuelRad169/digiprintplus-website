@@ -8,7 +8,7 @@ import { ArrowRight, Calendar, User, Tag, TrendingUp } from 'lucide-react'
 export const revalidate = 60
 
 export default async function BlogPage() {
-  const { isEnabled } = draftMode()
+  const { isEnabled } = await draftMode()
   const [posts, featuredPosts, categories] = await Promise.all([
     getAllBlogPosts(isEnabled),
     getFeaturedBlogPosts(3, isEnabled),
