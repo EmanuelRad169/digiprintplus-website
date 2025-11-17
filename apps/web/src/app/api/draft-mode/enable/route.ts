@@ -36,14 +36,15 @@ export async function GET(request: NextRequest) {
     return new Response('Invalid token', { status: 401 })
   }
 
+  // Enable Draft Mode by setting the cookie
+  const draft = await draftMode()
+  draft.enable()
+
   console.log('Draft mode enabled successfully', {
     perspective,
     slug,
     hasToken: !!token
   })
-
-  // Enable Draft Mode by setting the cookie
-  (await draftMode()).enable()
 
   // If this is a request from the visual editing overlay (has perspective param),
   // return JSON response instead of redirect
