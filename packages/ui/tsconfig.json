@@ -9,12 +9,21 @@
     "rootDir": "./src",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@workspace/utils": ["../utils/src"]
+      "@workspace/utils": [
+        "../utils/src"
+      ]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "references": [
-    { "path": "../utils" }
+    {
+      "path": "../utils"
+    }
   ]
 }

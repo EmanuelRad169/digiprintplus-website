@@ -64,7 +64,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         )}
         
         <div className="container mx-auto px-4 py-16 relative z-10">
-          <div className="max-w-4xl">
+          <div className="max-w-7xl">
             {/* Back Link */}
             <Link 
               href="/services"

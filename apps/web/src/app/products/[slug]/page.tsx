@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { getProductBySlug, getSiteSettings } from '@/lib/sanity/fetchers'
 import { PortableTextRenderer } from '@/components/portable-text'
 import { Product, ProductImage, ProductTestimonial, ProductSpecification, ProductFeature } from '@/types/product'
-import ProductTabs from '@/components/product-tabs'
 import { generateProductSEO, generateProductSchema } from '@/lib/seo'
 import { Star, Check, Download, Share2, Heart, ShoppingCart, Phone, Mail, ArrowLeft, Eye, Clock, Shield, Award, Tag, TrendingUp, AlertTriangle, Calendar, Truck, Sparkles, FileText, Video, Quote, BadgeCheck } from 'lucide-react'
 
@@ -296,9 +295,214 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
-      {/* Product Details Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <ProductTabs product={product} />
+      {/* Product Content Sections - Vertical Flow */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
+        
+        {/* Product Details Section */}
+        <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
+          <div className="flex items-center mb-6">
+            <FileText className="w-6 h-6 text-magenta-500 mr-3" />
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Product Details</h2>
+          </div>
+          <div className="border-t border-gray-200 pt-6">
+            {product.productDetails ? (
+              <div className="prose prose-lg max-w-none">
+                <PortableTextRenderer value={product.productDetails} />
+              </div>
+            ) : product.longDescription ? (
+              <div className="prose prose-lg max-w-none">
+                <PortableTextRenderer value={product.longDescription} />
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center mb-4">
+                  <FileText className="w-8 h-8 text-blue-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Details Available</h3>
+                <p className="text-gray-600 mb-4">
+                  Product details are not yet available. Contact us for more information.
+                </p>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Specifications Section */}
+        <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
+          <div className="flex items-center mb-6">
+            <BadgeCheck className="w-6 h-6 text-magenta-500 mr-3" />
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Specifications</h2>
+          </div>
+          <div className="border-t border-gray-200 pt-6">
+            {product.detailedSpecs ? (
+              <div className="prose prose-lg max-w-none">
+                <PortableTextRenderer value={product.detailedSpecs} />
+              </div>
+            ) : product.specifications && product.specifications.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {product.specifications.map((spec: ProductSpecification, index: number) => (
+                  <div key={index} className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-900">{spec.name}</span>
+                      <span className="text-magenta-600 font-medium">
+                        {spec.value} {spec.unit && <span className="text-sm text-gray-500">{spec.unit}</span>}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mb-4">
+                  <BadgeCheck className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Specifications Available</h3>
+                <p className="text-gray-600 mb-4">
+                  Detailed specifications for this product are not yet available.
+                </p>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Template Download Section */}
+        {product.template?.hasTemplate && (
+          <section className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg border border-purple-100 p-8 lg:p-12">
+            <div className="flex items-center mb-6">
+              <Download className="w-6 h-6 text-magenta-500 mr-3" />
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Download Template</h2>
+            </div>
+            <div className="border-t border-purple-200 pt-6">
+              {product.template.description && (
+                <p className="text-gray-700 text-lg leading-relaxed mb-6">
+                  {product.template.description}
+                </p>
+              )}
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {product.template.previewImage?.asset?.url && (
+                  <div className="rounded-xl overflow-hidden border border-gray-200 shadow-md">
+                    <Image
+                      src={product.template.previewImage.asset.url}
+                      alt={product.template.previewImage.alt || 'Template preview'}
+                      width={500}
+                      height={400}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-col justify-center space-y-4">
+                  {product.template.downloadFile?.asset?.url && (
+                    <a
+                      href={product.template.downloadFile.asset.url}
+                      className="inline-flex items-center justify-center px-8 py-4 bg-magenta-600 text-white font-semibold rounded-xl hover:bg-magenta-700 transition-all shadow-lg hover:shadow-xl"
+                      download
+                    >
+                      <Download className="w-5 h-5 mr-2" />
+                      Download Template File
+                    </a>
+                  )}
+                  
+                  <p className="text-sm text-gray-600 text-center">
+                    Professional template ready for customization
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Related Templates Section */}
+        {product.templates && product.templates.length > 0 && (
+          <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
+            <div className="flex items-center mb-6">
+              <FileText className="w-6 h-6 text-magenta-500 mr-3" />
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Related Templates</h2>
+            </div>
+            <p className="text-gray-600 mb-8">
+              Download these professionally designed templates for your {product.title.toLowerCase()} projects.
+            </p>
+            <div className="border-t border-gray-200 pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {product.templates.slice(0, 6).map((template: any) => (
+                  <div key={template._id} className="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all">
+                    {template.previewImage?.asset?.url && (
+                      <div className="aspect-video rounded-lg overflow-hidden mb-4">
+                        <Image
+                          src={template.previewImage.asset.url}
+                          alt={template.title}
+                          width={300}
+                          height={200}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      </div>
+                    )}
+                    <h3 className="font-semibold text-gray-900 mb-2">{template.title}</h3>
+                    <Link
+                      href={`/templates/${template.slug?.current}`}
+                      className="inline-flex items-center text-magenta-600 hover:text-magenta-700 font-medium text-sm"
+                    >
+                      View Template
+                      <ArrowLeft className="w-4 h-4 ml-1 rotate-180" />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+              {product.templates.length > 6 && (
+                <div className="text-center mt-8">
+                  <Link
+                    href="/templates"
+                    className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-medium rounded-xl hover:bg-magenta-600 transition-colors"
+                  >
+                    View All Templates
+                  </Link>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+      </div>
+
+      {/* Sticky CTA Bar - Request Quote */}
+      <div className="sticky bottom-0 z-40 bg-gradient-to-r from-magenta-600 to-purple-600 shadow-2xl border-t border-magenta-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg font-bold text-white">{product.title}</h3>
+              <p className="text-sm text-white/90">Ready to get started? Request your custom quote now.</p>
+            </div>
+            <div className="flex gap-3">
+              <Link
+                href={product.formLink || `/quote?product=${product.slug?.current}`}
+                className="inline-flex items-center px-6 py-3 bg-white text-magenta-600 font-semibold rounded-lg hover:bg-gray-100 transition-all shadow-lg"
+              >
+                <Quote className="w-5 h-5 mr-2" />
+                Request Quote
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center px-6 py-3 bg-magenta-700 text-white font-semibold rounded-lg hover:bg-magenta-800 transition-all border border-white/20"
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Call Us
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Enhanced Gallery */}
