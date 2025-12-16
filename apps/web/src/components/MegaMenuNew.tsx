@@ -126,7 +126,7 @@ export default function MegaMenu({
     if (isOpen && shouldFetchCategories && categories.length === 0) {
       loadCategories()
     }
-  }, [isOpen, categories.length])
+  }, [isOpen, categories.length, shouldFetchCategories])
 
   // Reset focus when menu closes
   useEffect(() => {

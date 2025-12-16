@@ -1,7 +1,12 @@
 'use client'
 
-import { VisualEditing as SanityVisualEditing } from '@sanity/visual-editing/react'
+import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
+
+const SanityVisualEditing = dynamic(
+  () => import('@sanity/visual-editing/react').then((mod) => mod.VisualEditing),
+  { ssr: false }
+)
 
 export function VisualEditing() {
   const [isDraftMode, setIsDraftMode] = useState(false)

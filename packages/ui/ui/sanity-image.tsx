@@ -2,9 +2,10 @@
 
 import { ComponentProps } from 'react'
 import Image from 'next/image'
+import imageUrlBuilder from '@sanity/image-url'
 import { getOptimizedImageProps, getResponsiveImageProps } from '@/lib/sanity/image'
 
-type SanityImageSource = any
+type SanityImageSource = Parameters<ReturnType<typeof imageUrlBuilder>['image']>[0]
 
 interface SanityImageProps extends Omit<ComponentProps<typeof Image>, 'src'> {
   src: SanityImageSource
