@@ -205,8 +205,8 @@ export default function Navigation() {
               <div key={item.name} 
                    className={`relative group ${item.megaMenu || item.submenu ? 'has-dropdown' : ''}`}
                    ref={(el) => {
-                     if (item.megaMenu) {
-                       megaMenuRef.current = el
+                     if (item.megaMenu && megaMenuRef.current !== el) {
+                       (megaMenuRef as React.MutableRefObject<HTMLDivElement | null>).current = el
                      } else if (item.submenu) {
                        dropdownRefs.current[item.name] = el
                      }
