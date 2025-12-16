@@ -51,12 +51,9 @@ export const getNavigation = async () => {
       }
     )
 
-    if (manualNav && manualNav.items && manualNav.items.length > 0) {
-      return manualNav
-    }
-
-    // If no manual navigation, build it dynamically from product categories
-    console.log('No manual navigation found, building from product categories...')
+    // Always use dynamically built navigation for consistent mega menu support
+    // The manual navigation in Sanity CMS is not compatible with the frontend mega menu structure
+    console.log('Building navigation dynamically from product categories and services...')
     return await buildNavigationFromCategories()
     
   } catch (error) {
@@ -83,14 +80,24 @@ export const buildNavigationFromCategories = async () => {
       return null
     }
 
-    // Group categories for mega menu sections
-    const popularCategories = categories.slice(0, 6) // First 6 categories
-    const businessEssentials = categories.filter((cat: ProductCategory) => 
-      ['letterhead', 'envelopes', 'ncr-forms', 'notepads', 'announcement-cards'].includes(cat.slug)
+    // Fetch services for submenu
+    const services = await sanityClient.fetch(
+      `*[_type == "service"] | order(order asc) [0...3] {
+        "name": title,
+        "href": slug.current,
+        "description": excerpt,
+        "isVisible": true,
+        "openInNewTab": false
+      }`
     )
-    const specialtyItems = categories.filter((cat: ProductCategory) => 
-      ['bookmarks', 'calendars', 'door-hangers', 'table-tents', 'counter-display-cards'].includes(cat.slug)
-    )
+
+    // Group categories for mega menu sections - distribute all categories evenly
+    const totalCategories = categories.length
+    const categoriesPerColumn = Math.ceil(totalCategories / 3)
+    
+    const popularCategories = categories.slice(0, categoriesPerColumn)
+    const businessEssentials = categories.slice(categoriesPerColumn, categoriesPerColumn * 2)
+    const specialtyItems = categories.slice(categoriesPerColumn * 2)
 
     // Build the navigation structure
     const navigationData = {
@@ -135,16 +142,67 @@ export const buildNavigationFromCategories = async () => {
           ]
         },
         {
-          name: 'About Us',
-          href: '/about',
+          name: 'Services',
+          href: '/services',
           order: 3,
           isVisible: true,
-          openInNewTab: false
+          openInNewTab: false,
+          megaMenu: [
+            {
+              sectionTitle: 'Our Services',
+              sectionDescription: 'Professional printing services',
+              links: [
+                ...(services || []).map((service: any) => ({
+                  name: service.name,
+                  href: `/services/${service.href}`,
+                  description: service.description,
+                  isVisible: true,
+                  isHighlighted: false
+                }))
+              ]
+            }
+          ]
+        },
+        {
+          name: 'About',
+          href: '/about',
+          order: 4,
+          isVisible: true,
+          openInNewTab: false,
+          megaMenu: [
+            {
+              sectionTitle: 'Company',
+              sectionDescription: 'Learn more about us',
+              links: [
+                {
+                  name: 'About Us',
+                  href: '/about',
+                  description: 'Our story and mission',
+                  isVisible: true,
+                  isHighlighted: false
+                },
+                {
+                  name: 'Contact',
+                  href: '/contact',
+                  description: 'Get in touch with us',
+                  isVisible: true,
+                  isHighlighted: false
+                },
+                {
+                  name: 'Blog',
+                  href: '/blog',
+                  description: 'Industry insights and news',
+                  isVisible: true,
+                  isHighlighted: false
+                }
+              ]
+            }
+          ]
         },
         {
           name: 'Contact',
           href: '/contact',
-          order: 4,
+          order: 5,
           isVisible: true,
           openInNewTab: false
         }
@@ -211,7 +269,7 @@ export const getProductCategories = async () => {
 }
 
 // Real-time navigation updates hook
-export const subscribeToNavigationUpdates = (callback: () => void) => {
+export const subscribeToNavigationUpdates = (callback: () => void): { unsubscribe: () => void } => {
   return sanityClient
     .listen('*[_type == "navigationMenu" && _id == "mainNav"] || *[_type == "productCategory"]')
     .subscribe({

@@ -88,7 +88,7 @@ export const getSiteSettings = async (): Promise<SiteSettings | null> => {
 }
 
 // Real-time site settings updates hook
-export const subscribeToSiteSettings = (callback: () => void) => {
+export const subscribeToSiteSettings = (callback: () => void): { unsubscribe: () => void } => {
   return sanityClient
     .listen('*[_type == "siteSettings"]')
     .subscribe({

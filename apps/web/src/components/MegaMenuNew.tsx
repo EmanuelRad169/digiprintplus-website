@@ -20,7 +20,13 @@ import {
   Tag,
   Grid,
   ArrowRight,
-  Loader2
+  Loader2,
+  Printer,
+  PenTool,
+  ImageIcon,
+  Building2,
+  Phone,
+  BookOpen
 } from 'lucide-react'
 
 // Icon mapping for categories
@@ -58,12 +64,27 @@ interface ProductCategory {
   image?: string
 }
 
+interface MegaMenuSection {
+  sectionTitle: string
+  sectionDescription?: string
+  links: Array<{
+    name: string
+    href: string
+    description?: string
+    isHighlighted?: boolean
+    isVisible?: boolean
+    openInNewTab?: boolean
+  }>
+}
+
 interface MegaMenuProps {
   isOpen?: boolean
   onLinkClick?: () => void
   onMouseEnter?: () => void
   onMouseLeave?: () => void
   className?: string
+  sections?: MegaMenuSection[]  // New: support static sections
+  mode?: 'products' | 'sections'  // New: explicit mode
 }
 
 export default function MegaMenu({ 
@@ -71,7 +92,9 @@ export default function MegaMenu({
   onLinkClick, 
   onMouseEnter, 
   onMouseLeave,
-  className = ''
+  className = '',
+  sections,
+  mode = 'products'
 }: MegaMenuProps) {
   const [categories, setCategories] = useState<ProductCategory[]>([])
   const [loading, setLoading] = useState(true)
@@ -79,6 +102,9 @@ export default function MegaMenu({
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const menuRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([])
+
+  // Only fetch if in products mode and no sections provided
+  const shouldFetchCategories = mode === 'products' && !sections
 
   // Fetch categories on mount
   useEffect(() => {
@@ -97,7 +123,7 @@ export default function MegaMenu({
       }
     }
 
-    if (isOpen && categories.length === 0) {
+    if (isOpen && shouldFetchCategories && categories.length === 0) {
       loadCategories()
     }
   }, [isOpen, categories.length])
@@ -192,6 +218,156 @@ export default function MegaMenu({
     return null
   }
 
+  // Helper function to get icon for link
+  const getIconForLink = (name: string) => {
+    const lowerName = name.toLowerCase()
+    
+    // Product categories
+    if (lowerName.includes('business card')) return CreditCard
+    if (lowerName.includes('envelope') || lowerName.includes('postcard')) return Mail
+    if (lowerName.includes('letter') || lowerName.includes('booklet') || lowerName.includes('catalog') || lowerName.includes('brochure')) return FileText
+    if (lowerName.includes('calendar')) return Calendar
+    if (lowerName.includes('bookmark')) return Bookmark
+    if (lowerName.includes('announcement') || lowerName.includes('gift')) return Gift
+    if (lowerName.includes('counter') || lowerName.includes('display') || lowerName.includes('star')) return Star
+    if (lowerName.includes('door') || lowerName.includes('hanger')) return MapPin
+    if (lowerName.includes('flyer') || lowerName.includes('poster') || lowerName.includes('banner')) return FileImage
+    if (lowerName.includes('ncr') || lowerName.includes('form') || lowerName.includes('folder')) return Clipboard
+    if (lowerName.includes('notepad') || lowerName.includes('label') || lowerName.includes('sticker')) return Tag
+    if (lowerName.includes('table') || lowerName.includes('tent')) return Users
+    if (lowerName.includes('all products')) return Package
+    
+    // Services
+    if (lowerName.includes('digital') || lowerName.includes('printing')) return Printer
+    if (lowerName.includes('offset')) return Printer
+    if (lowerName.includes('large format') || lowerName.includes('wide format')) return ImageIcon
+    if (lowerName.includes('design') || lowerName.includes('custom')) return PenTool
+    
+    // Company/About
+    if (lowerName.includes('about') || lowerName.includes('company')) return Building2
+    if (lowerName.includes('contact') || lowerName.includes('get in touch')) return Phone
+    if (lowerName.includes('blog') || lowerName.includes('news')) return BookOpen
+    
+    return Package // Default
+  }
+
+  // Render sections mode (static data)
+  if (sections && sections.length > 0) {
+    const visibleSections = sections.filter(section => 
+      section.links && section.links.some(link => link.isVisible !== false)
+    )
+
+    if (visibleSections.length === 0) {
+      return null
+    }
+
+    return (
+      <div
+        ref={menuRef}
+        className={`bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden ${className}`}
+        role="menu"
+        aria-label="Menu"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="grid grid-cols-1 gap-6">
+            {/* 3-column grid layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {visibleSections.slice(0, 3).map((section) => {
+                const visibleLinks = section.links.filter(link => link.isVisible !== false)
+                
+                return (
+                  <div key={section.sectionTitle} className="space-y-3">
+                    <h3 className="font-semibold text-gray-900 text-sm uppercase tracking-wide border-b border-gray-200 pb-1">
+                      {section.sectionTitle}
+                    </h3>
+                    
+                    <div className="space-y-1">
+                      {visibleLinks.map((link) => {
+                        const IconComponent = getIconForLink(link.name)
+                        
+                        return (
+                          <Link
+                            key={link.name}
+                            href={link.href}
+                            onClick={onLinkClick}
+                            className={`group flex items-start space-x-2 p-1.5 rounded-md transition-all duration-200 ${
+                              link.isHighlighted
+                                ? 'bg-magenta-50 border border-magenta-200 hover:bg-magenta-100'
+                                : 'hover:bg-gray-50 hover:text-gray-900'
+                            }`}
+                            {...(link.openInNewTab && { target: '_blank', rel: 'noopener noreferrer' })}
+                          >
+                            <IconComponent className={`h-4 w-4 flex-shrink-0 mt-0.5 ${
+                              link.isHighlighted
+                                ? 'text-magenta-600'
+                                : 'text-gray-400 group-hover:text-magenta-500'
+                            }`} />
+                            <div className="flex-1 min-w-0">
+                              <div className={`font-medium text-sm ${
+                                link.isHighlighted
+                                  ? 'text-magenta-700'
+                                  : 'text-gray-700 group-hover:text-gray-900'
+                              }`}>
+                                {link.name}
+                              </div>
+                              {link.description && (
+                                <div className={`text-xs mt-0.5 line-clamp-2 ${
+                                  link.isHighlighted
+                                    ? 'text-magenta-600'
+                                    : 'text-gray-500'
+                                }`}>
+                                  {link.description}
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            
+            {/* Promo Card */}
+            <div className="border-t border-gray-100">
+              <div className="bg-gradient-to-r from-magenta-500 via-magenta-600 to-purple-600 rounded-md p-3.5 text-white shadow-md relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute right-0 top-0 w-24 h-24 bg-white rounded-full -mr-6 -mt-6"></div>
+                  <div className="absolute left-0 bottom-0 w-16 h-16 bg-white rounded-full -ml-4 -mb-4"></div>
+                </div>
+                
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative z-10">
+                  <div className="flex items-start space-x-3">
+                    <Gift className="h-5 w-5 text-white flex-shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-semibold text-sm">Custom Printing Solutions</div>
+                      <div className="text-white text-xs mt-1 max-w-md opacity-90">
+                        Need something unique for your business? Our experts can help you create custom printing solutions tailored to your specific needs.
+                      </div>
+                    </div>
+                  </div>
+                  <div className="md:flex-shrink-0">
+                    <Link
+                      href="/quote"
+                      onClick={onLinkClick}
+                      className="inline-block text-xs font-medium text-white bg-black px-4 py-2.5 rounded-md transition-colors border border-white/30 hover:bg-white hover:text-magenta-600"
+                    >
+                      Get Custom Quote
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Render products mode (dynamic Sanity data)
   return (
     <div
       ref={menuRef}

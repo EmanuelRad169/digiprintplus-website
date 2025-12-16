@@ -3,19 +3,22 @@ import { PortableText } from '@portabletext/react'
 const components = {
   block: {
     h1: ({ children }: any) => (
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">{children}</h1>
+      <h1 className="text-4xl font-bold text-gray-900 mb-6 mt-8 first:mt-0">{children}</h1>
     ),
     h2: ({ children }: any) => (
-      <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">{children}</h2>
+      <h2 className="text-3xl font-bold text-gray-900 mt-10 mb-4 first:mt-0">{children}</h2>
     ),
     h3: ({ children }: any) => (
-      <h3 className="text-xl font-bold text-gray-900 mt-6 mb-3">{children}</h3>
+      <h3 className="text-2xl font-semibold text-gray-900 mt-8 mb-3 first:mt-0">{children}</h3>
+    ),
+    h4: ({ children }: any) => (
+      <h4 className="text-xl font-semibold text-gray-900 mt-6 mb-2">{children}</h4>
     ),
     normal: ({ children }: any) => (
-      <p className="text-gray-600 mb-6">{children}</p>
+      <p className="text-gray-700 text-lg leading-relaxed mb-4">{children}</p>
     ),
     blockquote: ({ children }: any) => (
-      <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-700 my-6">
+      <blockquote className="border-l-4 border-magenta-500 pl-6 italic text-gray-700 my-6 bg-gray-50 py-4">
         {children}
       </blockquote>
     ),
@@ -24,7 +27,7 @@ const components = {
     link: ({ children, value }: any) => (
       <a
         href={value.href}
-        className="text-blue-600 hover:text-blue-700 underline"
+        className="text-magenta-600 hover:text-magenta-700 underline font-medium"
         target={value.blank ? '_blank' : undefined}
         rel={value.blank ? 'noopener noreferrer' : undefined}
       >
@@ -32,38 +35,37 @@ const components = {
       </a>
     ),
     strong: ({ children }: any) => (
-      <strong className="font-semibold">{children}</strong>
+      <strong className="font-bold text-gray-900">{children}</strong>
     ),
     em: ({ children }: any) => (
-      <em className="italic">{children}</em>
+      <em className="italic text-gray-700">{children}</em>
     ),
   },
   list: {
     bullet: ({ children }: any) => (
-      <ul className="list-disc pl-6 mb-6 space-y-2">{children}</ul>
+      <ul className="list-disc pl-6 mb-6 space-y-3">{children}</ul>
     ),
     number: ({ children }: any) => (
-      <ol className="list-decimal pl-6 mb-6 space-y-2">{children}</ol>
+      <ol className="list-decimal pl-6 mb-6 space-y-3">{children}</ol>
     ),
   },
   listItem: {
-    bullet: ({ children }: any) => <li className="text-gray-600">{children}</li>,
-    number: ({ children }: any) => <li className="text-gray-600">{children}</li>,
+    bullet: ({ children }: any) => <li className="text-gray-700 text-lg leading-relaxed">{children}</li>,
+    number: ({ children }: any) => <li className="text-gray-700 text-lg leading-relaxed">{children}</li>,
   },
 }
 
 interface PortableTextRendererProps {
   content: any[]
+  className?: string
 }
 
-export function PortableTextRenderer({ content }: PortableTextRendererProps) {
+export function PortableTextRenderer({ content, className }: PortableTextRendererProps) {
   if (!content || !Array.isArray(content)) {
     return null
   }
 
   return (
-    <div className="prose prose-lg max-w-none">
-      <PortableText value={content} components={components} />
-    </div>
+    <PortableText value={content} components={components} />
   )
 }

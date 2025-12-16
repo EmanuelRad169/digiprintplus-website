@@ -8,19 +8,19 @@ import { Menu, X, ChevronDown } from 'lucide-react'
 import { getNavigationMenu, getSiteSettings } from '@/lib/sanity/fetchers'
 import { NavigationMenu, NavigationItem as SanityNavigationItem } from '@/types/navigation'
 import type { SiteSettings } from '@/types/siteSettings'
-import MegaMenu from '@/components/MegaMenu'
+import MegaMenuNew from '@/components/MegaMenuNew'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
   const [megaMenuOpenedByClick, setMegaMenuOpenedByClick] = useState(false)
-  const [submenuOpen, setSubmenuOpen] = useState(false)
-  const [submenuOpenedByClick, setSubmenuOpenedByClick] = useState(false)
+  const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({})
+  const [dropdownOpenedByClick, setDropdownOpenedByClick] = useState<Record<string, boolean>>({})
   const [navigationData, setNavigationData] = useState<NavigationMenu | null>(null)
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const megaMenuRef = useRef<HTMLDivElement>(null)
-  const submenuRef = useRef<HTMLDivElement>(null)
+  const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   useEffect(() => {
     async function loadNavigation() {
@@ -42,29 +42,35 @@ export default function Navigation() {
     loadNavigation()
   }, [])
 
-  // Click outside handler for mega menu and submenu
+  // Click outside handler for mega menu and dropdowns
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (megaMenuRef.current && !megaMenuRef.current.contains(event.target as Node)) {
         setMegaMenuOpen(false)
         setMegaMenuOpenedByClick(false)
       }
-      if (submenuRef.current && !submenuRef.current.contains(event.target as Node)) {
-        setSubmenuOpen(false)
-        setSubmenuOpenedByClick(false)
-      }
+      
+      // Check each dropdown
+      Object.keys(dropdownRefs.current).forEach(key => {
+        const ref = dropdownRefs.current[key]
+        if (ref && !ref.contains(event.target as Node)) {
+          setOpenDropdowns(prev => ({ ...prev, [key]: false }))
+          setDropdownOpenedByClick(prev => ({ ...prev, [key]: false }))
+        }
+      })
     }
 
-    if (megaMenuOpen || submenuOpen) {
+    const hasOpenDropdowns = Object.values(openDropdowns).some(isOpen => isOpen)
+    if (megaMenuOpen || hasOpenDropdowns) {
       document.addEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [megaMenuOpen, submenuOpen])
+  }, [megaMenuOpen, openDropdowns])
   
-  // Close mega menu and submenu when pressing Escape key
+  // Close mega menu and dropdowns when pressing Escape key
   useEffect(() => {
     function handleEscKey(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -72,16 +78,15 @@ export default function Navigation() {
           setMegaMenuOpen(false)
           setMegaMenuOpenedByClick(false)
         }
-        if (submenuOpen) {
-          setSubmenuOpen(false)
-          setSubmenuOpenedByClick(false)
-        }
+        // Close all dropdowns
+        setOpenDropdowns({})
+        setDropdownOpenedByClick({})
       }
     }
     
     document.addEventListener('keydown', handleEscKey)
     return () => document.removeEventListener('keydown', handleEscKey)
-  }, [megaMenuOpen, submenuOpen])
+  }, [megaMenuOpen])
 
   const handleToggle = () => {
     setIsOpen(!isOpen)
@@ -94,9 +99,9 @@ export default function Navigation() {
     } else {
       setMegaMenuOpen(true)
       setMegaMenuOpenedByClick(true)
-      // Close submenu when opening mega menu
-      setSubmenuOpen(false)
-      setSubmenuOpenedByClick(false)
+      // Close all dropdowns when opening mega menu
+      setOpenDropdowns({})
+      setDropdownOpenedByClick({})
     }
   }
 
@@ -105,22 +110,23 @@ export default function Navigation() {
     setMegaMenuOpenedByClick(false)
   }
 
-  const handleSubmenuToggle = () => {
-    if (submenuOpen) {
-      setSubmenuOpen(false)
-      setSubmenuOpenedByClick(false)
+  const handleDropdownToggle = (itemName: string) => {
+    const isCurrentlyOpen = openDropdowns[itemName]
+    if (isCurrentlyOpen) {
+      setOpenDropdowns(prev => ({ ...prev, [itemName]: false }))
+      setDropdownOpenedByClick(prev => ({ ...prev, [itemName]: false }))
     } else {
-      setSubmenuOpen(true)
-      setSubmenuOpenedByClick(true)
-      // Close mega menu when opening submenu
+      setOpenDropdowns(prev => ({ ...prev, [itemName]: true }))
+      setDropdownOpenedByClick(prev => ({ ...prev, [itemName]: true }))
+      // Close mega menu when opening any dropdown
       setMegaMenuOpen(false)
       setMegaMenuOpenedByClick(false)
     }
   }
 
-  const handleSubmenuClose = () => {
-    setSubmenuOpen(false)
-    setSubmenuOpenedByClick(false)
+  const handleDropdownClose = (itemName: string) => {
+    setOpenDropdowns(prev => ({ ...prev, [itemName]: false }))
+    setDropdownOpenedByClick(prev => ({ ...prev, [itemName]: false }))
   }
 
   const handleMouseEnter = () => {
@@ -193,10 +199,18 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item: SanityNavigationItem) => (
+            {navItems.map((item: SanityNavigationItem) => {
+              const isDropdownOpen = openDropdowns[item.name] || false
+              return (
               <div key={item.name} 
                    className={`relative group ${item.megaMenu || item.submenu ? 'has-dropdown' : ''}`}
-                   ref={item.megaMenu ? megaMenuRef : item.submenu ? submenuRef : undefined}
+                   ref={(el) => {
+                     if (item.megaMenu) {
+                       megaMenuRef.current = el
+                     } else if (item.submenu) {
+                       dropdownRefs.current[item.name] = el
+                     }
+                   }}
                    onMouseEnter={() => {
                      if (item.megaMenu) {
                        handleMouseEnter()
@@ -220,29 +234,32 @@ export default function Navigation() {
                     </button>
                     {/* Mega Menu - Positioned correctly under Products button */}
                     {megaMenuOpen && item.megaMenu && (
-                      <div className="absolute z-50 mt-1 transform -translate-x-1/2 left-1/2 w-max max-w-7xl">
-                        <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                          <MegaMenu
-                            sections={item.megaMenu}
-                            onLinkClick={handleMegaMenuClose}
-                          />
-                        </div>
+                      <div className="absolute z-50 mt-1 transform -translate-x-1/2 left-1/2">
+                        <MegaMenuNew
+                          isOpen={megaMenuOpen}
+                          sections={item.megaMenu}
+                          mode="sections"
+                          onLinkClick={handleMegaMenuClose}
+                          onMouseEnter={handleMouseEnter}
+                          onMouseLeave={handleMouseLeave}
+                          className="w-screen max-w-6xl"
+                        />
                       </div>
                     )}
                   </>
                 ) : item.submenu ? (
                   <>
                     <button 
-                      onClick={handleSubmenuToggle}
+                      onClick={() => handleDropdownToggle(item.name)}
                       className="flex items-center text-gray-700 hover:text-gray-900 font-medium transition-colors focus:outline-none"
-                      aria-expanded={submenuOpen}
+                      aria-expanded={isDropdownOpen}
                       aria-haspopup="true"
                     >
                       {item.name}
-                      <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${submenuOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
                     {/* Regular Submenu Dropdown */}
-                    {submenuOpen && item.submenu && (
+                    {isDropdownOpen && item.submenu && (
                       <div className="absolute z-50 mt-1 transform -translate-x-1/2 left-1/2 w-max min-w-48">
                         <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white">
                           <div className="py-1">
@@ -251,9 +268,9 @@ export default function Navigation() {
                               .map((subItem: any) => (
                                 <Link
                                   key={subItem.name}
-                                  href={subItem.href}
+                                  href={`/services/${subItem.href}`}
                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                                  onClick={handleSubmenuClose}
+                                  onClick={() => handleDropdownClose(item.name)}
                                 >
                                   {subItem.name}
                                 </Link>
@@ -282,7 +299,8 @@ export default function Navigation() {
                   )
                 )}
               </div>
-            ))}
+            )
+            })}
           </div>
 
           {/* Mobile menu button */}

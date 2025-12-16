@@ -13,6 +13,11 @@ const iconMap = {
   checkCircle: CheckCircle,
 }
 
+// Helper function to get icon component
+const getIcon = (iconName: string) => {
+  return iconMap[iconName as keyof typeof iconMap] || Award
+}
+
 interface ServicesGridServerProps {
   featuredOnly?: boolean
   limit?: number
@@ -20,11 +25,6 @@ interface ServicesGridServerProps {
 }
 
 export async function ServicesGridServer({ featuredOnly = false, limit, showCTA = true }: ServicesGridServerProps) {
-  const getIcon = (iconName: string) => {
-    const IconComponent = iconMap[iconName as keyof typeof iconMap] || Award
-    return IconComponent
-  }
-
   try {
     let sanityServices = featuredOnly ? await getFeaturedServices() : await getServices()
     
@@ -55,13 +55,14 @@ export async function ServicesGridServer({ featuredOnly = false, limit, showCTA 
     return (
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {services.map((service, index) => {
+          {services.map((service) => {
             const IconComponent = getIcon(service.icon)
             
             return (
-              <div
+              <Link
                 key={service._id}
-                className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
+                href={`/services/${service.slug.current}`}
+                className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden block"
               >
                 {/* Service Image */}
                 <div className="relative h-48 bg-gradient-to-br from-magenta-50 to-magenta-100">
@@ -101,8 +102,15 @@ export async function ServicesGridServer({ featuredOnly = false, limit, showCTA 
                       )}
                     </ul>
                   )}
+
+                  {/* Learn More Link */}
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <span className="text-magenta-600 group-hover:text-magenta-700 font-semibold flex items-center gap-2">
+                      Learn More <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             )
           })}
         </div>

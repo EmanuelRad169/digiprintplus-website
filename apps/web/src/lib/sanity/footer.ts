@@ -134,7 +134,7 @@ export const getFooter = async (): Promise<Footer> => {
 /**
  * Subscribe to real-time updates to the footer
  */
-export const subscribeToFooterUpdates = (callback: () => void) => {
+export const subscribeToFooterUpdates = (callback: () => void): { unsubscribe: () => void } => {
   return sanityClient
     .listen('*[_type == "footer"]')
     .subscribe({

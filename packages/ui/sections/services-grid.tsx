@@ -153,18 +153,6 @@ export function ServicesGrid({ featuredOnly = false, limit, showCTA = true }: Se
         })}
       </div>
 
-      {/* View All Services CTA */}
-      {featuredOnly && showCTA && (
-        <div className="text-center">
-          <Link
-            href="/services"
-            className="inline-flex items-center px-6 py-3 bg-magenta-600 hover:bg-magenta-700 text-white font-medium rounded-lg transition-colors"
-          >
-            View All Services
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Link>
-        </div>
-      )}
     </div>
   )
 }

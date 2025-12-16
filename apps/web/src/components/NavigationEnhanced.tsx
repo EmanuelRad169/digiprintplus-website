@@ -7,7 +7,6 @@ import { Menu, X, ChevronDown } from 'lucide-react'
 import { getNavigationMenu, getSiteSettings } from '@/lib/sanity/fetchers'
 import { NavigationMenu, NavigationItem as SanityNavigationItem } from '@/types/navigation'
 import type { SiteSettings } from '@/types/siteSettings'
-import MegaMenu from '@/components/MegaMenu'
 import MegaMenuNew from '@/components/MegaMenuNew'
 
 interface NavigationProps {
@@ -142,7 +141,7 @@ export default function NavigationEnhanced({ useNewMegaMenu = false }: Navigatio
                     )}
                   </>
                 ) : item.megaMenu ? (
-                  /* Old Mega Menu for other items */
+                  /* Unified Mega Menu with sections */
                   <>
                     <button 
                       onClick={handleMegaMenuToggle}
@@ -154,13 +153,16 @@ export default function NavigationEnhanced({ useNewMegaMenu = false }: Navigatio
                       <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${megaMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
                     {megaMenuOpen && item.megaMenu && (
-                      <div className="absolute z-50 mt-1 transform -translate-x-1/2 left-1/2 w-max max-w-7xl">
-                        <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                          <MegaMenu
-                            sections={item.megaMenu}
-                            onLinkClick={handleMegaMenuClose}
-                          />
-                        </div>
+                      <div className="absolute z-50 mt-1 transform -translate-x-1/2 left-1/2">
+                        <MegaMenuNew
+                          isOpen={megaMenuOpen}
+                          sections={item.megaMenu}
+                          mode="sections"
+                          onLinkClick={handleMegaMenuClose}
+                          onMouseEnter={handleMouseEnter}
+                          onMouseLeave={handleMouseLeave}
+                          className="w-screen max-w-6xl"
+                        />
                       </div>
                     )}
                   </>
