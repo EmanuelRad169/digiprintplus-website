@@ -1,5 +1,5 @@
-import { sanityClient, getSanityClient } from '@/lib/sanity';
-import type { SiteSettings } from '@/types/siteSettings';
+import { sanityClient, getSanityClient } from "@/lib/sanity";
+import type { SiteSettings } from "@/types/siteSettings";
 
 // Template Types
 export interface TemplateCategory {
@@ -55,7 +55,7 @@ export interface Template {
 export async function getAllTemplateCategories(): Promise<TemplateCategory[]> {
   try {
     // Use the appropriate client based on environment
-    const client = getSanityClient()
+    const client = getSanityClient();
     const query = `*[_type == "templateCategory" && status == "published"] | order(order asc, title asc) {
       _id,
       title,
@@ -67,7 +67,7 @@ export async function getAllTemplateCategories(): Promise<TemplateCategory[]> {
     const categories = await client.fetch(query);
     return categories || [];
   } catch (error) {
-    console.error('Error fetching template categories:', error);
+    console.error("Error fetching template categories:", error);
     return [];
   }
 }
@@ -75,7 +75,7 @@ export async function getAllTemplateCategories(): Promise<TemplateCategory[]> {
 export async function getAllTemplates(): Promise<Template[]> {
   try {
     // Use the appropriate client based on environment
-    const client = getSanityClient()
+    const client = getSanityClient();
     const query = `*[_type == "template" && status == "published"] | order(publishedAt desc) {
       _id,
       title,
@@ -126,14 +126,16 @@ export async function getAllTemplates(): Promise<Template[]> {
     const templates = await client.fetch(query);
     return templates || [];
   } catch (error) {
-    console.error('Error fetching templates:', error);
+    console.error("Error fetching templates:", error);
     return [];
   }
 }
 
-export async function getTemplatesByCategory(categorySlug: string): Promise<Template[]> {
+export async function getTemplatesByCategory(
+  categorySlug: string,
+): Promise<Template[]> {
   try {
-    const client = getSanityClient()
+    const client = getSanityClient();
     const query = `*[_type == "template" && status == "published" && category->slug.current == $categorySlug] | order(publishedAt desc) {
       _id,
       title,
@@ -184,14 +186,16 @@ export async function getTemplatesByCategory(categorySlug: string): Promise<Temp
     const templates = await client.fetch(query, { categorySlug });
     return templates || [];
   } catch (error) {
-    console.error('Error fetching templates by category:', error);
+    console.error("Error fetching templates by category:", error);
     return [];
   }
 }
 
-export async function getTemplateBySlug(slug: string): Promise<Template | null> {
+export async function getTemplateBySlug(
+  slug: string,
+): Promise<Template | null> {
   try {
-    const client = getSanityClient()
+    const client = getSanityClient();
     const query = `*[_type == "template" && status == "published" && slug.current == $slug][0] {
       _id,
       title,
@@ -242,20 +246,19 @@ export async function getTemplateBySlug(slug: string): Promise<Template | null> 
     const template = await client.fetch(query, { slug });
     return template;
   } catch (error) {
-    console.error('Error fetching template by slug:', error);
+    console.error("Error fetching template by slug:", error);
     return null;
   }
 }
 
-export async function incrementTemplateDownload(templateId: string): Promise<void> {
+export async function incrementTemplateDownload(
+  templateId: string,
+): Promise<void> {
   try {
-    const client = getSanityClient()
-    await client
-      .patch(templateId)
-      .inc({ downloadCount: 1 })
-      .commit();
+    const client = getSanityClient();
+    await client.patch(templateId).inc({ downloadCount: 1 }).commit();
   } catch (error) {
-    console.error('Error incrementing download count:', error);
+    console.error("Error incrementing download count:", error);
   }
 }
 
@@ -286,7 +289,7 @@ export async function getContactPage(isPreview = false) {
     const contactPage = await sanityClient.fetch(query);
     return contactPage;
   } catch (error) {
-    console.error('Error fetching contact page:', error);
+    console.error("Error fetching contact page:", error);
     return null;
   }
 }
@@ -334,7 +337,7 @@ export async function getPageBySlug(slug: string, isPreview = false) {
     const page = await sanityClient.fetch(query, { slug });
     return page;
   } catch (error) {
-    console.error('Error fetching page:', error);
+    console.error("Error fetching page:", error);
     return null;
   }
 }
@@ -496,7 +499,7 @@ export async function getAboutPage(slug: string, isPreview = false) {
     const aboutPage = await sanityClient.fetch(query, { slug });
     return aboutPage;
   } catch (error) {
-    console.error('Error fetching about page:', error);
+    console.error("Error fetching about page:", error);
     return null;
   }
 }
@@ -574,7 +577,7 @@ export async function getFinishingPage(slug: string, isPreview = false) {
     const finishingPage = await sanityClient.fetch(query, { slug });
     return finishingPage;
   } catch (error) {
-    console.error('Error fetching finishing page:', error);
+    console.error("Error fetching finishing page:", error);
     return null;
   }
 }
@@ -820,18 +823,18 @@ export async function getProductBySlug(slug: string, isPreview = false) {
     const product = await sanityClient.fetch(query, { slug });
     return product;
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error("Error fetching product:", error);
     return null;
   }
 }
 
 export async function getProducts(category?: string, isPreview = false) {
   try {
-    let filter = '';
-    
+    let filter = "";
+
     // Add category filter if provided
-    if (category && category !== 'all') {
-      filter = '&& category->slug.current == $category';
+    if (category && category !== "all") {
+      filter = "&& category->slug.current == $category";
     }
 
     const query = isPreview
@@ -899,7 +902,7 @@ export async function getProducts(category?: string, isPreview = false) {
     const products = await sanityClient.fetch(query, { category });
     return products;
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error("Error fetching products:", error);
     return [];
   }
 }
@@ -927,7 +930,7 @@ export async function getProductCategories(isPreview = false) {
     const categories = await sanityClient.fetch(query);
     return categories;
   } catch (error) {
-    console.error('Error fetching product categories:', error);
+    console.error("Error fetching product categories:", error);
     return [];
   }
 }
@@ -983,12 +986,15 @@ export async function getFeaturedProducts(isPreview = false) {
     const products = await sanityClient.fetch(query);
     return products;
   } catch (error) {
-    console.error('Error fetching featured products:', error);
+    console.error("Error fetching featured products:", error);
     return [];
   }
 }
 
-export async function getProductsByCategory(categorySlug: string, isPreview = false) {
+export async function getProductsByCategory(
+  categorySlug: string,
+  isPreview = false,
+) {
   try {
     const query = isPreview
       ? `*[_type == "product" && category->slug.current == $categorySlug] | order(title asc) {
@@ -1063,12 +1069,15 @@ export async function getProductsByCategory(categorySlug: string, isPreview = fa
     const products = await sanityClient.fetch(query, { categorySlug });
     return products;
   } catch (error) {
-    console.error('Error fetching products by category:', error);
+    console.error("Error fetching products by category:", error);
     return [];
   }
 }
 
-export async function getCategoryBySlug(categorySlug: string, isPreview = false) {
+export async function getCategoryBySlug(
+  categorySlug: string,
+  isPreview = false,
+) {
   try {
     const query = isPreview
       ? `*[_type == "productCategory" && slug.current == $categorySlug] | order(_updatedAt desc)[0] {
@@ -1115,7 +1124,7 @@ export async function getCategoryBySlug(categorySlug: string, isPreview = false)
     const category = await sanityClient.fetch(query, { categorySlug });
     return category;
   } catch (error) {
-    console.error('Error fetching category by slug:', error);
+    console.error("Error fetching category by slug:", error);
     return null;
   }
 }
@@ -1184,10 +1193,11 @@ export async function getNavigationMenu(isPreview = false) {
           }
         }`;
 
-    const navigationMenu = await sanityClient.fetch(query);
+    const client = getSanityClient();
+    const navigationMenu = await client.fetch(query);
     return navigationMenu;
   } catch (error) {
-    console.error('Error fetching navigation menu:', error);
+    console.error("Error fetching navigation menu:", error);
     return null;
   }
 }
@@ -1323,12 +1333,15 @@ export async function getAllBlogPosts(isPreview = false): Promise<BlogPost[]> {
     const posts = await sanityClient.fetch(query);
     return posts || [];
   } catch (error) {
-    console.error('Error fetching blog posts:', error);
+    console.error("Error fetching blog posts:", error);
     return [];
   }
 }
 
-export async function getBlogPostBySlug(slug: string, isPreview = false): Promise<BlogPost | null> {
+export async function getBlogPostBySlug(
+  slug: string,
+  isPreview = false,
+): Promise<BlogPost | null> {
   try {
     const query = isPreview
       ? `*[_type == "post" && slug.current == $slug] | order(_updatedAt desc)[0] {
@@ -1437,12 +1450,15 @@ export async function getBlogPostBySlug(slug: string, isPreview = false): Promis
     const post = await sanityClient.fetch(query, { slug });
     return post;
   } catch (error) {
-    console.error('Error fetching blog post:', error);
+    console.error("Error fetching blog post:", error);
     return null;
   }
 }
 
-export async function getFeaturedBlogPosts(limit: number = 3, isPreview = false): Promise<BlogPost[]> {
+export async function getFeaturedBlogPosts(
+  limit: number = 3,
+  isPreview = false,
+): Promise<BlogPost[]> {
   try {
     const query = isPreview
       ? `*[_type == "post" && featured == true] | order(publishedAt desc) [0...${limit}] {
@@ -1515,7 +1531,7 @@ export async function getFeaturedBlogPosts(limit: number = 3, isPreview = false)
     const posts = await sanityClient.fetch(query);
     return posts || [];
   } catch (error) {
-    console.error('Error fetching featured blog posts:', error);
+    console.error("Error fetching featured blog posts:", error);
     return [];
   }
 }
@@ -1525,16 +1541,18 @@ export async function getAllBlogSlugs(): Promise<{ slug: string }[]> {
     const query = `*[_type == "post" && !(_id in path('drafts.**'))] {
       "slug": slug.current
     }`;
-    
+
     const slugs = await sanityClient.fetch(query);
     return slugs || [];
   } catch (error) {
-    console.error('Error fetching blog slugs:', error);
+    console.error("Error fetching blog slugs:", error);
     return [];
   }
 }
 
-export async function getBlogCategories(isPreview = false): Promise<BlogCategory[]> {
+export async function getBlogCategories(
+  isPreview = false,
+): Promise<BlogCategory[]> {
   try {
     const query = isPreview
       ? `*[_type == "category"] | order(title asc) {
@@ -1553,7 +1571,7 @@ export async function getBlogCategories(isPreview = false): Promise<BlogCategory
     const categories = await sanityClient.fetch(query);
     return categories || [];
   } catch (error) {
-    console.error('Error fetching blog categories:', error);
+    console.error("Error fetching blog categories:", error);
     return [];
   }
 }
@@ -1599,10 +1617,11 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       }
     }`;
 
-    const settings = await sanityClient.fetch(query);
+    const client = getSanityClient();
+    const settings = await client.fetch(query);
     return settings;
   } catch (error) {
-    console.error('Error fetching site settings:', error);
+    console.error("Error fetching site settings:", error);
     return null;
   }
 }

@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Search, Download, Eye, RefreshCw } from 'lucide-react'
-import RequestCustomDesignModal from '@/components/RequestCustomDesignModal'
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
+import { Search, Download, Eye, RefreshCw } from "lucide-react";
+import RequestCustomDesignModal from "@/components/RequestCustomDesignModal";
 
 interface Template {
   _id: string;
@@ -43,84 +43,87 @@ interface TemplateCategory {
 }
 
 export default function TemplatesPage() {
-  const [activeCategory, setActiveCategory] = useState('all')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [templates, setTemplates] = useState<Template[]>([])
-  const [categories, setCategories] = useState<TemplateCategory[]>([])
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [activeCategory, setActiveCategory] = useState("all-templates"); // Changed from 'all' to 'all-templates'
+  const [searchTerm, setSearchTerm] = useState("");
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [categories, setCategories] = useState<TemplateCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadData = async () => {
-    console.log('🔍 Frontend: Loading templates data...')
     try {
-      const response = await fetch('/api/debug-templates', {
-        cache: 'no-store',
+      const response = await fetch("/api/debug-templates", {
+        cache: "no-store",
         headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
-      })
-      const result = await response.json()
-      
-      console.log('📊 Frontend: API response success:', result.success)
-      console.log('📊 Frontend: Templates count:', result.data?.templateCount || 0)
-      console.log('📊 Frontend: Categories count:', result.data?.categoryCount || 0)
-      
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+      const result = await response.json();
+
       if (result.success) {
-        setTemplates(result.data.templates || [])
-        setCategories(result.data.categories || [])
+        setTemplates(result.data.templates || []);
+        setCategories(result.data.categories || []);
       } else {
-        console.error('❌ Frontend: API returned error:', result.error)
-        setTemplates([])
-        setCategories([])
+        setTemplates([]);
+        setCategories([]);
       }
     } catch (error) {
-      console.error('❌ Frontend: Error loading templates data:', error)
-      setTemplates([])
-      setCategories([])
+      console.error("❌ Frontend: Error loading templates data:", error);
+      setTemplates([]);
+      setCategories([]);
     }
-  }
+  };
 
   const refreshData = async () => {
-    setRefreshing(true)
-    await loadData()
-    setRefreshing(false)
-  }
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     const initialize = async () => {
-      await loadData()
-      setLoading(false)
-    }
-    initialize()
-  }, [])
+      await loadData();
+      setLoading(false);
+    };
+    initialize();
+  }, []);
 
-  const filteredTemplates = templates.filter(template => {
-    const matchesCategory = activeCategory === 'all' || template.category?.slug?.current === activeCategory
-    const matchesSearch = template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    return matchesCategory && matchesSearch
-  })
+  const filteredTemplates = templates.filter((template) => {
+    const matchesCategory =
+      activeCategory === "all" ||
+      activeCategory === "all-templates" ||
+      template.category?.slug?.current === activeCategory;
+    const matchesSearch =
+      (template.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (template.description || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
 
   const handleDownload = async (template: Template) => {
     try {
-      const link = document.createElement('a')
-      link.href = template.downloadFile.asset.url
-      link.download = template.downloadFile.asset.originalFilename || template.title
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      const link = document.createElement("a");
+      link.href = template.downloadFile.asset.url;
+      link.download =
+        template.downloadFile.asset.originalFilename || template.title;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading template:', error)
+      console.error("Error downloading template:", error);
     }
-  }
+  };
 
   const getCategoryCount = (categorySlug: string) => {
-    if (categorySlug === 'all') return templates.length
-    return templates.filter(t => t.category?.slug?.current === categorySlug).length
-  }
+    if (categorySlug === "all" || categorySlug === "all-templates")
+      return templates.length;
+    return templates.filter((t) => t.category?.slug?.current === categorySlug)
+      .length;
+  };
 
   if (loading) {
     return (
@@ -132,7 +135,7 @@ export default function TemplatesPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -145,9 +148,11 @@ export default function TemplatesPage() {
               Professional <span className="text-magenta-400">Templates</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8">
-              Download professionally designed templates for all your printing needs. Customize with your brand colors, text, and images for stunning results.
+              Download professionally designed templates for all your printing
+              needs. Customize with your brand colors, text, and images for
+              stunning results.
             </p>
-            
+
             {/* Search and Filter */}
             <div className="flex flex-col md:flex-row gap-4 justify-center max-w-2xl mx-auto">
               <div className="relative flex-1">
@@ -170,8 +175,10 @@ export default function TemplatesPage() {
                   className="bg-magenta-600 hover:bg-magenta-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
                   title="Refresh templates from CMS"
                 >
-                  <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                  {refreshing ? 'Refreshing...' : 'Refresh'}
+                  <RefreshCw
+                    className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+                  />
+                  {refreshing ? "Refreshing..." : "Refresh"}
                 </button>
               </div>
             </div>
@@ -188,32 +195,37 @@ export default function TemplatesPage() {
               <h3 className="text-lg font-semibold mb-4 text-gray-900">
                 📁 Categories
               </h3>
-              
+
               <div className="space-y-2">
                 <button
-                  onClick={() => setActiveCategory('all')}
+                  onClick={() => setActiveCategory("all-templates")}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex justify-between ${
-                    activeCategory === 'all'
-                      ? 'bg-magenta-100 text-magenta-700 font-medium'
-                      : 'text-gray-700 hover:bg-gray-100'
+                    activeCategory === "all" ||
+                    activeCategory === "all-templates"
+                      ? "bg-magenta-100 text-magenta-700 font-medium"
+                      : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <span>All Templates</span>
-                  <span className="text-sm text-gray-500">{getCategoryCount('all')}</span>
+                  <span className="text-sm text-gray-500">
+                    {getCategoryCount("all-templates")}
+                  </span>
                 </button>
-                
-                {categories.map(category => (
+
+                {categories.map((category) => (
                   <button
                     key={category._id}
                     onClick={() => setActiveCategory(category.slug.current)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex justify-between ${
                       activeCategory === category.slug.current
-                        ? 'bg-magenta-100 text-magenta-700 font-medium'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? "bg-magenta-100 text-magenta-700 font-medium"
+                        : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
                     <span>{category.title}</span>
-                    <span className="text-sm text-gray-500">{getCategoryCount(category.slug.current)}</span>
+                    <span className="text-sm text-gray-500">
+                      {getCategoryCount(category.slug.current)}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -234,15 +246,17 @@ export default function TemplatesPage() {
             {filteredTemplates.length === 0 ? (
               <div className="text-center py-16">
                 <div className="text-6xl mb-6">🔍</div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">No templates found</h3>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  No templates found
+                </h3>
                 <p className="text-gray-600 mb-8">
                   Try adjusting your search or selecting a different category
                 </p>
                 <div className="flex gap-4 justify-center">
                   <button
                     onClick={() => {
-                      setSearchTerm('')
-                      setActiveCategory('all')
+                      setSearchTerm("");
+                      setActiveCategory("all-templates");
                     }}
                     className="bg-magenta-600 hover:bg-magenta-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                   >
@@ -253,14 +267,16 @@ export default function TemplatesPage() {
                     disabled={refreshing}
                     className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
                   >
-                    <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                    <RefreshCw
+                      className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+                    />
                     Refresh from CMS
                   </button>
                 </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredTemplates.map(template => (
+                {filteredTemplates.map((template) => (
                   <motion.div
                     key={template._id}
                     initial={{ opacity: 0, y: 20 }}
@@ -269,7 +285,10 @@ export default function TemplatesPage() {
                   >
                     <div className="relative aspect-[2/1] overflow-hidden">
                       <Image
-                        src={template.previewImage?.asset?.url || '/api/placeholder/300/225'}
+                        src={
+                          template.previewImage?.asset?.url ||
+                          "/api/placeholder/300/225"
+                        }
                         alt={template.previewImage?.alt || template.title}
                         fill
                         className="object-contain bg-gray-50"
@@ -277,7 +296,7 @@ export default function TemplatesPage() {
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <div className="flex space-x-3">
-                          <Link 
+                          <Link
                             href={`/templates/${template.slug.current}`}
                             className="p-2 bg-white/90 rounded-full text-gray-800 hover:bg-white transition-colors"
                           >
@@ -292,21 +311,21 @@ export default function TemplatesPage() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="p-4">
                       <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-magenta-600 transition-colors">
                         {template.title}
                       </h3>
-                      
+
                       <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                         {template.description}
                       </p>
-                      
+
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                         <span>{template.fileType}</span>
                         <span>{template.size}</span>
                       </div>
-                      
+
                       <div className="flex space-x-2">
                         <Link
                           href={`/templates/${template.slug.current}`}
@@ -337,10 +356,11 @@ export default function TemplatesPage() {
             Need a Custom Design?
           </h2>
           <p className="text-xl text-magenta-100 mb-8 max-w-2xl mx-auto">
-            Can&apos;t find the perfect template? Our design team can create custom templates tailored to your brand and specific requirements.
+            Can&apos;t find the perfect template? Our design team can create
+            custom templates tailored to your brand and specific requirements.
           </p>
           <div className="flex justify-center">
-            <button 
+            <button
               onClick={() => setIsModalOpen(true)}
               className="bg-black hover:bg-gray-900 text-white px-6 py-3 rounded-lg font-medium transition-colors"
             >
@@ -351,10 +371,10 @@ export default function TemplatesPage() {
       </section>
 
       {/* Modal */}
-      <RequestCustomDesignModal 
+      <RequestCustomDesignModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
     </div>
-  )
+  );
 }

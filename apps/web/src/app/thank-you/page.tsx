@@ -1,13 +1,15 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { CheckCircle, ArrowRight, Phone, Mail, Clock } from 'lucide-react'
+import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { CheckCircle, ArrowRight, Phone, Mail, Clock } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function ThankYouPage() {
-  const searchParams = useSearchParams()
-  const quoteId = searchParams?.get('quote')
+  const searchParams = useSearchParams();
+  const quoteId = searchParams?.get("quote");
+  const { siteSettings } = useSiteSettings();
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
@@ -39,7 +41,8 @@ export default function ThankYouPage() {
               Thank You!
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Your quote request has been successfully submitted. We&apos;re excited to help bring your printing project to life!
+              Your quote request has been successfully submitted. We&apos;re
+              excited to help bring your printing project to life!
             </p>
             {quoteId && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
@@ -60,40 +63,51 @@ export default function ThankYouPage() {
             transition={{ delay: 0.6, duration: 0.6 }}
             className="bg-primary-50 rounded-xl p-8 mb-12"
           >
-            <h2 className="text-2xl font-bold text-primary-900 mb-6">What Happens Next?</h2>
+            <h2 className="text-2xl font-bold text-primary-900 mb-6">
+              What Happens Next?
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
               <div className="flex items-start space-x-4">
                 <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-sm">1</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-primary-900 mb-2">Confirmation Email</h3>
+                  <h3 className="font-semibold text-primary-900 mb-2">
+                    Confirmation Email
+                  </h3>
                   <p className="text-sm text-primary-700">
-                    Check your inbox for an immediate confirmation with your quote request details.
+                    Check your inbox for an immediate confirmation with your
+                    quote request details.
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-4">
                 <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-sm">2</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-primary-900 mb-2">Expert Review</h3>
+                  <h3 className="font-semibold text-primary-900 mb-2">
+                    Expert Review
+                  </h3>
                   <p className="text-sm text-primary-700">
-                    Our specialists will carefully review your requirements and prepare a detailed quote.
+                    Our specialists will carefully review your requirements and
+                    prepare a detailed quote.
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-4">
                 <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-sm">3</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-primary-900 mb-2">Personal Contact</h3>
+                  <h3 className="font-semibold text-primary-900 mb-2">
+                    Personal Contact
+                  </h3>
                   <p className="text-sm text-primary-700">
-                    We&apos;ll call or email you within 24 hours with your custom quote and next steps.
+                    We&apos;ll call or email you within 24 hours with your
+                    custom quote and next steps.
                   </p>
                 </div>
               </div>
@@ -107,18 +121,24 @@ export default function ThankYouPage() {
             transition={{ delay: 0.8, duration: 0.6 }}
             className="border-t border-gray-200 pt-8"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Need Immediate Assistance?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+              Need Immediate Assistance?
+            </h3>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <a
-                href="tel:+15551234567"
-                className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 transition-colors duration-200"
-              >
-                <Phone className="w-5 h-5" />
-                <span className="font-medium">(555) 123-4567</span>
-              </a>
-              
+              {siteSettings?.contact?.phone && (
+                <a
+                  href={`tel:${siteSettings.contact.phone.replace(/\D/g, "")}`}
+                  className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 transition-colors duration-200"
+                >
+                  <Phone className="w-5 h-5" />
+                  <span className="font-medium">
+                    {siteSettings.contact.phone}
+                  </span>
+                </a>
+              )}
+
               <div className="hidden sm:block text-gray-300">|</div>
-              
+
               <a
                 href="mailto:sales@digiprintplus.com"
                 className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 transition-colors duration-200"
@@ -126,9 +146,9 @@ export default function ThankYouPage() {
                 <Mail className="w-5 h-5" />
                 <span className="font-medium">sales@digiprintplus.com</span>
               </a>
-              
+
               <div className="hidden sm:block text-gray-300">|</div>
-              
+
               <div className="flex items-center space-x-2 text-gray-600">
                 <Clock className="w-5 h-5" />
                 <span className="text-sm">Mon-Fri: 8AM-6PM</span>
@@ -150,7 +170,7 @@ export default function ThankYouPage() {
               Browse More Products
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
-            
+
             <Link
               href="/"
               className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200"
@@ -171,5 +191,5 @@ export default function ThankYouPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

@@ -79,6 +79,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             </h1>
             <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8">
               {service.description}
+              
             </p>
 
             <div className="flex flex-wrap gap-4">

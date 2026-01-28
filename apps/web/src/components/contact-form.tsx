@@ -14,8 +14,8 @@ const contactFormSchema = z.object({
   phone: z.string().min(1, "Phone number is required"),
   company: z.string().optional(),
   message: z.string().min(1, "Message is required"),
-  agreeToTerms: z.boolean().refine(val => val === true, {
-    message: "You must agree to the Terms of Service and Privacy Policy"
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the Terms of Service and Privacy Policy",
   }),
 });
 
@@ -24,7 +24,10 @@ type ContactFormData = z.infer<typeof contactFormSchema>;
 export function ContactForm() {
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const [captchaQuestion, setCaptchaQuestion] = useState({ question: "", answer: 0 });
+  const [captchaQuestion, setCaptchaQuestion] = useState({
+    question: "",
+    answer: 0,
+  });
   const [userCaptchaAnswer, setUserCaptchaAnswer] = useState("");
 
   const {
@@ -39,11 +42,14 @@ export function ContactForm() {
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
     const operation = Math.random() > 0.5 ? "+" : "-";
-    const answer = operation === "+" ? num1 + num2 : Math.max(num1, num2) - Math.min(num1, num2);
-    
+    const answer =
+      operation === "+"
+        ? num1 + num2
+        : Math.max(num1, num2) - Math.min(num1, num2);
+
     setCaptchaQuestion({
       question: `${Math.max(num1, num2)} ${operation} ${Math.min(num1, num2)} = ?`,
-      answer: answer
+      answer: answer,
     });
     setShowCaptcha(true);
     setCaptchaVerified(false);
@@ -65,21 +71,26 @@ export function ContactForm() {
       generateCaptcha();
       return;
     }
-    
+
     // TODO: Implement form submission logic
     console.log("Form submitted:", data);
     // Send data to API endpoint for processing
   };
 
   const renderError = (error: FieldError | undefined) => {
-    return error ? <p className="text-red-500 text-sm mt-1">{error.message}</p> : null;
+    return error ? (
+      <p className="text-red-500 text-sm mt-1">{error.message}</p>
+    ) : null;
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="firstName"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             First Name *
           </label>
           <input
@@ -94,7 +105,10 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="lastName"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Last Name *
           </label>
           <input
@@ -109,7 +123,10 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Email Address *
           </label>
           <input
@@ -124,7 +141,10 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Phone Number *
           </label>
           <input
@@ -132,14 +152,17 @@ export function ContactForm() {
             id="phone"
             {...register("phone")}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-magenta-500 focus:border-transparent transition-colors duration-200"
-            placeholder="(555) 123-4567"
+            placeholder="Your phone number"
             required
           />
           {renderError(errors.phone)}
         </div>
 
         <div className="md:col-span-2">
-          <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="company"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Company Name
           </label>
           <input
@@ -154,7 +177,10 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="message"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Message *
         </label>
         <textarea
@@ -178,11 +204,17 @@ export function ContactForm() {
         />
         <label htmlFor="agreeToTerms" className="text-sm text-gray-600">
           I agree to the{" "}
-          <a href="/terms" className="text-magenta-600 hover:text-magenta-700 underline">
+          <a
+            href="/terms"
+            className="text-magenta-600 hover:text-magenta-700 underline"
+          >
             Terms of Service
           </a>{" "}
           and{" "}
-          <a href="/privacy" className="text-magenta-600 hover:text-magenta-700 underline">
+          <a
+            href="/privacy"
+            className="text-magenta-600 hover:text-magenta-700 underline"
+          >
             Privacy Policy
           </a>
           *
@@ -223,14 +255,18 @@ export function ContactForm() {
       {captchaVerified && (
         <div className="flex items-center space-x-2 text-green-600">
           <CheckCircle className="w-5 h-5" />
-          <span className="text-sm font-medium">Security verification completed</span>
+          <span className="text-sm font-medium">
+            Security verification completed
+          </span>
         </div>
       )}
 
       {/* Privacy Note */}
       <div className="bg-magenta-50 p-4 rounded-lg">
         <p className="text-sm text-magenta-800">
-          <strong>Privacy Note:</strong> Your information is secure and will only be used to respond to your inquiry and provide relevant information about our services.
+          <strong>Privacy Note:</strong> Your information is secure and will
+          only be used to respond to your inquiry and provide relevant
+          information about our services.
         </p>
       </div>
 

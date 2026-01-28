@@ -3,5 +3,12 @@
   "version": 2,
   "framework": "nextjs",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "buildCommand": "npm run build",
+  "rewrites": [
+    {
+      "source": "/studio/(.*)",
+      "destination": "https://dppadmin.sanity.studio/$1"
+    }
+  ]
 }

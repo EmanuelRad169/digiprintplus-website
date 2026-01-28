@@ -1,0 +1,16 @@
+# Vercel Production Environment Variables
+# CRITICAL: Copy ALL of these to Vercel Dashboard → Settings → Environment Variables
+# Make sure to set for "Production", "Preview", AND "Development" environments
+
+NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
+NEXT_PUBLIC_SANITY_DATASET=development
+NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01  
+NEXT_PUBLIC_SANITY_STUDIO_URL=https://dppadmin.sanity.studio
+NEXT_PUBLIC_SITE_URL=https://digiprintplus.vercel.app
+SANITY_API_TOKEN=skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU
+
+# Sanity Preview/Draft Mode  
+SANITY_REVALIDATE_SECRET=preview-secret-key-2024
+SANITY_STUDIO_PREVIEW_URL=https://digiprintplus.vercel.app
+
+# IMPORTANT: Delete any old environment variables in Vercel that reference "production" dataset

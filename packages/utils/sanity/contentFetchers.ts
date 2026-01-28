@@ -1,42 +1,42 @@
-import { createClient } from '@sanity/client'
+import { createClient } from "@sanity/client";
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   useCdn: false,
-  apiVersion: '2024-01-01'
-})
+  apiVersion: "2024-01-01",
+});
 
 // Export the client for use by other modules
-export { client }
+export { client };
 
 // Hero Slides
 export interface HeroSlide {
-  _id: string
-  title: string
-  subtitle: string
-  description: string
+  _id: string;
+  title: string;
+  subtitle: string;
+  description: string;
   image?: {
     asset: {
-      url: string
+      url: string;
       metadata?: {
         dimensions: {
-          width: number
-          height: number
-        }
-      }
-    }
-    alt?: string
-  }
-  ctaText: string
-  ctaLink: string
+          width: number;
+          height: number;
+        };
+      };
+    };
+    alt?: string;
+  };
+  ctaText: string;
+  ctaLink: string;
   stats: {
-    number: string
-    text: string
-  }
-  features: string[]
-  order: number
-  isActive: boolean
+    number: string;
+    text: string;
+  };
+  features: string[];
+  order: number;
+  isActive: boolean;
 }
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {
@@ -65,33 +65,33 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
       order,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 // Services
 export interface Service {
-  _id: string
-  title: string
-  slug: { current: string }
-  description: string
-  content: any[]
-  icon: string
+  _id: string;
+  title: string;
+  slug: { current: string };
+  description: string;
+  content: any[];
+  icon: string;
   image?: {
     asset: {
-      url: string
-    }
-    alt?: string
-  }
-  features: string[]
-  category: string
-  isFeatured: boolean
-  order: number
-  isActive: boolean
+      url: string;
+    };
+    alt?: string;
+  };
+  features: string[];
+  category: string;
+  isFeatured: boolean;
+  order: number;
+  isActive: boolean;
   seo?: {
-    metaTitle?: string
-    metaDescription?: string
-  }
+    metaTitle?: string;
+    metaDescription?: string;
+  };
 }
 
 export async function getServices(): Promise<Service[]> {
@@ -116,8 +116,8 @@ export async function getServices(): Promise<Service[]> {
       isActive,
       seo
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 export async function getFeaturedServices(): Promise<Service[]> {
@@ -142,8 +142,8 @@ export async function getFeaturedServices(): Promise<Service[]> {
       isActive,
       seo
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
@@ -168,36 +168,36 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
       isActive,
       seo
     }
-  `
-  return await client.fetch(query, { slug })
+  `;
+  return await client.fetch(query, { slug });
 }
 
 // About Sections
 export interface AboutSection {
-  _id: string
-  sectionType: string
-  title: string
-  subtitle?: string
-  content: any[]
+  _id: string;
+  sectionType: string;
+  title: string;
+  subtitle?: string;
+  content: any[];
   statistics?: Array<{
-    number: string
-    label: string
-    icon: string
-  }>
+    number: string;
+    label: string;
+    icon: string;
+  }>;
   features?: Array<{
-    title: string
-    description: string
-    highlight: string
-    icon: string
-  }>
+    title: string;
+    description: string;
+    highlight: string;
+    icon: string;
+  }>;
   image?: {
     asset: {
-      url: string
-    }
-    alt?: string
-  }
-  order: number
-  isActive: boolean
+      url: string;
+    };
+    alt?: string;
+  };
+  order: number;
+  isActive: boolean;
 }
 
 export async function getAboutSections(): Promise<AboutSection[]> {
@@ -219,11 +219,13 @@ export async function getAboutSections(): Promise<AboutSection[]> {
       order,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
-export async function getAboutSectionByType(sectionType: string): Promise<AboutSection | null> {
+export async function getAboutSectionByType(
+  sectionType: string,
+): Promise<AboutSection | null> {
   const query = `
     *[_type == "aboutSection" && sectionType == $sectionType && isActive == true][0] {
       _id,
@@ -242,23 +244,23 @@ export async function getAboutSectionByType(sectionType: string): Promise<AboutS
       order,
       isActive
     }
-  `
-  return await client.fetch(query, { sectionType })
+  `;
+  return await client.fetch(query, { sectionType });
 }
 
 // Contact Information
 export interface ContactInfo {
-  _id: string
-  type: string
-  title: string
-  value: string
-  displayText?: string
-  description?: string
-  icon: string
-  link?: string
-  isMainContact: boolean
-  order: number
-  isActive: boolean
+  _id: string;
+  type: string;
+  title: string;
+  value: string;
+  displayText?: string;
+  description?: string;
+  icon: string;
+  link?: string;
+  isMainContact: boolean;
+  order: number;
+  isActive: boolean;
 }
 
 export async function getContactInfo(): Promise<ContactInfo[]> {
@@ -276,8 +278,8 @@ export async function getContactInfo(): Promise<ContactInfo[]> {
       order,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 export async function getMainContactInfo(): Promise<ContactInfo[]> {
@@ -295,24 +297,24 @@ export async function getMainContactInfo(): Promise<ContactInfo[]> {
       order,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 // FAQ Items
 export interface FAQItem {
-  _id: string
-  question: string
-  answer: any[]
-  category: string
+  _id: string;
+  question: string;
+  answer: any[];
+  category: string;
   relatedProducts?: Array<{
-    _id: string
-    title: string
-    slug: { current: string }
-  }>
-  isPopular: boolean
-  order: number
-  isActive: boolean
+    _id: string;
+    title: string;
+    slug: { current: string };
+  }>;
+  isPopular: boolean;
+  order: number;
+  isActive: boolean;
 }
 
 export async function getFAQItems(): Promise<FAQItem[]> {
@@ -331,8 +333,8 @@ export async function getFAQItems(): Promise<FAQItem[]> {
       order,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 export async function getPopularFAQs(): Promise<FAQItem[]> {
@@ -351,8 +353,8 @@ export async function getPopularFAQs(): Promise<FAQItem[]> {
       order,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 export async function getFAQsByCategory(category: string): Promise<FAQItem[]> {
@@ -371,28 +373,28 @@ export async function getFAQsByCategory(category: string): Promise<FAQItem[]> {
       order,
       isActive
     }
-  `
-  return await client.fetch(query, { category })
+  `;
+  return await client.fetch(query, { category });
 }
 
 // CTA Sections
 export interface CTASection {
-  _id: string
-  title: string
-  description: string
+  _id: string;
+  title: string;
+  description: string;
   primaryButton: {
-    text: string
-    link: string
-  }
+    text: string;
+    link: string;
+  };
   secondaryButton?: {
-    text: string
-    link: string
-    type: 'phone' | 'link'
-  }
-  highlights: string[]
-  backgroundColor: 'magenta' | 'blue' | 'gray' | 'black'
-  sectionId: string
-  isActive: boolean
+    text: string;
+    link: string;
+    type: "phone" | "link";
+  };
+  highlights: string[];
+  backgroundColor: "magenta" | "blue" | "gray" | "black";
+  sectionId: string;
+  isActive: boolean;
 }
 
 export async function getCTASections(): Promise<CTASection[]> {
@@ -408,11 +410,13 @@ export async function getCTASections(): Promise<CTASection[]> {
       sectionId,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
-export async function getCTASectionById(sectionId: string): Promise<CTASection | null> {
+export async function getCTASectionById(
+  sectionId: string,
+): Promise<CTASection | null> {
   const query = `
     *[_type == "ctaSection" && sectionId == $sectionId && isActive == true][0] {
       _id,
@@ -425,51 +429,51 @@ export async function getCTASectionById(sectionId: string): Promise<CTASection |
       sectionId,
       isActive
     }
-  `
-  return await client.fetch(query, { sectionId })
+  `;
+  return await client.fetch(query, { sectionId });
 }
 
 // Quote Settings Interface and Fetcher
 export interface QuoteSettings {
-  _id: string
-  formTitle: string
+  _id: string;
+  formTitle: string;
   jobSpecsStep: {
-    title: string
-    description: string
-    productTypes: string[]
-    quantities: string[]
-    paperTypes: string[]
-    finishes: string[]
-    turnaroundTimes: string[]
-  }
+    title: string;
+    description: string;
+    productTypes: string[];
+    quantities: string[];
+    paperTypes: string[];
+    finishes: string[];
+    turnaroundTimes: string[];
+  };
   contactStep: {
-    title: string
-    description: string
-  }
+    title: string;
+    description: string;
+  };
   reviewStep: {
-    title: string
-    description: string
-    terms: string
-  }
+    title: string;
+    description: string;
+    terms: string;
+  };
   labels: {
-    productType: string
-    quantity: string
-    paperType: string
-    finish: string
-    turnaround: string
-    specialInstructions: string
-    fileUpload: string
-    firstName: string
-    lastName: string
-    email: string
-    phone: string
-    company: string
-  }
+    productType: string;
+    quantity: string;
+    paperType: string;
+    finish: string;
+    turnaround: string;
+    specialInstructions: string;
+    fileUpload: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    company: string;
+  };
   buttonText: {
-    next: string
-    previous: string
-    submit: string
-  }
+    next: string;
+    previous: string;
+    submit: string;
+  };
 }
 
 export async function getQuoteSettings(): Promise<QuoteSettings | null> {
@@ -483,24 +487,26 @@ export async function getQuoteSettings(): Promise<QuoteSettings | null> {
       labels,
       buttonText
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }
 
 // Page Settings Interface and Fetcher
 export interface PageSettings {
-  _id: string
-  pageId: string
-  title: string
+  _id: string;
+  pageId: string;
+  title: string;
   sections: {
-    contactInfo: string
-    businessHours: string
-    servicesList: string
-    aboutUs: string
-  }
+    contactInfo: string;
+    businessHours: string;
+    servicesList: string;
+    aboutUs: string;
+  };
 }
 
-export async function getPageSettings(pageId: string): Promise<PageSettings | null> {
+export async function getPageSettings(
+  pageId: string,
+): Promise<PageSettings | null> {
   const query = `
     *[_type == "pageSettings" && pageId == $pageId][0] {
       _id,
@@ -508,38 +514,38 @@ export async function getPageSettings(pageId: string): Promise<PageSettings | nu
       title,
       sections
     }
-  `
-  return await client.fetch(query, { pageId })
+  `;
+  return await client.fetch(query, { pageId });
 }
 
 // Enhanced About Page Interface and Fetcher
 export interface AboutPageData {
-  _id: string
-  title: string
-  subtitle?: string
-  heroImage?: any
-  content?: any[]
+  _id: string;
+  title: string;
+  subtitle?: string;
+  heroImage?: any;
+  content?: any[];
   achievements?: Array<{
-    text: string
-    icon: string
-  }>
-  teamImage?: any
+    text: string;
+    icon: string;
+  }>;
+  teamImage?: any;
   values?: Array<{
-    title: string
-    description: string
-    icon: string
-    color: string
-  }>
+    title: string;
+    description: string;
+    icon: string;
+    color: string;
+  }>;
   badge?: {
-    title: string
-    subtitle: string
-    icon: string
-  }
+    title: string;
+    subtitle: string;
+    icon: string;
+  };
   seo?: {
-    metaTitle: string
-    metaDescription: string
-  }
-  isActive: boolean
+    metaTitle: string;
+    metaDescription: string;
+  };
+  isActive: boolean;
 }
 
 export async function getAboutPageData(): Promise<AboutPageData | null> {
@@ -548,15 +554,27 @@ export async function getAboutPageData(): Promise<AboutPageData | null> {
       _id,
       title,
       subtitle,
-      heroImage,
+      heroImage {
+        asset-> {
+          _id,
+          url
+        },
+        alt
+      },
       content,
       achievements,
-      teamImage,
+      teamImage {
+        asset-> {
+          _id,
+          url
+        },
+        alt
+      },
       values,
       badge,
       seo,
       isActive
     }
-  `
-  return await client.fetch(query)
+  `;
+  return await client.fetch(query);
 }

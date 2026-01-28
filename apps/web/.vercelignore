@@ -1,0 +1,42 @@
+# Development files
+
+.next/
+node_modules/
+.env.local
+.env.development
+.env.test
+\*.log
+
+# IDE files
+
+.vscode/
+.idea/
+_.swp
+_.swo
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Test files
+
+**/_.test._
+**/_.spec._
+**tests**/
+coverage/
+
+# Temporary files
+
+_.tmp
+_.temp
+
+# Build artifacts
+
+dist/
+build/
+
+# Storybook
+
+.storybook/
+storybook-static/
