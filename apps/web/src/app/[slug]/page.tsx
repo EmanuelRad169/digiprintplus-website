@@ -7,6 +7,15 @@ import { PortableTextRenderer } from '@/components/portable-text'
 
 export const revalidate = 60
 
+// Generate static params for known pages
+export async function generateStaticParams() {
+  // Return known pages that use this route
+  return [
+    { slug: 'about' },
+    { slug: 'finishing' },
+  ]
+}
+
 interface PageProps {
   params: {
     slug: string

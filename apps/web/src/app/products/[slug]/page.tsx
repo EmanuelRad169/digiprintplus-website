@@ -4,7 +4,7 @@ import { draftMode } from "next/headers";
 import { SanityProductImage } from "@/components/ui/sanity-image";
 import Image from "next/image";
 import Link from "next/link";
-import { getProductBySlug, getSiteSettings } from "@/lib/sanity/fetchers";
+import { getProductBySlug, getSiteSettings, getProducts } from "@/lib/sanity/fetchers";
 import { PortableTextRenderer } from "@/components/portable-text";
 import {
   Product,
@@ -44,6 +44,22 @@ import {
 } from "lucide-react";
 
 export const revalidate = 60;
+
+// Generate static params for all products
+export async function generateStaticParams() {
+  try {
+    const products = await getProducts()
+    
+    return products
+      .filter((product) => product.slug?.current)
+      .map((product) => ({
+        slug: product.slug!.current,
+      }))
+  } catch (error) {
+    console.error('Error generating static params for products:', error)
+    return []
+  }
+}
 
 interface ProductPageProps {
   params: {

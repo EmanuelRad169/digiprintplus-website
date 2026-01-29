@@ -10,6 +10,22 @@ import { ShareButton } from '@/components/share-button'
 
 export const revalidate = 60
 
+// Generate static params for all blog posts
+export async function generateStaticParams() {
+  try {
+    const posts = await getAllBlogPosts()
+    
+    return posts
+      .filter((post) => post.slug?.current)
+      .map((post) => ({
+        slug: post.slug!.current,
+      }))
+  } catch (error) {
+    console.error('Error generating static params for blog posts:', error)
+    return []
+  }
+}
+
 interface BlogPostPageProps {
   params: {
     slug: string
