@@ -1,39 +1,51 @@
-import { createClient, type SanityClient } from '@sanity/client'
+import { createClient, type SanityClient } from "@sanity/client";
 
 // Configuration interface
 interface SanityConfig {
-  projectId: string
-  dataset: string
-  apiVersion: string
-  token?: string
-  useCdn: boolean
-  perspective: 'published' | 'previewDrafts'
-  studioUrl: string
+  projectId: string;
+  dataset: string;
+  apiVersion: string;
+  token?: string;
+  useCdn: boolean;
+  perspective: "published" | "previewDrafts";
+  studioUrl: string;
 }
 
 // Validate environment variables with fallbacks for build process
 function validateSanityConfig(): SanityConfig {
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'as5tildt'
-  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
-  const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01'
-  const token = process.env.SANITY_API_TOKEN
-  const studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'https://dppadmin.sanity.studio'
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "as5tildt";
+  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+  const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-01-01";
+  const token = process.env.SANITY_API_TOKEN;
+  const studioUrl =
+    process.env.NEXT_PUBLIC_SANITY_STUDIO_URL ||
+    "https://dppadmin.sanity.studio";
 
   // During build process, use fallbacks to prevent build failures
-  if (!projectId && process.env.NODE_ENV === 'development') {
-    console.error('Missing NEXT_PUBLIC_SANITY_PROJECT_ID in environment variables')
-    throw new Error('Missing NEXT_PUBLIC_SANITY_PROJECT_ID in environment variables')
+  if (!projectId && process.env.NODE_ENV === "development") {
+    console.error(
+      "Missing NEXT_PUBLIC_SANITY_PROJECT_ID in environment variables",
+    );
+    throw new Error(
+      "Missing NEXT_PUBLIC_SANITY_PROJECT_ID in environment variables",
+    );
   }
 
-  if (!dataset && process.env.NODE_ENV === 'development') {
-    console.error('Missing NEXT_PUBLIC_SANITY_DATASET in environment variables')
-    throw new Error('Missing NEXT_PUBLIC_SANITY_DATASET in environment variables')
+  if (!dataset && process.env.NODE_ENV === "development") {
+    console.error(
+      "Missing NEXT_PUBLIC_SANITY_DATASET in environment variables",
+    );
+    throw new Error(
+      "Missing NEXT_PUBLIC_SANITY_DATASET in environment variables",
+    );
   }
 
   // Warn if token is missing (not critical for read-only operations)
-  if (!token && typeof window === 'undefined') {
-    console.warn('⚠️  SANITY_API_TOKEN is missing. Write operations will fail.')
-    console.warn('💡 To fix this, run: cd apps/studio && npx sanity login')
+  if (!token && typeof window === "undefined") {
+    console.warn(
+      "⚠️  SANITY_API_TOKEN is missing. Write operations will fail.",
+    );
+    console.warn("💡 To fix this, run: cd apps/studio && npx sanity login");
   }
 
   return {
@@ -41,61 +53,64 @@ function validateSanityConfig(): SanityConfig {
     dataset,
     apiVersion,
     token,
-    useCdn: false, // Disable CDN for immediate updates
-    perspective: 'published',
-    studioUrl
-  }
+    useCdn: process.env.NETLIFY ? true : false, // Use CDN for Netlify builds for faster performance
+    perspective: "published",
+    studioUrl,
+  };
 }
 
 // Global configuration with safe initialization
-let sanityConfig: SanityConfig
+let sanityConfig: SanityConfig;
 try {
-  sanityConfig = validateSanityConfig()
+  sanityConfig = validateSanityConfig();
 } catch (error) {
-  console.error('❌ Sanity configuration error:', error)
+  console.error("❌ Sanity configuration error:", error);
   // Provide fallback configuration for build process
   sanityConfig = {
-    projectId: 'as5tildt',
-    dataset: 'production',
-    apiVersion: '2024-01-01',
+    projectId: "as5tildt",
+    dataset: "production",
+    apiVersion: "2024-01-01",
     token: undefined,
     useCdn: false,
-    perspective: 'published',
-    studioUrl: 'https://dpladmin.sanity.studio'
-  }
-  console.warn('🔄 Using fallback Sanity configuration for build process')
+    perspective: "published",
+    studioUrl: "https://dpladmin.sanity.studio",
+  };
+  console.warn("🔄 Using fallback Sanity configuration for build process");
 }
 
 // Enhanced client creation with authentication handling
-const createSanityClient = (options: {
-  useToken?: boolean
-  perspective?: 'published' | 'previewDrafts'
-  enableStega?: boolean
-} = {}): SanityClient => {
-  const { 
-    useToken = false, 
-    perspective = 'published',
-    enableStega = false 
-  } = options
+const createSanityClient = (
+  options: {
+    useToken?: boolean;
+    perspective?: "published" | "previewDrafts";
+    enableStega?: boolean;
+  } = {},
+): SanityClient => {
+  const {
+    useToken = false,
+    perspective = "published",
+    enableStega = false,
+  } = options;
 
-  const isDraftMode = typeof window !== 'undefined' && 
-    document.cookie.includes('__prerender_bypass')
-  
-  const finalPerspective = isDraftMode ? 'previewDrafts' : perspective
-  const shouldUseToken = useToken && !!sanityConfig.token
-  const shouldEnableStega = enableStega || isDraftMode || 
-    (process.env.NODE_ENV === 'development')
+  const isDraftMode =
+    typeof window !== "undefined" &&
+    document.cookie.includes("__prerender_bypass");
+
+  const finalPerspective = isDraftMode ? "previewDrafts" : perspective;
+  const shouldUseToken = useToken && !!sanityConfig.token;
+  const shouldEnableStega =
+    enableStega || isDraftMode || process.env.NODE_ENV === "development";
 
   // Log client creation in development
-  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
-    console.log('🔌 Creating Sanity client:', {
+  if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+    console.log("🔌 Creating Sanity client:", {
       projectId: sanityConfig.projectId,
       dataset: sanityConfig.dataset,
       perspective: finalPerspective,
       hasToken: shouldUseToken,
       stegaEnabled: shouldEnableStega,
-      environment: process.env.NODE_ENV
-    })
+      environment: process.env.NODE_ENV,
+    });
   }
 
   const client = createClient({
@@ -105,73 +120,78 @@ const createSanityClient = (options: {
     token: shouldUseToken ? sanityConfig.token : undefined,
     useCdn: sanityConfig.useCdn,
     perspective: finalPerspective,
-    stega: shouldEnableStega ? {
-      enabled: true,
-      studioUrl: sanityConfig.studioUrl,
-    } : undefined,
+    stega: shouldEnableStega
+      ? {
+          enabled: true,
+          studioUrl: sanityConfig.studioUrl,
+        }
+      : undefined,
     ignoreBrowserTokenWarning: true,
     withCredentials: true,
-  })
+  });
 
-  return client
-}
+  return client;
+};
 
 // Test connection function
 async function testConnection(client: SanityClient): Promise<boolean> {
   try {
-    const result = await client.fetch('*[_type == "sanity.imageAsset"][0]')
-    return true
+    const result = await client.fetch('*[_type == "sanity.imageAsset"][0]');
+    return true;
   } catch (error: any) {
-    console.error('❌ Sanity connection test failed:', error.message)
-    
+    console.error("❌ Sanity connection test failed:", error.message);
+
     // Handle specific authentication errors
     if (error.statusCode === 401) {
-      console.error('🔐 Authentication failed. Please check your SANITY_API_TOKEN.')
-      console.error('💡 To fix this, run: cd apps/studio && npx sanity login')
+      console.error(
+        "🔐 Authentication failed. Please check your SANITY_API_TOKEN.",
+      );
+      console.error("💡 To fix this, run: cd apps/studio && npx sanity login");
     }
-    
-    return false
+
+    return false;
   }
 }
 
 // Client instances
-export const sanityClient = createSanityClient({ useToken: true })
-export const sanityClientNoToken = createSanityClient({ useToken: false })
-export const visualEditingClient = createSanityClient({ 
-  useToken: true, 
-  perspective: 'previewDrafts',
-  enableStega: true 
-})
+export const sanityClient = createSanityClient({ useToken: true });
+export const sanityClientNoToken = createSanityClient({ useToken: false });
+export const visualEditingClient = createSanityClient({
+  useToken: true,
+  perspective: "previewDrafts",
+  enableStega: true,
+});
 
 // Smart client selector
 export const getSanityClient = (): SanityClient => {
-  const isBrowser = typeof window !== 'undefined'
-  const isDraftMode = isBrowser && document.cookie.includes('__prerender_bypass')
-  
+  const isBrowser = typeof window !== "undefined";
+  const isDraftMode =
+    isBrowser && document.cookie.includes("__prerender_bypass");
+
   if (isDraftMode) {
-    return visualEditingClient
+    return visualEditingClient;
   }
-  
-  return isBrowser ? sanityClientNoToken : sanityClient
-}
+
+  return isBrowser ? sanityClientNoToken : sanityClient;
+};
 
 // Connection validation on module load (server-side only)
-if (typeof window === 'undefined') {
-  testConnection(sanityClient).then(isConnected => {
+if (typeof window === "undefined") {
+  testConnection(sanityClient).then((isConnected) => {
     if (isConnected) {
-      console.log('✅ Sanity connection established')
+      console.log("✅ Sanity connection established");
     } else {
-      console.log('⚠️  Sanity connection issues detected')
+      console.log("⚠️  Sanity connection issues detected");
     }
-  })
+  });
 }
 
 export async function createQuoteRequest(formData: any) {
   try {
     const quoteRequest = {
-      _type: 'quoteRequest',
-      status: 'new',
-      priority: 'normal',
+      _type: "quoteRequest",
+      status: "new",
+      priority: "normal",
       contact: {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -190,13 +210,13 @@ export async function createQuoteRequest(formData: any) {
       },
       // Note: File uploads would need additional handling
       submittedAt: new Date().toISOString(),
-    }
+    };
 
     // Always use the server-side client for mutations
-    const result = await sanityClient.create(quoteRequest)
-    return { success: true, data: result }
+    const result = await sanityClient.create(quoteRequest);
+    return { success: true, data: result };
   } catch (error) {
-    console.error('Error creating quote request:', error)
-    return { success: false, error }
+    console.error("Error creating quote request:", error);
+    return { success: false, error };
   }
 }

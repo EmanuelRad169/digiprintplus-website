@@ -4,7 +4,11 @@ import { draftMode } from "next/headers";
 import { SanityProductImage } from "@/components/ui/sanity-image";
 import Image from "next/image";
 import Link from "next/link";
-import { getProductBySlug, getSiteSettings, getProducts } from "@/lib/sanity/fetchers";
+import {
+  getProductBySlug,
+  getSiteSettings,
+  getProducts,
+} from "@/lib/sanity/fetchers";
 import { PortableTextRenderer } from "@/components/portable-text";
 import {
   Product,
@@ -48,16 +52,16 @@ export const revalidate = 60;
 // Generate static params for all products
 export async function generateStaticParams() {
   try {
-    const products = await getProducts()
-    
+    const products = await getProducts();
+
     return products
       .filter((product: Product) => product.slug?.current)
       .map((product: Product) => ({
         slug: product.slug!.current,
-      }))
+      }));
   } catch (error) {
-    console.error('Error generating static params for products:', error)
-    return []
+    console.error("Error generating static params for products:", error);
+    return [];
   }
 }
 
@@ -339,7 +343,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
               {/* Short Description */}
               <div className="text-gray-600 text-lg leading-relaxed">
-                {product.description && typeof product.description === 'string' ? (
+                {product.description &&
+                typeof product.description === "string" ? (
                   <p>{product.description}</p>
                 ) : product.description ? (
                   <PortableTextRenderer content={product.description} />
@@ -621,7 +626,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                           <ChevronDown className="w-4 h-4 text-gray-500 group-open:rotate-180 transition-transform" />
                         </summary>
                         <div className="px-4 pb-4 text-sm text-gray-700">
-                          {item.answer && typeof item.answer === 'string' ? (
+                          {item.answer && typeof item.answer === "string" ? (
                             item.answer
                           ) : item.answer ? (
                             <PortableTextRenderer content={item.answer} />

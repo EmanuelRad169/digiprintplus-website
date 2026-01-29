@@ -1,5 +1,5 @@
-import { PortableText } from '@portabletext/react'
-import Image from 'next/image'
+import { PortableText } from "@portabletext/react";
+import Image from "next/image";
 
 const components = {
   block: {
@@ -26,8 +26,8 @@ const components = {
       <a
         href={value.href}
         className="text-blue-600 hover:text-blue-700 underline"
-        target={value.blank ? '_blank' : undefined}
-        rel={value.blank ? 'noopener noreferrer' : undefined}
+        target={value.blank ? "_blank" : undefined}
+        rel={value.blank ? "noopener noreferrer" : undefined}
       >
         {children}
       </a>
@@ -35,9 +35,7 @@ const components = {
     strong: ({ children }: any) => (
       <strong className="font-semibold">{children}</strong>
     ),
-    em: ({ children }: any) => (
-      <em className="italic">{children}</em>
-    ),
+    em: ({ children }: any) => <em className="italic">{children}</em>,
   },
   list: {
     bullet: ({ children }: any) => (
@@ -48,18 +46,22 @@ const components = {
     ),
   },
   listItem: {
-    bullet: ({ children }: any) => <li className="text-gray-600">{children}</li>,
-    number: ({ children }: any) => <li className="text-gray-600">{children}</li>,
+    bullet: ({ children }: any) => (
+      <li className="text-gray-600">{children}</li>
+    ),
+    number: ({ children }: any) => (
+      <li className="text-gray-600">{children}</li>
+    ),
   },
   types: {
     image: ({ value }: any) => {
-      if (!value?.asset?.url) return null
-      
+      if (!value?.asset?.url) return null;
+
       return (
         <div className="my-6">
           <Image
             src={value.asset.url}
-            alt={value.alt || 'Content image'}
+            alt={value.alt || "Content image"}
             width={800}
             height={400}
             className="rounded-lg"
@@ -70,23 +72,23 @@ const components = {
             </p>
           )}
         </div>
-      )
+      );
     },
   },
-}
+};
 
 interface PortableTextRendererProps {
-  content: any[]
+  content: any[];
 }
 
 export function PortableTextRenderer({ content }: PortableTextRendererProps) {
   if (!content || !Array.isArray(content)) {
-    return null
+    return null;
   }
 
   return (
     <div className="prose prose-lg max-w-none">
       <PortableText value={content} components={components} />
     </div>
-  )
+  );
 }

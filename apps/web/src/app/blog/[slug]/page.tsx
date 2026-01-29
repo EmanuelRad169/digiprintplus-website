@@ -1,67 +1,69 @@
-import { Metadata } from 'next'
-import { getAllBlogSlugs, getBlogPostBySlug, getAllBlogPosts } from '@/lib/sanity/fetchers'
-import { PortableTextRenderer } from '@/components/portable-text'
-import { draftMode } from 'next/headers'
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
-import { ShareButton } from '@/components/share-button'
+import { Metadata } from "next";
+import {
+  getAllBlogSlugs,
+  getBlogPostBySlug,
+  getAllBlogPosts,
+} from "@/lib/sanity/fetchers";
+import { PortableTextRenderer } from "@/components/portable-text";
+import { draftMode } from "next/headers";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { ShareButton } from "@/components/share-button";
 
-export const revalidate = 60
+export const revalidate = 60;
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
   try {
-    const posts = await getAllBlogPosts()
-    
+    const posts = await getAllBlogPosts();
+
     return posts
       .filter((post) => post.slug?.current)
       .map((post) => ({
         slug: post.slug!.current,
-      }))
+      }));
   } catch (error) {
-    console.error('Error generating static params for blog posts:', error)
-    return []
+    console.error("Error generating static params for blog posts:", error);
+    return [];
   }
 }
 
 interface BlogPostPageProps {
   params: {
-    slug: string
-  }
+    slug: string;
+  };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { isEnabled } = await draftMode()
-  const post = await getBlogPostBySlug(params.slug, isEnabled)
+  const { isEnabled } = await draftMode();
+  const post = await getBlogPostBySlug(params.slug, isEnabled);
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   // Get related posts (excluding current post)
-  const allPosts = await getAllBlogPosts(isEnabled)
-  const relatedPosts = allPosts
-    .filter(p => p._id !== post._id)
-    .slice(0, 3)
+  const allPosts = await getAllBlogPosts(isEnabled);
+  const relatedPosts = allPosts.filter((p) => p._id !== post._id).slice(0, 3);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   const formatReadingTime = (content: any[]) => {
     // Rough estimate: 200 words per minute
-    const wordsPerMinute = 200
-    const contentString = JSON.stringify(content)
-    const wordCount = contentString.split(/\s+/).length
-    const readingTime = Math.ceil(wordCount / wordsPerMinute)
-    return `${readingTime} min read`
-  }
+    const wordsPerMinute = 200;
+    const contentString = JSON.stringify(content);
+    const wordCount = contentString.split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / wordsPerMinute);
+    return `${readingTime} min read`;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -70,37 +72,37 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
             headline: post.title,
             description: post.excerpt || post.seo?.metaDescription,
             image: post.coverImage?.asset.url || post.seo?.ogImage?.asset.url,
             author: {
-              '@type': 'Person',
+              "@type": "Person",
               name: post.author.name,
               image: post.author.image?.asset.url,
             },
             publisher: {
-              '@type': 'Organization',
-              name: 'DigiPrintPlus',
+              "@type": "Organization",
+              name: "DigiPrintPlus",
               logo: {
-                '@type': 'ImageObject',
+                "@type": "ImageObject",
                 url: `${process.env.NEXT_PUBLIC_SITE_URL}/images/logo.png`,
               },
             },
             datePublished: post.publishedAt,
             dateModified: post.publishedAt,
             mainEntityOfPage: {
-              '@type': 'WebPage',
-              '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug.current}`,
+              "@type": "WebPage",
+              "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug.current}`,
             },
             keywords: [
-              ...(post.categories?.map(cat => cat.title) || []),
+              ...(post.categories?.map((cat) => cat.title) || []),
               ...(post.seo?.keywords || []),
-            ].join(', '),
-            articleSection: post.categories?.[0]?.title || 'Blog',
+            ].join(", "),
+            articleSection: post.categories?.[0]?.title || "Blog",
             wordCount: JSON.stringify(post.content).split(/\s+/).length,
-            inLanguage: 'en-US',
+            inLanguage: "en-US",
             url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug.current}`,
           }),
         }}
@@ -109,8 +111,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* Simple Header */}
       <div className="border-b border-gray-100">
         <div className="container mx-auto px-4 py-4">
-          <Link 
-            href="/blog" 
+          <Link
+            href="/blog"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-[#ea088c] transition-colors text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -128,7 +130,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.categories && post.categories.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {post.categories.map((category) => (
-                  <span key={category._id} className="text-xs font-medium text-[#ea088c] bg-[#ea088c]/5 px-3 py-1 rounded-full">
+                  <span
+                    key={category._id}
+                    className="text-xs font-medium text-[#ea088c] bg-[#ea088c]/5 px-3 py-1 rounded-full"
+                  >
                     {category.title}
                   </span>
                 ))}
@@ -159,7 +164,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     className="rounded-full"
                   />
                 )}
-                <span className="font-medium text-gray-700">{post.author.name}</span>
+                <span className="font-medium text-gray-700">
+                  {post.author.name}
+                </span>
               </div>
               <span>{formatDate(post.publishedAt)}</span>
               <span>{formatReadingTime(post.content)}</span>
@@ -183,10 +190,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="prose prose-lg max-w-none mb-12">
             <PortableTextRenderer content={post.content} />
           </div>
-          
+
           {/* Share */}
           <div className="flex items-center justify-between py-8 border-t border-gray-100">
-            <span className="text-sm font-medium text-gray-700">Share this article</span>
+            <span className="text-sm font-medium text-gray-700">
+              Share this article
+            </span>
             <ShareButton title={post.title} excerpt={post.excerpt} />
           </div>
 
@@ -204,7 +213,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   />
                 )}
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">About {post.author.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    About {post.author.name}
+                  </h3>
                   <div className="prose prose-sm text-gray-600">
                     <PortableTextRenderer content={post.author.bio} />
                   </div>
@@ -220,37 +231,49 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <section className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">Related Articles</h2>
-              
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                Related Articles
+              </h2>
+
               <div className="space-y-6">
                 {relatedPosts.map((relatedPost) => (
-                  <article key={relatedPost._id} className="bg-white rounded-lg p-6 hover:shadow-md transition-shadow">
+                  <article
+                    key={relatedPost._id}
+                    className="bg-white rounded-lg p-6 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex gap-6">
                       {relatedPost.coverImage && (
                         <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
                           <Image
                             src={relatedPost.coverImage.asset.url}
-                            alt={relatedPost.coverImage.alt || relatedPost.title}
+                            alt={
+                              relatedPost.coverImage.alt || relatedPost.title
+                            }
                             fill
                             className="object-cover"
                           />
                         </div>
                       )}
-                      
+
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                          <Link href={`/blog/${relatedPost.slug.current}`} className="hover:text-[#ea088c] transition-colors">
+                          <Link
+                            href={`/blog/${relatedPost.slug.current}`}
+                            className="hover:text-[#ea088c] transition-colors"
+                          >
                             {relatedPost.title}
                           </Link>
                         </h3>
-                        
+
                         <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
                           <span>{relatedPost.author.name}</span>
                           <span>{formatDate(relatedPost.publishedAt)}</span>
                         </div>
-                        
+
                         {relatedPost.excerpt && (
-                          <p className="text-gray-600 text-sm line-clamp-2">{relatedPost.excerpt}</p>
+                          <p className="text-gray-600 text-sm line-clamp-2">
+                            {relatedPost.excerpt}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -264,105 +287,128 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* Simple CTA */}
       <div className="container bg-magenta-500 rounded-2xl p-8 md:p-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
-            <div className="relative z-10 max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Ready to start your next print project?</h2>
-              <p className="text-white/90 text-lg mb-8 max-w-2xlxl mx-auto">
-                Contact us today to discuss how our printing services can help bring your ideas to life.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link 
-                  href="/quote" 
-                    className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  Get a Quote
-                </Link>
-                <Link 
-                  href="/contact" 
-                    className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  Contact Us
-                </Link>
-              </div>
-            </div>
+        <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+            Ready to start your next print project?
+          </h2>
+          <p className="text-white/90 text-lg mb-8 max-w-2xlxl mx-auto">
+            Contact us today to discuss how our printing services can help bring
+            your ideas to life.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link
+              href="/quote"
+              className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              Get a Quote
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              Contact Us
+            </Link>
           </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = await getBlogPostBySlug(params.slug)
-  
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
+  const post = await getBlogPostBySlug(params.slug);
+
   if (!post) {
     return {
-      title: 'Post Not Found',
-      description: 'The requested blog post could not be found.',
-    }
+      title: "Post Not Found",
+      description: "The requested blog post could not be found.",
+    };
   }
 
   // SEO data with fallbacks
-  const seoTitle = post.seo?.metaTitle || post.title
-  const seoDescription = post.seo?.metaDescription || post.excerpt || `Read ${post.title} on the DigiPrintPlus blog`
-  const ogTitle = post.seo?.ogTitle || seoTitle
-  const ogDescription = post.seo?.ogDescription || seoDescription
-  const ogImage = post.seo?.ogImage || post.coverImage
-  const canonicalUrl = post.seo?.canonicalUrl || `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug.current}`
-  
+  const seoTitle = post.seo?.metaTitle || post.title;
+  const seoDescription =
+    post.seo?.metaDescription ||
+    post.excerpt ||
+    `Read ${post.title} on the DigiPrintPlus blog`;
+  const ogTitle = post.seo?.ogTitle || seoTitle;
+  const ogDescription = post.seo?.ogDescription || seoDescription;
+  const ogImage = post.seo?.ogImage || post.coverImage;
+  const canonicalUrl =
+    post.seo?.canonicalUrl ||
+    `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${post.slug.current}`;
+
   // Keywords from categories and SEO field
-  const categoryKeywords = post.categories?.map(cat => cat.title.toLowerCase()) || []
-  const seoKeywords = post.seo?.keywords || []
-  const allKeywords = [...new Set([...categoryKeywords, ...seoKeywords, 'printing', 'blog', 'digiprintplus'])]
+  const categoryKeywords =
+    post.categories?.map((cat) => cat.title.toLowerCase()) || [];
+  const seoKeywords = post.seo?.keywords || [];
+  const allKeywords = [
+    ...new Set([
+      ...categoryKeywords,
+      ...seoKeywords,
+      "printing",
+      "blog",
+      "digiprintplus",
+    ]),
+  ];
 
   return {
     title: `${seoTitle} | DigiPrintPlus Blog`,
     description: seoDescription,
-    keywords: allKeywords.join(', '),
+    keywords: allKeywords.join(", "),
     authors: [{ name: post.author.name }],
     creator: post.author.name,
-    publisher: 'DigiPrintPlus',
-    robots: post.seo?.noIndex ? 'noindex,nofollow' : 'index,follow',
+    publisher: "DigiPrintPlus",
+    robots: post.seo?.noIndex ? "noindex,nofollow" : "index,follow",
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
       title: ogTitle,
       description: ogDescription,
-      type: 'article',
+      type: "article",
       url: canonicalUrl,
-      siteName: 'DigiPrintPlus Blog',
+      siteName: "DigiPrintPlus Blog",
       publishedTime: post.publishedAt,
       modifiedTime: post.publishedAt,
       authors: [post.author.name],
-      section: post.categories?.[0]?.title || 'Blog',
+      section: post.categories?.[0]?.title || "Blog",
       tags: allKeywords,
-      images: ogImage ? [
-        {
-          url: ogImage.asset.url,
-          width: 1200,
-          height: 630,
-          alt: ogImage.alt || post.title,
-          type: 'image/jpeg',
-        }
-      ] : [],
+      images: ogImage
+        ? [
+            {
+              url: ogImage.asset.url,
+              width: 1200,
+              height: 630,
+              alt: ogImage.alt || post.title,
+              type: "image/jpeg",
+            },
+          ]
+        : [],
     },
     twitter: {
-      card: 'summary_large_image',
-      site: '@digiprintplus',
-      creator: `@${post.author.name.toLowerCase().replace(/\s+/g, '')}`,
+      card: "summary_large_image",
+      site: "@digiprintplus",
+      creator: `@${post.author.name.toLowerCase().replace(/\s+/g, "")}`,
       title: ogTitle,
       description: ogDescription,
-      images: ogImage ? [
-        {
-          url: ogImage.asset.url,
-          alt: ogImage.alt || post.title,
-        }
-      ] : [],
+      images: ogImage
+        ? [
+            {
+              url: ogImage.asset.url,
+              alt: ogImage.alt || post.title,
+            },
+          ]
+        : [],
     },
     other: {
-      'article:author': post.author.name,
-      'article:published_time': post.publishedAt,
-      'article:section': post.categories?.[0]?.title || 'Blog',
-      'article:tag': allKeywords.join(','),
+      "article:author": post.author.name,
+      "article:published_time": post.publishedAt,
+      "article:section": post.categories?.[0]?.title || "Blog",
+      "article:tag": allKeywords.join(","),
     },
-  }
+  };
 }

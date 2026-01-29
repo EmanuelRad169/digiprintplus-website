@@ -1,23 +1,49 @@
-# netlify.toml
+# netlify.toml - Optimized for standalone deployment
 [build]
-  base = "."
-  command = "corepack enable && corepack prepare pnpm@9.15.0 --activate && pnpm install --frozen-lockfile && pnpm run build:web"
-  publish = "apps/web/.next"
+  base = "apps/web"
+  command = "./netlify-prebuild.sh && npm install --legacy-peer-deps --no-optional && npm run build:netlify"
+  publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "18"
-  COREPACK_ENABLE_STRICT = "0"
+  NODE_VERSION = "18.17.0"
+  NPM_FLAGS = "--legacy-peer-deps --no-optional"
+  NETLIFY = "true"
   
-# Add basic environment variables with fallbacks
+  # Sanity Configuration
   NEXT_PUBLIC_SANITY_PROJECT_ID = "as5tildt"
   NEXT_PUBLIC_SANITY_DATASET = "production"
   NEXT_PUBLIC_SANITY_API_VERSION = "2024-01-01"
   NEXT_PUBLIC_SANITY_STUDIO_URL = "https://dppadmin.sanity.studio"
+  SANITY_API_TOKEN = "skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU"
+  SANITY_REVALIDATE_SECRET = "preview-secret-key-2024"
+  
+  # Site Configuration
+  NEXT_PUBLIC_SITE_URL = "https://marvelous-treacle-ca0286.netlify.app"
 
-  ## Uncomment to use this redirect for Single Page Applications like create-react-app.
-  ## Not needed for static site generators.
-  #[[redirects]]
-  #  from = "/*"
+# Increase build timeout
+[build.processing]
+  skip_processing = false
+
+# Redirects for SPA behavior if needed
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
   #  to = "/index.html"
   #  status = 200
 

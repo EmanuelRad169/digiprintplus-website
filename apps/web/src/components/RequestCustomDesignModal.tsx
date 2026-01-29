@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@workspace/ui";
-import { Input } from "@workspace/ui";
-import { Textarea } from "@workspace/ui";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import { Loader2, CheckCircle, XCircle, X } from "lucide-react";
 
 const customDesignSchema = z.object({
