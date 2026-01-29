@@ -6,6 +6,8 @@ import { Footer } from '@/components/footer'
 import { HeaderTop } from '@/components/header-top'
 import { VisualEditing } from '@/components/visual-editing'
 import { generateSEO, generateOrganizationSchema } from '@/lib/seo'
+import { getNavigationMenu, getSiteSettings } from "@/lib/sanity/fetchers";
+import { getFooter } from "@/lib/sanity/footer";
 
 // Initialize the Inter font with SWC
 const inter = Inter({ 
@@ -21,12 +23,28 @@ export const metadata = generateSEO({
   canonical: '/',
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const organizationSchema = generateOrganizationSchema()
+
+  // Fetch data for navigation and footer
+  const [navigationData, siteSettings, footerData] = await Promise.all([
+    getNavigationMenu().catch(err => {
+      console.error("Failed to fetch navigation:", err);
+      return null;
+    }),
+    getSiteSettings().catch(err => {
+      console.error("Failed to fetch site settings:", err);
+      return null;
+    }),
+    getFooter().catch(err => {
+      console.error("Failed to fetch footer:", err);
+      return null;
+    })
+  ]);
 
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
@@ -63,9 +81,9 @@ export default function RootLayout({
         <Providers>
           <div className="min-h-screen flex flex-col">
             <HeaderTop />
-            <Navigation />
+            <Navigation navigationData={navigationData} siteSettings={siteSettings} />
             <main className="flex-1">{children}</main>
-            <Footer />
+            <Footer footerData={footerData} siteSettings={siteSettings} />
           </div>
           <VisualEditing />
         </Providers>

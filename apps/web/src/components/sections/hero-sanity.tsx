@@ -24,14 +24,20 @@ const fallbackSlides: HeroSlide[] = [
   }
 ]
 
-export function HeroSanity() {
-  const [slides, setSlides] = useState<HeroSlide[]>(fallbackSlides)
+interface HeroSanityProps {
+  initialSlides?: HeroSlide[]
+}
+
+export function HeroSanity({ initialSlides }: HeroSanityProps) {
+  const [slides, setSlides] = useState<HeroSlide[]>(initialSlides || fallbackSlides)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!initialSlides)
 
   // Load hero slides from Sanity
   useEffect(() => {
+    if (initialSlides) return
+
     async function loadSlides() {
       try {
         const sanitySlides = await getHeroSlides()
@@ -47,7 +53,7 @@ export function HeroSanity() {
     }
 
     loadSlides()
-  }, [])
+  }, [initialSlides])
 
   // Auto-advance slides
   useEffect(() => {

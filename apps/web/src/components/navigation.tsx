@@ -5,7 +5,6 @@ import Link from "next/link";
 import { SanityImage } from "@/components/ui/sanity-image";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { getNavigationMenu, getSiteSettings } from "@/lib/sanity/fetchers";
 import {
   NavigationMenu,
   NavigationItem as SanityNavigationItem,
@@ -13,7 +12,12 @@ import {
 import type { SiteSettings } from "@/types/siteSettings";
 import MegaMenuNew from "@/components/MegaMenuNew";
 
-export default function Navigation() {
+interface NavigationProps {
+  navigationData: NavigationMenu | null;
+  siteSettings: SiteSettings | null;
+}
+
+export default function Navigation({ navigationData, siteSettings }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [megaMenuOpenedByClick, setMegaMenuOpenedByClick] = useState(false);
@@ -23,42 +27,10 @@ export default function Navigation() {
   const [dropdownOpenedByClick, setDropdownOpenedByClick] = useState<
     Record<string, boolean>
   >({});
-  const [navigationData, setNavigationData] = useState<NavigationMenu | null>(
-    null,
-  );
-  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  
   const megaMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  useEffect(() => {
-    async function loadNavigation() {
-      const timeout = setTimeout(() => {
-        console.warn(
-          "Navigation loading timeout, falling back to default navigation",
-        );
-        setLoading(false);
-      }, 5000); // 5 second timeout
-
-      try {
-        const [navigationMenu, settings] = await Promise.all([
-          getNavigationMenu(),
-          getSiteSettings(),
-        ]);
-        clearTimeout(timeout);
-        setNavigationData(navigationMenu);
-        setSiteSettings(settings);
-      } catch (error) {
-        clearTimeout(timeout);
-        console.error("Error loading navigation and settings:", error);
-        // Keep navigationData and siteSettings as null for fallback
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadNavigation();
-  }, []);
 
   // Click outside handler for mega menu and dropdowns
   useEffect(() => {

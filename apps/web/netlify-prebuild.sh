@@ -2,6 +2,7 @@
 
 # Netlify pre-build script to prepare standalone deployment
 set -e
+cd "$(dirname "$0")"
 
 echo "🏗️  Preparing Netlify deployment..."
 

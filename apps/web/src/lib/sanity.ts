@@ -53,7 +53,7 @@ function validateSanityConfig(): SanityConfig {
     dataset,
     apiVersion,
     token,
-    useCdn: process.env.NETLIFY ? true : false, // Use CDN for Netlify builds for faster performance
+    useCdn: false, // Always use fresh data for static builds to avoid stale content
     perspective: "published",
     studioUrl,
   };

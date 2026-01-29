@@ -1,8 +1,7 @@
-# netlify.toml - Static export for Netlify
+# netlify.toml - Web App Configuration (Project "main")
 [build]
-  base = "apps/web"
-  command = "./netlify-prebuild.sh && npm install --legacy-peer-deps --no-optional && npm run build:netlify"
-  publish = "out"
+  command = "chmod +x apps/web/netlify-prebuild.sh && ./apps/web/netlify-prebuild.sh && cd apps/web && NETLIFY=true npm run build"
+  publish = "apps/web/out"
 
 [build.environment]
   NODE_VERSION = "18.17.0"
@@ -23,25 +22,6 @@
 # Increase build timeout
 [build.processing]
   skip_processing = false
-
-# Static export redirects - handle Next.js static routes
-[[redirects]]
-  from = "/blog/*"
-  to = "/blog/[slug].html"
-  status = 200
-  force = false
-
-[[redirects]]  
-  from = "/products/*"
-  to = "/products/[slug].html"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/categories/*"
-  to = "/categories/[slug].html"
-  status = 200
-  force = false
 
 # Fallback for non-existent routes
 [[redirects]]

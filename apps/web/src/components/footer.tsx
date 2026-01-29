@@ -1,84 +1,22 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, Youtube, Globe, Printer, Clock } from 'lucide-react'
-import { getFooter, subscribeToFooterUpdates, type Footer as FooterType, DEFAULT_FOOTER } from '@/lib/sanity/footer'
-import { getSiteSettings, subscribeToSiteSettings, urlForImage, type SiteSettings } from '@/lib/sanity/settings'
+import { type Footer as FooterType, DEFAULT_FOOTER } from '@/lib/sanity/footer'
+import { urlForImage } from '@/lib/sanity/settings'
+import type { SiteSettings } from "@/types/siteSettings";
 
-export function Footer() {
-  const [footerData, setFooterData] = useState<FooterType>(DEFAULT_FOOTER)
-  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+interface FooterProps {
+  footerData: FooterType | null;
+  siteSettings: SiteSettings | null;
+}
 
-  // Function to load footer data
-  const loadFooterData = useCallback(async () => {
-    try {
-      const data = await getFooter()
-      setFooterData(data)
-    } catch (error) {
-      console.error('Failed to load footer data:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+export function Footer({ footerData: initialFooterData, siteSettings: initialSiteSettings }: FooterProps) {
+  const [footerData] = useState<FooterType>(initialFooterData || DEFAULT_FOOTER)
+  const [siteSettings] = useState<SiteSettings | null>(initialSiteSettings)
 
-  // Function to load site settings (for logo)
-  const loadSiteSettings = useCallback(async () => {
-    try {
-      const settings = await getSiteSettings()
-      if (settings) {
-        setSiteSettings(settings)
-      }
-    } catch (error) {
-      console.error('Failed to load site settings:', error)
-    }
-  }, [])
-
-  // Initial data load
-  useEffect(() => {
-    loadFooterData()
-    loadSiteSettings()
-  }, [loadFooterData, loadSiteSettings])
-
-  // Real-time updates subscription for footer
-  useEffect(() => {
-    let footerSubscription: any = null
-    
-    try {
-      footerSubscription = subscribeToFooterUpdates(() => {
-        loadFooterData()
-      })
-    } catch (error) {
-      console.error('Failed to setup real-time footer updates:', error)
-    }
-    
-    return () => {
-      if (footerSubscription) {
-        footerSubscription.unsubscribe()
-      }
-    }
-  }, [loadFooterData])
-
-  // Real-time updates subscription for site settings
-  useEffect(() => {
-    let siteSettingsSubscription: any = null
-    
-    try {
-      siteSettingsSubscription = subscribeToSiteSettings(() => {
-        loadSiteSettings()
-      })
-    } catch (error) {
-      console.error('Failed to setup real-time site settings updates:', error)
-    }
-    
-    return () => {
-      if (siteSettingsSubscription) {
-        siteSettingsSubscription.unsubscribe()
-      }
-    }
-  }, [loadSiteSettings])
 
   // Helper to render social media icons
   const getSocialIcon = (platform: string) => {
@@ -117,25 +55,6 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-5">
-            {isLoading ? (
-              <div className="animate-pulse space-y-5">
-                <div className="h-10 bg-gray-200 rounded w-1/2"></div>
-                <div className="h-20 bg-gray-200 rounded w-full"></div>
-                <div className="h-6 flex space-x-1 mt-2">
-                  <div className="h-6 w-12 bg-gray-200 rounded"></div>
-                  <div className="h-6 w-10 bg-gray-200 rounded"></div>
-                  <div className="h-6 w-10 bg-gray-200 rounded"></div>
-                  <div className="h-6 w-10 bg-gray-200 rounded"></div>
-                  <div className="h-6 w-10 bg-gray-200 rounded"></div>
-                </div>
-                <div className="flex space-x-2">
-                  <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-                  <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-                  <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-                </div>
-              </div>
-            ) : (
-              <>
                 <Link href="/" className="group">
                   {siteSettings?.logo?.asset ? (
                     <div className="h-[45px]">
@@ -172,8 +91,6 @@ export function Footer() {
                       </a>
                   ))}
                 </div>
-              </>
-            )}
           </div>
 
           {/* Services */}
@@ -210,38 +127,7 @@ export function Footer() {
 
           {/* Contact Info */}
           <div className="space-y-5">
-            {isLoading ? (
-              <div className="animate-pulse space-y-4">
-                {/* Contact Info Loading */}
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                
-                {/* Business Hours Loading */}
-                <div className="mt-5 pt-4 border-t border-gray-100">
-                  <div className="flex items-center mb-3">
-                    <div className="h-8 w-8 bg-gray-200 rounded-full mr-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                  </div>
-                  <div className="pl-8 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-full flex justify-between mb-2">
-                      <div className="w-1/3 h-full bg-gray-300 rounded"></div>
-                      <div className="w-1/3 h-full bg-gray-300 rounded"></div>
-                    </div>
-                    <div className="h-4 bg-gray-200 rounded w-full flex justify-between mb-2">
-                      <div className="w-1/4 h-full bg-gray-300 rounded"></div>
-                      <div className="w-1/3 h-full bg-gray-300 rounded"></div>
-                    </div>
-                    <div className="h-4 bg-gray-200 rounded w-full flex justify-between">
-                      <div className="w-1/4 h-full bg-gray-300 rounded"></div>
-                      <div className="w-1/6 h-full bg-gray-300 rounded"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-sm">
                   {siteSettings?.contact?.address && (
                     <div className="flex items-center space-x-3 group">
                       <div className="p-2 rounded-full bg-magenta-500 group-hover:bg-magenta-600 transition-all duration-300">
@@ -272,10 +158,10 @@ export function Footer() {
                       </a>
                     </div>
                   )}
-                </div>
+            </div>
                 
-                {/* Business Hours */}
-                <div className="mt-6 pt-5 border-t border-gray-100">
+            {/* Business Hours */}
+            <div className="mt-6 pt-5 border-t border-gray-100">
                   <h4 className="font-medium mb-3 text-gray-800 flex items-center">
                     <div className="p-2 mr-2 rounded-full bg-magenta-500">
                       <Clock className="w-3 h-3 text-white flex-shrink-0" />
@@ -295,9 +181,7 @@ export function Footer() {
                       </>
                     )}
                   </div>
-                </div>
-              </>
-            )}
+            </div>
           </div>
         </div>
 
