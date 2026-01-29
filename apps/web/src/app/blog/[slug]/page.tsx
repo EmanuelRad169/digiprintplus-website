@@ -290,14 +290,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   )
 }
 
-export async function generateStaticParams() {
-  const slugs = await getAllBlogSlugs()
-  
-  return slugs.map((post) => ({
-    slug: post.slug,
-  }))
-}
-
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const post = await getBlogPostBySlug(params.slug)
   

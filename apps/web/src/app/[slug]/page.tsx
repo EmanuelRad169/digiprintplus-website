@@ -307,10 +307,3 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return metadata
 }
-
-// Generate static params for known pages
-export async function generateStaticParams() {
-  // You can fetch all pages from Sanity here if needed
-  // For now, return empty array to use ISR
-  return []
-}

@@ -51,8 +51,8 @@ export async function generateStaticParams() {
     const products = await getProducts()
     
     return products
-      .filter((product) => product.slug?.current)
-      .map((product) => ({
+      .filter((product: Product) => product.slug?.current)
+      .map((product: Product) => ({
         slug: product.slug!.current,
       }))
   } catch (error) {
@@ -899,11 +899,4 @@ export async function generateMetadata({
     product,
     category: product.category?.title,
   });
-}
-
-// Generate static params for products
-export async function generateStaticParams() {
-  // You can fetch all product slugs from Sanity here if needed
-  // For now, return empty array to use ISR
-  return [];
 }

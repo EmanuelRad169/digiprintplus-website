@@ -1,4 +1,5 @@
 import { PortableText } from '@portabletext/react'
+import Image from 'next/image'
 
 const components = {
   block: {
@@ -49,6 +50,28 @@ const components = {
   listItem: {
     bullet: ({ children }: any) => <li className="text-gray-600">{children}</li>,
     number: ({ children }: any) => <li className="text-gray-600">{children}</li>,
+  },
+  types: {
+    image: ({ value }: any) => {
+      if (!value?.asset?.url) return null
+      
+      return (
+        <div className="my-6">
+          <Image
+            src={value.asset.url}
+            alt={value.alt || 'Content image'}
+            width={800}
+            height={400}
+            className="rounded-lg"
+          />
+          {value.caption && (
+            <p className="text-sm text-gray-500 mt-2 text-center italic">
+              {value.caption}
+            </p>
+          )}
+        </div>
+      )
+    },
   },
 }
 
