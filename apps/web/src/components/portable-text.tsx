@@ -1,4 +1,5 @@
 import { PortableText } from '@portabletext/react'
+import Image from 'next/image'
 
 const components = {
   block: {
@@ -53,19 +54,53 @@ const components = {
     bullet: ({ children }: any) => <li className="text-gray-700 text-lg leading-relaxed">{children}</li>,
     number: ({ children }: any) => <li className="text-gray-700 text-lg leading-relaxed">{children}</li>,
   },
+  types: {
+    image: ({ value }: any) => {
+      if (!value?.asset?.url) return null
+      
+      return (
+        <div className="my-8">
+          <Image
+            src={value.asset.url}
+            alt={value.alt || 'Content image'}
+            width={800}
+            height={400}
+            className="rounded-lg w-full"
+          />
+          {value.caption && (
+            <p className="text-sm text-gray-500 mt-2 text-center italic">
+              {value.caption}
+            </p>
+          )}
+        </div>
+      )
+    },
+  },
 }
 
 interface PortableTextRendererProps {
-  content: any[]
+  content: any[] | any
   className?: string
 }
 
 export function PortableTextRenderer({ content, className }: PortableTextRendererProps) {
-  if (!content || !Array.isArray(content)) {
+  if (!content) {
+    return null
+  }
+
+  // Handle single object content by wrapping in array
+  const contentArray = Array.isArray(content) ? content : [content]
+
+  // Filter out invalid content blocks
+  const validContent = contentArray.filter((block: any) => {
+    return block && typeof block === 'object' && block._type
+  })
+
+  if (validContent.length === 0) {
     return null
   }
 
   return (
-    <PortableText value={content} components={components} />
+    <PortableText value={validContent} components={components} />
   )
 }

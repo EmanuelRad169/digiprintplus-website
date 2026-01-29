@@ -338,9 +338,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
 
               {/* Short Description */}
-              <p className="text-gray-600 text-lg leading-relaxed">
-                {product.description}
-              </p>
+              <div className="text-gray-600 text-lg leading-relaxed">
+                {product.description && typeof product.description === 'string' ? (
+                  <p>{product.description}</p>
+                ) : product.description ? (
+                  <PortableTextRenderer content={product.description} />
+                ) : null}
+              </div>
 
               {/* Lead Time & Availability */}
               {(product.leadTime || product.inStock !== undefined) && (
@@ -617,7 +621,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                           <ChevronDown className="w-4 h-4 text-gray-500 group-open:rotate-180 transition-transform" />
                         </summary>
                         <div className="px-4 pb-4 text-sm text-gray-700">
-                          {item.answer}
+                          {item.answer && typeof item.answer === 'string' ? (
+                            item.answer
+                          ) : item.answer ? (
+                            <PortableTextRenderer content={item.answer} />
+                          ) : null}
                         </div>
                       </details>
                     ))}
