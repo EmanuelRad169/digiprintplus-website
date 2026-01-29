@@ -1,12 +1,12 @@
 # netlify.toml
 [build]
   base = "."
-  command = "./scripts/build-netlify.sh"
+  command = "corepack enable && corepack prepare pnpm@9.15.0 --activate && pnpm install --frozen-lockfile && pnpm run build:web"
   publish = "apps/web/.next"
 
 [build.environment]
   NODE_VERSION = "18"
-  PNPM_VERSION = "9.15.0"
+  COREPACK_ENABLE_STRICT = "0"
   
 # Add basic environment variables with fallbacks
   NEXT_PUBLIC_SANITY_PROJECT_ID = "as5tildt"
