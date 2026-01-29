@@ -1,8 +1,8 @@
-# netlify.toml - Optimized for standalone deployment
+# netlify.toml - Static export for Netlify
 [build]
   base = "apps/web"
   command = "./netlify-prebuild.sh && npm install --legacy-peer-deps --no-optional && npm run build:netlify"
-  publish = ".next"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "18.17.0"
@@ -24,17 +24,30 @@
 [build.processing]
   skip_processing = false
 
-# Redirects for SPA behavior if needed
+# Static export redirects - handle Next.js static routes
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  from = "/blog/*"
+  to = "/blog/[slug].html"
   status = 200
+  force = false
+
+[[redirects]]  
+  from = "/products/*"
+  to = "/products/[slug].html"
+  status = 200
+  force = false
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/categories/*"
+  to = "/categories/[slug].html"
   status = 200
-  conditions = {Role = ["admin"]}
+  force = false
+
+# Fallback for non-existent routes
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
 
 # Headers for security
 [[headers]]

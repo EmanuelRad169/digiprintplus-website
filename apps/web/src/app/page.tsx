@@ -4,9 +4,9 @@ import FeaturedProducts from '@/components/sections/featured-products'
 import { AboutSanity } from '@/components/sections/about-sanity'
 import { CallToActionSanity } from '@/components/sections/call-to-action-sanity'
 
-// Mark page as server component
-export const dynamic = 'force-dynamic'
-export const revalidate = 60 // Revalidate every 60 seconds
+// Mark page as static for export
+export const dynamic = 'force-static'
+export const revalidate = false // No revalidation for static export
 
 export default function HomePage() {
   return (

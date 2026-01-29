@@ -38,5 +38,44 @@ for component in "button.tsx" "input.tsx" "textarea.tsx" "dialog.tsx" "label.tsx
     fi
 done
 
+# Temporarily rename problematic API routes for static export
+echo "🔧 Preparing API routes for static export..."
+mkdir -p .netlify-backup
+
+# Backup and disable API routes that conflict with static export
+API_ROUTES=("deploy" "draft-mode" "preview" "exit-preview" "revalidate" "quotes" "sanity-proxy" "send-custom-request" "sitemap" "test-blog" "visual-editing" "categories" "products")
+API_FILES=("cors.ts" "errors.ts")
+DYNAMIC_ROUTES=("robots.txt" "sitemap.ts")
+PROBLEMATIC_ROUTES=("templates/[slug]" "products/category/[category]/[item]")
+
+for route in "${API_ROUTES[@]}"; do
+    if [ -d "src/app/api/$route" ]; then
+        echo "   Backing up API route: $route"
+        mv "src/app/api/$route" ".netlify-backup/$route" 2>/dev/null || true
+    fi
+done
+
+for file in "${API_FILES[@]}"; do
+    if [ -f "src/app/api/$file" ]; then
+        echo "   Backing up API file: $file"
+        mv "src/app/api/$file" ".netlify-backup/$file" 2>/dev/null || true
+    fi
+done
+
+for route in "${DYNAMIC_ROUTES[@]}"; do
+    if [ -f "src/app/$route" ] || [ -d "src/app/$route" ]; then
+        echo "   Backing up dynamic route: $route"
+        mv "src/app/$route" ".netlify-backup/$route" 2>/dev/null || true
+    fi
+done
+
+for route in "${PROBLEMATIC_ROUTES[@]}"; do
+    if [ -d "src/app/$route" ]; then
+        echo "   Backing up problematic route: $route"
+        route_name=$(echo "$route" | tr '/' '-' | tr '[' '_' | tr ']' '_')
+        mv "src/app/$route" ".netlify-backup/$route_name" 2>/dev/null || true
+    fi
+done
+
 echo "✅ All components verified"
 echo "🚀 Ready for build..."

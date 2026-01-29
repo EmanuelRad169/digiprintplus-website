@@ -297,3 +297,24 @@ export default function ProductItemPage({ params }: ProductItemPageProps) {
     </div>
   )
 }
+
+// Generate static params for products within categories
+export async function generateStaticParams({ 
+  params 
+}: { 
+  params: { category: string } 
+}) {
+  try {
+    const { getProductsByCategory } = await import('@/lib/sanity/fetchers')
+    const products = await getProductsByCategory(params.category)
+    
+    return products
+      .filter((product: Product) => product.slug?.current)
+      .map((product: Product) => ({
+        item: product.slug!.current,
+      }))
+  } catch (error) {
+    console.error('Error generating static params:', error)
+    return []
+  }
+}
