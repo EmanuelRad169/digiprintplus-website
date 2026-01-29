@@ -1,8 +1,18 @@
 # netlify.toml
 [build]
-  base = "apps/web"
-  command = "npm run build -- --webpack"
-  publish = ".next"
+  base = "."
+  command = "./scripts/build-netlify.sh"
+  publish = "apps/web/.next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  PNPM_VERSION = "9.15.0"
+  
+# Add basic environment variables with fallbacks
+  NEXT_PUBLIC_SANITY_PROJECT_ID = "as5tildt"
+  NEXT_PUBLIC_SANITY_DATASET = "production"
+  NEXT_PUBLIC_SANITY_API_VERSION = "2024-01-01"
+  NEXT_PUBLIC_SANITY_STUDIO_URL = "https://dppadmin.sanity.studio"
 
   ## Uncomment to use this redirect for Single Page Applications like create-react-app.
   ## Not needed for static site generators.
