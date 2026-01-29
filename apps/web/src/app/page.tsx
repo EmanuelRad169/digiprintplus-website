@@ -10,17 +10,28 @@ export const dynamic = "force-static";
 export const revalidate = false; // No revalidation for static export
 
 export default async function HomePage() {
-  const heroSlides = await getHeroSlides();
-  const ctaData = await getCTASectionById("homepage-cta");
+  let heroSlides;
+  let ctaData;
 
+  try {
+    heroSlides = await getHeroSlides();
+  } catch (error) {
+    console.error("Error fetching hero slides:", error);
+  }
+
+  try {
+    ctaData = await getCTASectionById("homepage-cta");
+  } catch (error) {
+    console.error("Error fetching CTA data:", error);
+  }
   return (
     <>
       <HeroSanity initialSlides={heroSlides} />
       <FeaturedProducts />
       <FeaturedServicesServerSection />
       <AboutSanity />
-      <CallToActionSanity 
-        sectionId="homepage-cta" 
+      <CallToActionSanity
+        sectionId="homepage-cta"
         fallbackData={ctaData || undefined}
       />
     </>

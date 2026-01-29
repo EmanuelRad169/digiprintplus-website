@@ -12,6 +12,25 @@ interface CallToActionSanityProps {
   fallbackData?: CTASection;
 }
 
+const defaultCTA: CTASection = {
+  _id: "default-cta",
+  title: "Ready to Get Started?",
+  description: "Join thousands of satisfied customers who trust DigiPrintPlus for their printing needs. Get your instant quote today.",
+  primaryButton: {
+    text: "Get Your Free Quote",
+    link: "/quote"
+  },
+  secondaryButton: {
+    text: "Call (949) 770-5000",
+    link: "tel:9497705000",
+    type: "phone"
+  },
+  highlights: ["Rush Orders Available", "Expert Support", "Satisfaction Guaranteed"],
+  backgroundColor: "magenta",
+  sectionId: "homepage-cta",
+  isActive: true
+};
+
 export function CallToActionSanity({
   sectionId,
   fallbackData,
@@ -35,9 +54,10 @@ export function CallToActionSanity({
       const fetchCTAData = async () => {
         try {
           const data = await getCTASectionById(sectionId);
-          setCTAData(data);
+          setCTAData(data || defaultCTA);
         } catch (error) {
           console.error("Error fetching CTA data:", error);
+          setCTAData(defaultCTA);
         } finally {
           setLoading(false);
         }

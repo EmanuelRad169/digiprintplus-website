@@ -1,85 +1,96 @@
-'use client'
+"use client";
 
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
-import { ArrowRight, CheckCircle, ChevronLeft, ChevronRight, Printer } from 'lucide-react'
-import { SanityHeroImage } from '@/components/ui/sanity-image'
-import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import { getHeroSlides, type HeroSlide } from '@/lib/sanity/contentFetchers'
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import {
+  ArrowRight,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Printer,
+} from "lucide-react";
+import { SanityHeroImage } from "@/components/ui/sanity-image";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { getHeroSlides, type HeroSlide } from "@/lib/sanity/contentFetchers";
 
 // Fallback slides for when Sanity data is not available
 const fallbackSlides: HeroSlide[] = [
   {
-    _id: 'fallback-1',
-    title: 'Premium Business Cards',
-    subtitle: 'PROFESSIONAL PRINTING',
-    description: 'Make a lasting impression with our premium business cards. Choose from over 50 paper stocks and finishes.',
-    ctaText: 'Get Quote',
-    ctaLink: '/quote',
-    stats: { number: '24hrs', text: 'Rush Service' },
-    features: ['Premium Materials', 'Free Design', 'Fast Delivery'],
+    _id: "fallback-1",
+    title: "Premium Business Cards",
+    subtitle: "PROFESSIONAL PRINTING",
+    description:
+      "Make a lasting impression with our premium business cards. Choose from over 50 paper stocks and finishes.",
+    ctaText: "Get Quote",
+    ctaLink: "/quote",
+    stats: { number: "24hrs", text: "Rush Service" },
+    features: ["Premium Materials", "Free Design", "Fast Delivery"],
     order: 1,
-    isActive: true
-  }
-]
+    isActive: true,
+  },
+];
 
 interface HeroSanityProps {
-  initialSlides?: HeroSlide[]
+  initialSlides?: HeroSlide[];
 }
 
 export function HeroSanity({ initialSlides }: HeroSanityProps) {
-  const [slides, setSlides] = useState<HeroSlide[]>(initialSlides || fallbackSlides)
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const [loading, setLoading] = useState(!initialSlides)
+  const [slides, setSlides] = useState<HeroSlide[]>(
+    initialSlides && initialSlides.length > 0 ? initialSlides : fallbackSlides,
+  );
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [loading, setLoading] = useState(
+    !(initialSlides && initialSlides.length > 0),
+  );
 
   // Load hero slides from Sanity
   useEffect(() => {
-    if (initialSlides) return
+    if (initialSlides && initialSlides.length > 0) return;
 
     async function loadSlides() {
       try {
-        const sanitySlides = await getHeroSlides()
+        const sanitySlides = await getHeroSlides();
         if (sanitySlides && sanitySlides.length > 0) {
-          setSlides(sanitySlides)
+          setSlides(sanitySlides);
         }
       } catch (error) {
-        console.error('Failed to load hero slides:', error)
+        console.error("Failed to load hero slides:", error);
         // Keep fallback slides
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    loadSlides()
-  }, [initialSlides])
+    loadSlides();
+  }, [initialSlides]);
 
   // Auto-advance slides
   useEffect(() => {
-    if (!isAutoPlaying || loading) return
-    
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 7000)
+    if (!isAutoPlaying || loading) return;
 
-    return () => clearInterval(interval)
-  }, [isAutoPlaying, loading, slides.length])
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 7000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, loading, slides.length]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length)
-    setIsAutoPlaying(false)
-  }
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    setIsAutoPlaying(false);
+  };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-    setIsAutoPlaying(false)
-  }
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    setIsAutoPlaying(false);
+  };
 
   const goToSlide = (index: number) => {
-    setCurrentSlide(index)
-    setIsAutoPlaying(false)
-  }
+    setCurrentSlide(index);
+    setIsAutoPlaying(false);
+  };
 
   if (loading) {
     return (
@@ -89,7 +100,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
           <p>Loading...</p>
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -121,7 +132,6 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
       <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center h-full py-8 sm:py-12 lg:py-20">
-            
             {/* Content Column */}
             <AnimatePresence mode="wait">
               <motion.div
@@ -152,9 +162,15 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                   transition={{ delay: 0.3, duration: 0.7 }}
                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight sm:leading-none tracking-tight"
                 >
-                  {slides[currentSlide].title.split(' ').map((word, index) => (
-                    <span key={index} className={index === 1 ? 'text-magenta-500' : ''}>
-                      {word}{index < slides[currentSlide].title.split(' ').length - 1 ? ' ' : ''}
+                  {slides[currentSlide].title.split(" ").map((word, index) => (
+                    <span
+                      key={index}
+                      className={index === 1 ? "text-magenta-500" : ""}
+                    >
+                      {word}
+                      {index < slides[currentSlide].title.split(" ").length - 1
+                        ? " "
+                        : ""}
                     </span>
                   ))}
                 </motion.h1>
@@ -177,9 +193,14 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                   className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4"
                 >
                   {slides[currentSlide].features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-1.5 sm:space-x-2 bg-white/10 backdrop-blur-sm px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20">
+                    <div
+                      key={index}
+                      className="flex items-center space-x-1.5 sm:space-x-2 bg-white/10 backdrop-blur-sm px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20"
+                    >
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-magenta-500 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm font-medium">{feature}</span>
+                      <span className="text-xs sm:text-sm font-medium">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </motion.div>
@@ -240,8 +261,12 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                     <div className="flex items-center space-x-2 lg:space-x-3">
                       <Printer className="w-6 h-6 lg:w-8 lg:h-8 text-magenta-500" />
                       <div>
-                        <div className="text-xl lg:text-2xl font-bold">50K+</div>
-                        <div className="text-xs lg:text-sm text-slate-300">Projects Done</div>
+                        <div className="text-xl lg:text-2xl font-bold">
+                          50K+
+                        </div>
+                        <div className="text-xs lg:text-sm text-slate-300">
+                          Projects Done
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -261,7 +286,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
           >
             <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6 group-hover:-translate-x-1 transition-transform" />
           </button>
-          
+
           <button
             onClick={nextSlide}
             className="hidden sm:flex absolute right-4 lg:right-8 top-1/2 transform -translate-y-1/2 z-30 w-10 h-10 lg:w-12 lg:h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-none items-center justify-center text-white transition-all duration-300 group"
@@ -280,7 +305,9 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
               onClick={() => goToSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index === currentSlide ? 'bg-magenta-500 w-6' : 'bg-white/50 hover:bg-white/75'
+                index === currentSlide
+                  ? "bg-magenta-500 w-6"
+                  : "bg-white/50 hover:bg-white/75"
               }`}
             />
           ))}
@@ -303,5 +330,5 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
       <div className="hidden lg:block absolute bottom-32 left-32 w-3 h-3 bg-white/30 transform rotate-45 z-20" />
       <div className="hidden lg:block absolute top-1/3 right-1/3 w-1 h-1 bg-magenta-500 rounded-full z-20" />
     </section>
-  )
+  );
 }
