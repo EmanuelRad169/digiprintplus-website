@@ -4,6 +4,7 @@
   # Keep paths relative to that base to avoid `apps/web/apps/web/...`.
   command = "chmod +x netlify-prebuild.sh && ./netlify-prebuild.sh && NETLIFY=true npm run build"
   publish = "out"
+  functions = "../../netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18.17.0"
@@ -17,6 +18,10 @@
   NEXT_PUBLIC_SANITY_STUDIO_URL = "https://dppadmin.sanity.studio"
   SANITY_API_TOKEN = "skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU"
   SANITY_REVALIDATE_SECRET = "preview-secret-key-2024"
+  SANITY_WEBHOOK_SECRET = "sanity-webhook-secret-2024"
+  
+  # Netlify Build Hook (will be set in Netlify UI after creating the hook)
+  # NETLIFY_BUILD_HOOK_URL = "https://api.netlify.com/build_hooks/YOUR_HOOK_ID"
   
   # Site Configuration
   NEXT_PUBLIC_SITE_URL = "https://marvelous-treacle-ca0286.netlify.app"
