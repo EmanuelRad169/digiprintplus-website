@@ -5,7 +5,9 @@ import {
   getAllTemplates,
 } from "@/lib/sanity/fetchers";
 
-export const revalidate = 300;
+// Static export mode - data fetched at build time
+export const dynamic = "force-static";
+export const revalidate = false;
 
 export default async function TemplatesPage() {
   const { isEnabled } = await draftMode();
