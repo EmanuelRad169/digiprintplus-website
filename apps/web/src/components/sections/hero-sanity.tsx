@@ -22,6 +22,19 @@ const fallbackSlides: HeroSlide[] = [
     subtitle: "PROFESSIONAL PRINTING",
     description:
       "Make a lasting impression with our premium business cards. Choose from over 50 paper stocks and finishes.",
+    // Placeholder image
+    image: {
+      asset: {
+        url: "https://cdn.sanity.io/images/as5tildt/production/04d82f7177844547a3d7da734ccd80af746d5af2-1024x1024.png", // Using a known image from our sanity dataset
+        metadata: {
+          dimensions: {
+            width: 1024,
+            height: 1024,
+          },
+        },
+      },
+      alt: "Premium Business Cards",
+    },
     ctaText: "Get Quote",
     ctaLink: "/quote",
     stats: { number: "24hrs", text: "Rush Service" },
