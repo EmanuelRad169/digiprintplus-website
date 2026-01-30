@@ -23,6 +23,8 @@ import finishingPage from './finishingPage'
 import post from './post'
 import author from './author'
 import category from './category'
+import homepageSettings from './homepageSettings'
+import faqCategory from './faqCategory'
 
 export const schemaTypes = [
   // Documents
@@ -46,6 +48,8 @@ export const schemaTypes = [
   aboutPage,
   integrationSettings,
   finishingPage,
+  homepageSettings,
+  faqCategory,
   
   // Blog
   post,
