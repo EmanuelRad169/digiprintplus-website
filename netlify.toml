@@ -1,7 +1,9 @@
 # netlify.toml - Web App Configuration (Project "main")
 [build]
-  command = "chmod +x apps/web/netlify-prebuild.sh && ./apps/web/netlify-prebuild.sh && cd apps/web && NETLIFY=true npm run build"
-  publish = "apps/web/out"
+  # When deploying via Netlify (including CLI), the build base is `apps/web`.
+  # Keep paths relative to that base to avoid `apps/web/apps/web/...`.
+  command = "chmod +x netlify-prebuild.sh && ./netlify-prebuild.sh && NETLIFY=true npm run build"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "18.17.0"
