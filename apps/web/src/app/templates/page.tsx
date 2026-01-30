@@ -1,3 +1,4 @@
+import { draftMode } from "next/headers";
 import TemplatesPageClient from "./client";
 import {
   getAllTemplateCategories,
@@ -7,6 +8,8 @@ import {
 export const revalidate = 300;
 
 export default async function TemplatesPage() {
+  const { isEnabled } = await draftMode();
+  
   const [templates, categories] = await Promise.all([
     getAllTemplates(),
     getAllTemplateCategories(),

@@ -207,6 +207,13 @@ export function FAQSection({
 }
 
 // Categories for FAQ filtering
+/**
+ * OPTIONAL: Consider migrating to Sanity for easier editing by content team
+ * Not critical - FAQ categories rarely change, but CMS management would allow:
+ * - Adding/removing categories without code deployment
+ * - Reordering categories dynamically
+ * - Localizing category names for multi-language support
+ */
 export function FAQCategories({ onCategorySelect, selectedCategory }: {
   onCategorySelect: (category: string | null) => void
   selectedCategory: string | null

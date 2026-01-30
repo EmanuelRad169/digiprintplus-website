@@ -12,6 +12,15 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+/**
+ * TODO: Consider migrating to Sanity CMS for dynamic management
+ * Suggested approach:
+ * - Create a 'featuredProduct' schema in Sanity Studio
+ * - Fetch via GROQ: *[_type == 'featuredProduct' && isActive == true] | order(order asc)
+ * - Benefits: Marketing team can update without code changes
+ * 
+ * Current: Hardcoded for curated homepage carousel (acceptable for now)
+ */
 const products = [
   {
     id: "business-cards",
