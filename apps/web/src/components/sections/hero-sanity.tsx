@@ -54,14 +54,14 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
   );
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [loading, setLoading] = useState(
-    !(initialSlides && initialSlides.length > 0),
-  );
+  const [loading, setLoading] = useState(false);
 
   // Load hero slides from Sanity
   useEffect(() => {
     if (initialSlides && initialSlides.length > 0) return;
 
+    // If we're using fallback slides, we can try to fetch real ones on the client
+    setLoading(true);
     async function loadSlides() {
       try {
         const sanitySlides = await getHeroSlides();
