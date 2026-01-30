@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldError } from "react-hook-form";
-import { Shield, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 const contactFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -21,14 +22,21 @@ const contactFormSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
 
+const FORM_NAME = "contact";
+
+function encodeNetlifyForm(data: Record<string, string>) {
+  return Object.keys(data)
+    .map(
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(data[key] ?? "")}`,
+    )
+    .join("&");
+}
+
 export function ContactForm() {
-  const [captchaVerified, setCaptchaVerified] = useState(false);
-  const [showCaptcha, setShowCaptcha] = useState(false);
-  const [captchaQuestion, setCaptchaQuestion] = useState({
-    question: "",
-    answer: 0,
-  });
-  const [userCaptchaAnswer, setUserCaptchaAnswer] = useState("");
+  const router = useRouter();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const {
     register,
@@ -37,44 +45,44 @@ export function ContactForm() {
     watch,
   } = useForm<ContactFormData>({ resolver: zodResolver(contactFormSchema) });
 
-  // Generate simple math CAPTCHA
-  const generateCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
-    const operation = Math.random() > 0.5 ? "+" : "-";
-    const answer =
-      operation === "+"
-        ? num1 + num2
-        : Math.max(num1, num2) - Math.min(num1, num2);
+  const onSubmit = async (data: ContactFormData) => {
+    setSubmitError(null);
+    setSubmitSuccess(false);
 
-    setCaptchaQuestion({
-      question: `${Math.max(num1, num2)} ${operation} ${Math.min(num1, num2)} = ?`,
-      answer: answer,
-    });
-    setShowCaptcha(true);
-    setCaptchaVerified(false);
-  };
+    try {
+      const payload: Record<string, string> = {
+        "form-name": FORM_NAME,
+        "bot-field": "",
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        company: data.company || "",
+        message: data.message,
+        agreeToTerms: data.agreeToTerms ? "yes" : "no",
+      };
 
-  const verifyCaptcha = () => {
-    if (parseInt(userCaptchaAnswer) === captchaQuestion.answer) {
-      setCaptchaVerified(true);
-      setShowCaptcha(false);
-    } else {
-      alert("Incorrect answer. Please try again.");
-      generateCaptcha();
-      setUserCaptchaAnswer("");
+      const response = await fetch("/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: encodeNetlifyForm(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Submission failed. Please try again.");
+      }
+
+      setSubmitSuccess(true);
+      router.push(`/forms/success?form=${encodeURIComponent(FORM_NAME)}`);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.",
+      );
     }
-  };
-
-  const onSubmit = (data: ContactFormData) => {
-    if (!captchaVerified) {
-      generateCaptcha();
-      return;
-    }
-
-    // TODO: Implement form submission logic
-    console.log("Form submitted:", data);
-    // Send data to API endpoint for processing
   };
 
   const renderError = (error: FieldError | undefined) => {
@@ -84,7 +92,35 @@ export function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      name={FORM_NAME}
+      method="POST"
+      action={`/forms/success?form=${encodeURIComponent(FORM_NAME)}`}
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6"
+    >
+      <input type="hidden" name="form-name" value={FORM_NAME} />
+      <p className="hidden">
+        <label>
+          Don’t fill this out if you’re human: <input name="bot-field" />
+        </label>
+      </p>
+
+      {submitError && (
+        <div className="rounded-lg border border-magenta-200 bg-magenta-50 p-4 text-sm text-magenta-800">
+          {submitError}
+        </div>
+      )}
+
+      {submitSuccess && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800 flex items-center gap-2">
+          <CheckCircle className="h-4 w-4" />
+          Message sent successfully.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label
@@ -221,45 +257,6 @@ export function ContactForm() {
         </label>
       </div>
       {renderError(errors.agreeToTerms)}
-
-      {/* CAPTCHA */}
-      {showCaptcha && (
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <div className="flex items-center space-x-4">
-            <Shield className="w-5 h-5 text-gray-600" />
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Security Check: {captchaQuestion.question}
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="number"
-                  value={userCaptchaAnswer}
-                  onChange={(e) => setUserCaptchaAnswer(e.target.value)}
-                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-magenta-500 focus:border-transparent"
-                  placeholder="Answer"
-                />
-                <button
-                  type="button"
-                  onClick={verifyCaptcha}
-                  className="px-4 py-2 bg-magenta-600 text-white rounded-lg hover:bg-magenta-700 transition-colors"
-                >
-                  Verify
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {captchaVerified && (
-        <div className="flex items-center space-x-2 text-green-600">
-          <CheckCircle className="w-5 h-5" />
-          <span className="text-sm font-medium">
-            Security verification completed
-          </span>
-        </div>
-      )}
 
       {/* Privacy Note */}
       <div className="bg-magenta-50 p-4 rounded-lg">

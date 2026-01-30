@@ -56,7 +56,7 @@ export async function getAllTemplateCategories(): Promise<TemplateCategory[]> {
   try {
     // Use the appropriate client based on environment
     const client = getSanityClient();
-    const query = `*[_type == "templateCategory" && status == "published"] | order(order asc, title asc) {
+    const query = `*[_type == "templateCategory" && !(_id in path('drafts.**')) && (!defined(status) || status == "published")] | order(order asc, title asc) {
       _id,
       title,
       slug,
@@ -76,7 +76,7 @@ export async function getAllTemplates(): Promise<Template[]> {
   try {
     // Use the appropriate client based on environment
     const client = getSanityClient();
-    const query = `*[_type == "template" && status == "published"] | order(publishedAt desc) {
+    const query = `*[_type == "template" && !(_id in path('drafts.**')) && (!defined(status) || status == "published")] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -136,7 +136,7 @@ export async function getTemplatesByCategory(
 ): Promise<Template[]> {
   try {
     const client = getSanityClient();
-    const query = `*[_type == "template" && status == "published" && category->slug.current == $categorySlug] | order(publishedAt desc) {
+    const query = `*[_type == "template" && !(_id in path('drafts.**')) && (!defined(status) || status == "published") && category->slug.current == $categorySlug] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -196,7 +196,7 @@ export async function getTemplateBySlug(
 ): Promise<Template | null> {
   try {
     const client = getSanityClient();
-    const query = `*[_type == "template" && status == "published" && slug.current == $slug][0] {
+    const query = `*[_type == "template" && !(_id in path('drafts.**')) && (!defined(status) || status == "published") && slug.current == $slug][0] {
       _id,
       title,
       slug,

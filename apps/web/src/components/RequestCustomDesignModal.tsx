@@ -24,6 +24,17 @@ const customDesignSchema = z.object({
 
 type CustomDesignFormData = z.infer<typeof customDesignSchema>;
 
+const FORM_NAME = "custom-design-request";
+
+function encodeNetlifyForm(data: Record<string, string>) {
+  return Object.keys(data)
+    .map(
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(data[key] ?? "")}`,
+    )
+    .join("&");
+}
+
 interface RequestCustomDesignModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -54,12 +65,25 @@ export default function RequestCustomDesignModal({
     setErrorMessage("");
 
     try {
-      const response = await fetch("/api/send-custom-request", {
+      const payload: Record<string, string> = {
+        "form-name": FORM_NAME,
+        "bot-field": "",
+        name: data.name,
+        email: data.email,
+        company: data.company || "",
+        phone: data.phone || "",
+        projectType: data.projectType,
+        description: data.description,
+        budget: data.budget || "",
+        timeline: data.timeline || "",
+      };
+
+      const response = await fetch("/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify(data),
+        body: encodeNetlifyForm(payload),
       });
 
       if (!response.ok) {
@@ -157,7 +181,22 @@ export default function RequestCustomDesignModal({
           )}
 
           {submitStatus !== "success" && (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              name={FORM_NAME}
+              method="POST"
+              action={`/forms/success?form=${encodeURIComponent(FORM_NAME)}`}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
+              <input type="hidden" name="form-name" value={FORM_NAME} />
+              <p className="hidden">
+                <label>
+                  Don’t fill this out if you’re human:{" "}
+                  <input name="bot-field" />
+                </label>
+              </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label

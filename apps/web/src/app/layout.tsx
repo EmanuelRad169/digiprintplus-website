@@ -1,49 +1,58 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
-import Providers from './providers'
-import Navigation from '@/components/navigation'
-import { Footer } from '@/components/footer'
-import { HeaderTop } from '@/components/header-top'
-import { VisualEditing } from '@/components/visual-editing'
-import { generateSEO, generateOrganizationSchema } from '@/lib/seo'
+import "./globals.css";
+import { Inter } from "next/font/google";
+import Providers from "./providers";
+import Navigation from "@/components/navigation";
+import { Footer } from "@/components/footer";
+import { HeaderTop } from "@/components/header-top";
+import { VisualEditing } from "@/components/visual-editing";
+import { generateSEO, generateOrganizationSchema } from "@/lib/seo";
 import { getNavigationMenu, getSiteSettings } from "@/lib/sanity/fetchers";
 import { getFooter } from "@/lib/sanity/footer";
 
 // Initialize the Inter font with SWC
-const inter = Inter({ 
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter'
-})
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata = generateSEO({
-  title: 'Professional Print Solutions',
-  description: 'Your trusted partner for high-quality printing services. Get instant quotes for business cards, brochures, banners, and more.',
-  keywords: ['printing', 'business cards', 'brochures', 'banners', 'professional printing', 'custom printing', 'print services'],
-  canonical: '/',
-})
+  title: "Professional Print Solutions",
+  description:
+    "Your trusted partner for high-quality printing services. Get instant quotes for business cards, brochures, banners, and more.",
+  keywords: [
+    "printing",
+    "business cards",
+    "brochures",
+    "banners",
+    "professional printing",
+    "custom printing",
+    "print services",
+  ],
+  canonical: "/",
+});
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const organizationSchema = generateOrganizationSchema()
+  const organizationSchema = generateOrganizationSchema();
 
   // Fetch data for navigation and footer
   const [navigationData, siteSettings, footerData] = await Promise.all([
-    getNavigationMenu().catch(err => {
+    getNavigationMenu().catch((err) => {
       console.error("Failed to fetch navigation:", err);
       return null;
     }),
-    getSiteSettings().catch(err => {
+    getSiteSettings().catch((err) => {
       console.error("Failed to fetch site settings:", err);
       return null;
     }),
-    getFooter().catch(err => {
+    getFooter().catch((err) => {
       console.error("Failed to fetch footer:", err);
       return null;
-    })
+    }),
   ]);
 
   return (
@@ -54,7 +63,7 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema)
+            __html: JSON.stringify(organizationSchema),
           }}
         />
         {/* Google Analytics */}
@@ -81,7 +90,10 @@ export default async function RootLayout({
         <Providers>
           <div className="min-h-screen flex flex-col">
             <HeaderTop />
-            <Navigation navigationData={navigationData} siteSettings={siteSettings} />
+            <Navigation
+              navigationData={navigationData}
+              siteSettings={siteSettings}
+            />
             <main className="flex-1">{children}</main>
             <Footer footerData={footerData} siteSettings={siteSettings} />
           </div>
@@ -89,5 +101,5 @@ export default async function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

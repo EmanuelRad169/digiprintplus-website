@@ -17,7 +17,10 @@ interface NavigationProps {
   siteSettings: SiteSettings | null;
 }
 
-export default function Navigation({ navigationData, siteSettings }: NavigationProps) {
+export default function Navigation({
+  navigationData,
+  siteSettings,
+}: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [megaMenuOpenedByClick, setMegaMenuOpenedByClick] = useState(false);
@@ -27,10 +30,9 @@ export default function Navigation({ navigationData, siteSettings }: NavigationP
   const [dropdownOpenedByClick, setDropdownOpenedByClick] = useState<
     Record<string, boolean>
   >({});
-  
+
   const megaMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
 
   // Click outside handler for mega menu and dropdowns
   useEffect(() => {

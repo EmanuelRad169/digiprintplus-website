@@ -34,6 +34,7 @@ export function ContactStep({ formData, updateFormData }: ContactStepProps) {
           <input
             type="text"
             id="firstName"
+            name="firstName"
             value={formData.firstName}
             onChange={(e) => updateFormData({ firstName: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-magenta-500 focus:border-transparent transition-colors duration-200"
@@ -52,6 +53,7 @@ export function ContactStep({ formData, updateFormData }: ContactStepProps) {
           <input
             type="text"
             id="lastName"
+            name="lastName"
             value={formData.lastName}
             onChange={(e) => updateFormData({ lastName: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-magenta-500 focus:border-transparent transition-colors duration-200"
@@ -70,6 +72,7 @@ export function ContactStep({ formData, updateFormData }: ContactStepProps) {
           <input
             type="email"
             id="email"
+            name="email"
             value={formData.email}
             onChange={(e) => updateFormData({ email: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-magenta-500 focus:border-transparent transition-colors duration-200"
@@ -88,6 +91,7 @@ export function ContactStep({ formData, updateFormData }: ContactStepProps) {
           <input
             type="tel"
             id="phone"
+            name="phone"
             value={formData.phone}
             onChange={(e) => updateFormData({ phone: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-magenta-500 focus:border-transparent transition-colors duration-200"
@@ -106,6 +110,7 @@ export function ContactStep({ formData, updateFormData }: ContactStepProps) {
           <input
             type="text"
             id="company"
+            name="company"
             value={formData.company}
             onChange={(e) => updateFormData({ company: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-magenta-500 focus:border-transparent transition-colors duration-200"

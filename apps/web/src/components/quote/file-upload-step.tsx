@@ -1,34 +1,47 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import { useRef } from 'react'
-import { Upload, File, X } from 'lucide-react'
+import { motion } from "framer-motion";
+import { useRef } from "react";
+import { Upload, File, X } from "lucide-react";
 
 interface FileUploadStepProps {
-  formData: any
-  updateFormData: (data: any) => void
+  formData: any;
+  updateFormData: (data: any) => void;
 }
 
-export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+export function FileUploadStep({
+  formData,
+  updateFormData,
+}: FileUploadStepProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const syncInputFiles = (files: File[]) => {
+    if (!fileInputRef.current) return;
+    const dataTransfer = new DataTransfer();
+    files.forEach((file) => dataTransfer.items.add(file));
+    fileInputRef.current.files = dataTransfer.files;
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
-    updateFormData({ files: [...formData.files, ...files] })
-  }
+    const files = Array.from(e.target.files || []);
+    const nextFiles = [...formData.files, ...files];
+    updateFormData({ files: nextFiles });
+    syncInputFiles(nextFiles);
+  };
 
   const removeFile = (index: number) => {
-    const newFiles = formData.files.filter((_: any, i: number) => i !== index)
-    updateFormData({ files: newFiles })
-  }
+    const newFiles = formData.files.filter((_: any, i: number) => i !== index);
+    updateFormData({ files: newFiles });
+    syncInputFiles(newFiles);
+  };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   return (
     <motion.div
@@ -37,8 +50,12 @@ export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps
       className="space-y-6"
     >
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload Your Files</h2>
-        <p className="text-gray-600">Upload your design files, artwork, or reference materials.</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Upload Your Files
+        </h2>
+        <p className="text-gray-600">
+          Upload your design files, artwork, or reference materials.
+        </p>
       </div>
 
       {/* Upload Area */}
@@ -50,15 +67,14 @@ export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps
         <h3 className="text-lg font-medium text-gray-900 mb-2">
           Click to upload files
         </h3>
-        <p className="text-gray-500 mb-4">
-          or drag and drop your files here
-        </p>
+        <p className="text-gray-500 mb-4">or drag and drop your files here</p>
         <p className="text-sm text-gray-400">
           Supported formats: PDF, AI, EPS, JPG, PNG, PSD (Max 50MB per file)
         </p>
         <input
           ref={fileInputRef}
           type="file"
+          name="files"
           multiple
           accept=".pdf,.ai,.eps,.jpg,.jpeg,.png,.psd"
           onChange={handleFileUpload}
@@ -69,7 +85,9 @@ export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps
       {/* Uploaded Files */}
       {formData.files.length > 0 && (
         <div className="space-y-4">
-          <h3 className="font-medium text-gray-900">Uploaded Files ({formData.files.length})</h3>
+          <h3 className="font-medium text-gray-900">
+            Uploaded Files ({formData.files.length})
+          </h3>
           <div className="space-y-2">
             {formData.files.map((file: File, index: number) => (
               <div
@@ -80,7 +98,9 @@ export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps
                   <File className="w-5 h-5 text-gray-500" />
                   <div>
                     <div className="font-medium text-gray-900">{file.name}</div>
-                    <div className="text-sm text-gray-500">{formatFileSize(file.size)}</div>
+                    <div className="text-sm text-gray-500">
+                      {formatFileSize(file.size)}
+                    </div>
                   </div>
                 </div>
                 <button
@@ -97,13 +117,20 @@ export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps
 
       {/* File Requirements */}
       <div className="bg-magenta-50 p-4 rounded-lg">
-        <h4 className="font-medium text-magenta-900 mb-2">File Requirements & Tips:</h4>
+        <h4 className="font-medium text-magenta-900 mb-2">
+          File Requirements & Tips:
+        </h4>
         <ul className="text-sm text-magenta-800 space-y-1">
           <li>• High-resolution files (300 DPI) for best print quality</li>
-          <li>• Include bleed area (0.125&quot; minimum) for products requiring cutting</li>
+          <li>
+            • Include bleed area (0.125&quot; minimum) for products requiring
+            cutting
+          </li>
           <li>• Convert text to outlines/curves to avoid font issues</li>
           <li>• Use CMYK color mode for accurate color reproduction</li>
-          <li>• Don&apos;t have files ready? No problem! We can help with design.</li>
+          <li>
+            • Don&apos;t have files ready? No problem! We can help with design.
+          </li>
         </ul>
       </div>
 
@@ -112,6 +139,11 @@ export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps
         <label className="flex items-center space-x-3">
           <input
             type="checkbox"
+            name="needsDesignAssistance"
+            checked={!!formData.needsDesignAssistance}
+            onChange={(e) =>
+              updateFormData({ needsDesignAssistance: e.target.checked })
+            }
             className="w-4 h-4 text-magenta-600 border-gray-300 rounded focus:ring-magenta-500"
           />
           <span className="text-sm text-gray-700">
@@ -120,5 +152,5 @@ export function FileUploadStep({ formData, updateFormData }: FileUploadStepProps
         </label>
       </div>
     </motion.div>
-  )
+  );
 }
