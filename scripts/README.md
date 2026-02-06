@@ -2,7 +2,56 @@
 
 This directory contains all automation scripts and tools for the DigiPrintPlus project, organized by purpose and usage frequency.
 
-## 📤📥 Product Export/Import Scripts
+## � Environment & Configuration
+
+### Verify Sanity Environment
+
+```bash
+npm run verify:env
+```
+
+**Purpose:** Validates that environment variables are correctly configured for:
+- Local development (.env.local)
+- Sanity Studio connection
+- Production deployment (Netlify)
+- Live GROQ query tests
+
+**What it checks:**
+- ✅ All required environment variables exist
+- ✅ Sanity API connection works
+- ✅ API token has correct permissions
+- ✅ Draft filtering is working properly
+- ✅ Content counts (products, blog posts, etc.)
+
+**Output Example:**
+```
+🔍 SANITY CMS ENVIRONMENT VALIDATION
+
+📋 Environment Variables:
+┌─────────────┬──────────────────────────────┐
+│ Project ID  │ 'as5tildt'                   │
+│ Dataset     │ 'production'                 │
+│ API Version │ '2024-01-01'                 │
+│ API Token   │ '✅ SET (hidden)'            │
+└─────────────┴──────────────────────────────┘
+
+🌐 Testing Sanity API Connection...
+✅ Found 153 active products
+✅ Found 8 published blog posts
+✅ Draft filtering working: 0 drafts, 387 published
+
+Results: 5 passed | 0 failed | 0 warnings
+```
+
+**When to use:**
+- Before deploying to Netlify
+- After updating environment variables
+- When troubleshooting Sanity connection issues
+- To verify draft filtering is working correctly
+
+---
+
+## �📤📥 Product Export/Import Scripts
 
 ### Export Scripts
 
