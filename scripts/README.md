@@ -49,6 +49,82 @@ Results: 5 passed | 0 failed | 0 warnings
 - When troubleshooting Sanity connection issues
 - To verify draft filtering is working correctly
 
+### Post-Deployment QA Validation
+
+```bash
+# Test local development
+npm run qa:deploy
+
+# Test production deployment
+npm run qa:deploy https://magical-starburst-38d690.netlify.app
+```
+
+**Purpose:** Comprehensive post-deployment validation suite that tests:
+- 🌐 Live site accessibility and content rendering
+- 🔗 Dynamic routes (blog posts, products, categories)
+- 📋 Environment variable synchronization
+- 🔒 Sanity draft filtering in production
+- ⚙️  Build configuration (ESLint, exports)
+- 🤖 SEO files (robots.txt, sitemap.xml)
+- 💡 Performance audit (Lighthouse, optional)
+
+**What it validates:**
+- ✅ Homepage and static pages load correctly
+- ✅ Blog posts and product pages render
+- ✅ No draft content leaks to production
+- ✅ Content counts match expectations (153 products, 8 blog posts)
+- ✅ ESLint version compatibility (8.57.0)
+- ✅ getBlogPostBySlug export exists
+- ✅ robots.txt and sitemap.xml are valid
+- ✅ Performance, accessibility, and SEO scores (if Lighthouse installed)
+
+**Output Example:**
+```
+🚀 POST-DEPLOYMENT QA VALIDATION
+🌐 Testing Site: https://magical-starburst-38d690.netlify.app
+
+📋 1. ENVIRONMENT VARIABLES
+   ✅ NEXT_PUBLIC_SANITY_PROJECT_ID
+   ✅ NEXT_PUBLIC_SANITY_DATASET
+
+🌐 2. SANITY CMS DATA VALIDATION
+   ✅ Found 153 products (expected 153)
+   ✅ Found 8 blog posts (expected 8)
+
+🌍 3. LIVE SITE ACCESSIBILITY
+   ✅ Homepage accessible (200)
+   ✅ /products (200)
+
+🔗 4. DYNAMIC ROUTES
+   ✅ /blog/[slug] working
+
+🤖 5. SEO FILES
+   ✅ robots.txt valid
+   ✅ sitemap.xml with 204 URLs
+
+⚙️  6. BUILD CONFIGURATION
+   ✅ ESLint 8.57.0
+   ✅ getBlogPostBySlug exported
+
+💡 7. LIGHTHOUSE AUDIT
+   ✅ Performance: 92/100
+   ✅ Accessibility: 95/100
+
+📊 Results: 25 passed | 0 failed
+```
+
+**Lighthouse Setup (Optional):**
+```bash
+# Install globally for performance audits
+npm i -g lighthouse
+```
+
+**When to use:**
+- ✅ After every Netlify deployment
+- ✅ Before announcing new releases
+- ✅ During troubleshooting
+- ✅ Weekly health checks
+
 ---
 
 ## �📤📥 Product Export/Import Scripts
