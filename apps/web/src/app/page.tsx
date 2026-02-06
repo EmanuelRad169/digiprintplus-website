@@ -16,7 +16,7 @@ export default async function HomePage() {
   
   let heroSlides;
   let ctaData;
-  let featuredProducts;
+  let featuredProducts: any[] = [];
   let homepageSettings;
 
   try {

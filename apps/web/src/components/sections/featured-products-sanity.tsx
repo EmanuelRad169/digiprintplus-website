@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { urlForImage } from "@/lib/sanity/image";
+import { urlFor } from "@/lib/sanity/image";
 import type { FeaturedProduct } from "@/lib/sanity/homepageFetchers";
 
 interface ProductCarouselProps {
@@ -202,12 +202,12 @@ export default function ProductCarousel({
             >
               {visibleProducts.map((product, index) => {
                 const imageUrl = product.image 
-                  ? urlForImage(product.image).width(400).height(400).url()
+                  ? urlFor(product.image).width(400).height(400).url()
                   : '/placeholder-product.png';
 
                 return (
                   <motion.div
-                    key={`${product.id || product.slug}-${startIndex}-${index}`}
+                    key={`${product._id || product.slug}-${startIndex}-${index}`}
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.05 }}
@@ -217,7 +217,7 @@ export default function ProductCarousel({
                     <Link
                       href={product.href || `/products/${product.slug}`}
                       className="group relative w-full aspect-square rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer shadow-black/30 block"
-                      onMouseEnter={() => setHoveredItem(product.id || product.slug)}
+                      onMouseEnter={() => setHoveredItem(product._id || product.slug)}
                       onMouseLeave={() => setHoveredItem(null)}
                     >
                       {/* Background gradient */}
@@ -236,7 +236,7 @@ export default function ProductCarousel({
 
                       {/* Product info overlay */}
                       <AnimatePresence>
-                        {hoveredItem === (product.id || product.slug) && (
+                        {hoveredItem === (product._id || product.slug) && (
                           <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
