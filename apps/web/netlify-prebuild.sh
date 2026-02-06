@@ -79,4 +79,18 @@ for route in "${PROBLEMATIC_ROUTES[@]}"; do
 done
 
 echo "✅ All components verified"
+
+# Debug: Verify critical Sanity fetchers exist
+echo "🔍 Verifying Sanity fetchers..."
+if [ -f "src/lib/sanity/fetchers.ts" ]; then
+    echo "   ✓ fetchers.ts exists"
+    if grep -q "export async function getBlogPostBySlug" src/lib/sanity/fetchers.ts; then
+        echo "   ✓ getBlogPostBySlug function found"
+    else
+        echo "   ⚠️  getBlogPostBySlug function NOT found"
+    fi
+else
+    echo "   ❌ fetchers.ts NOT found"
+fi
+
 echo "🚀 Ready for build..."

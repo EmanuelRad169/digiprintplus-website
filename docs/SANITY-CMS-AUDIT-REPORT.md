@@ -24,6 +24,7 @@ The Sanity CMS integration has been audited and optimized for Netlify's static h
 All required environment variables are properly configured:
 
 **netlify.toml Configuration:**
+
 ```toml
 NEXT_PUBLIC_SANITY_PROJECT_ID = "as5tildt"
 NEXT_PUBLIC_SANITY_DATASET = "production"
@@ -36,6 +37,7 @@ NEXT_PUBLIC_SITE_URL = "https://marvelous-treacle-ca0286.netlify.app"
 ```
 
 **Fallback Behavior:**
+
 - `next.config.js`: Provides hardcoded fallbacks for `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET`
 - `sanity.ts`: Validates environment variables with intelligent fallbacks during build process
 
@@ -48,6 +50,7 @@ NEXT_PUBLIC_SITE_URL = "https://marvelous-treacle-ca0286.netlify.app"
 **File:** `apps/web/src/lib/sanity.ts`
 
 **Key Features:**
+
 1. **CDN Disabled:** `useCdn: false` - ensures fresh data for static builds
 2. **Token Authentication:** Server-side requests use `SANITY_API_TOKEN` for read access
 3. **Perspective Switching:** Automatically switches to `previewDrafts` in draft mode
@@ -57,6 +60,7 @@ NEXT_PUBLIC_SITE_URL = "https://marvelous-treacle-ca0286.netlify.app"
    - Draft Mode: Uses `visualEditingClient` (preview with Stega)
 
 **Client Configuration:**
+
 ```typescript
 {
   projectId: "as5tildt",
@@ -87,11 +91,13 @@ All queries properly filter for published content:
 ```
 
 **Fallback Handling:**
+
 - All fetchers include try-catch blocks
 - Returns empty arrays `[]` on error
 - Console logging for debugging
 
 **Data Fetched:**
+
 - ✅ Templates (150+ products)
 - ✅ Template Categories (24+ categories)
 - ✅ Blog Posts (8 posts)
@@ -108,12 +114,14 @@ All queries properly filter for published content:
 **Build Mode:** Static Export (`output: "export"`)
 
 **Page Configuration:**
+
 ```typescript
 export const dynamic = "force-static";
 export const revalidate = false;
 ```
 
 **Key Pages:**
+
 - `/` - Homepage (static)
 - `/templates` - Templates listing (static with 150+ products)
 - `/products/[slug]` - Product pages (150+ pre-rendered)
@@ -121,6 +129,7 @@ export const revalidate = false;
 - `/services/[slug]` - Service pages (3 pre-rendered)
 
 **Build Output:**
+
 ```
 ✓ Exporting (all routes)
 ○ (Static) prerendered as static content
@@ -136,12 +145,14 @@ export const revalidate = false;
 **Issue:** API routes (`/api/draft`, `/api/webhook`) are incompatible with `output: "export"`
 
 **Solution:**
+
 - ✅ Removed `/api/draft` route
 - ✅ Removed `/api/webhook` route
 - ✅ Webhook handling moved to Netlify Functions (`netlify/functions/sanity-webhook.ts`)
 - ⚠️ Draft mode not supported in static export (acceptable trade-off)
 
 **Note:** Draft mode requires server-side rendering. For preview functionality, consider:
+
 - Using Sanity Studio's preview pane
 - Deploying a separate preview environment with `output: "standalone"`
 
@@ -154,6 +165,7 @@ export const revalidate = false;
 **File:** `netlify.toml`
 
 **Build Configuration:**
+
 ```toml
 [build]
   base = "apps/web"
@@ -165,11 +177,13 @@ export const revalidate = false;
 ```
 
 **Build Environment:**
+
 - Node Version: 18.17.0
 - Build Timeout: Default (15 minutes)
 - Functions: Webhook endpoint for Sanity CMS triggers
 
 **Security Headers:**
+
 ```toml
 X-Frame-Options = "DENY"
 X-XSS-Protection = "1; mode=block"
@@ -182,13 +196,15 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 ## 🔧 Issues Fixed During Audit
 
 ### 1. **Unused Import in Blog Page**
+
 - **File:** `apps/web/src/app/blog/[slug]/page.tsx`
 - **Issue:** Imported `getAllBlogSlugs` but used `getAllBlogPosts` instead
 - **Fix:** Removed unused import
 - **Commit:** `3b27d4a`
 
 ### 2. **API Routes Breaking Static Export**
-- **Files:** 
+
+- **Files:**
   - `apps/web/src/app/api/draft/route.ts`
   - `apps/web/src/app/api/webhook/route.ts` (already removed)
 - **Issue:** API routes incompatible with `output: "export"`
@@ -196,18 +212,21 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 - **Commit:** `ae77e7e`
 
 ### 3. **TypeScript Type Errors**
+
 - **File:** `apps/web/src/app/page.tsx`
 - **Issue:** Implicit `any[]` type on `featuredProducts`
 - **Fix:** Added explicit type annotation
 - **Commit:** `ae77e7e`
 
 ### 4. **urlForImage Import Error**
+
 - **File:** `apps/web/src/components/sections/featured-products-sanity.tsx`
 - **Issue:** Imported non-existent `urlForImage` function
 - **Fix:** Changed to `urlFor` (actual export from `@/lib/sanity/image`)
 - **Previous commit**
 
 ### 5. **Next.js 15 draftMode() Async Compatibility**
+
 - **File:** `apps/web/src/app/api/draft/route.ts`
 - **Issue:** `draftMode()` is now async in Next.js 15
 - **Fix:** Used `(await draftMode()).enable()`
@@ -265,21 +284,25 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 ## ⚠️ Limitations & Trade-offs
 
 ### 1. **No ISR (Incremental Static Regeneration)**
+
 - **Impact:** Content updates require full site rebuild
 - **Mitigation:** Sanity webhook triggers automatic rebuild (~3-5 minutes)
 - **Alternative:** Use `output: "standalone"` for ISR support
 
 ### 2. **No Draft Mode**
+
 - **Impact:** Cannot preview unpublished content on production site
 - **Mitigation:** Use Sanity Studio's built-in preview pane
 - **Alternative:** Deploy separate preview environment
 
 ### 3. **No API Routes**
+
 - **Impact:** Cannot handle real-time form submissions via Next.js API
 - **Mitigation:** Use Netlify Functions or external form handlers
 - **Status:** Quote form may need Netlify Function (currently client-side)
 
 ### 4. **Build Time Data Fetching Only**
+
 - **Impact:** New content not visible until rebuild completes
 - **Mitigation:** Webhook automation ensures timely updates
 - **Acceptable:** Most CMS content changes are infrequent
@@ -289,12 +312,14 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 ## 🚀 Recommendations
 
 ### Immediate Actions
+
 1. ✅ All fixes applied and pushed (commits: 3b27d4a, ae77e7e)
 2. ✅ Monitor Netlify deployment dashboard for successful build
 3. ⏳ Verify webhook endpoint responds: `curl https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook`
 4. ⏳ Test Sanity webhook in Studio after deployment
 
 ### Future Enhancements
+
 1. **Consider Hybrid Approach:**
    - Static pages for product/template listings
    - Server-side rendering for dynamic content (quotes, search)
@@ -320,6 +345,7 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 ## 📊 Build Statistics
 
 **Last Successful Build:**
+
 - Total Pages: 180+ routes
 - Build Time: ~6-8 minutes
 - Output Size: ~204KB first load JS
@@ -329,6 +355,7 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 - Product Categories: 24 generated
 
 **Data Fetching:**
+
 - All CMS queries successful
 - No runtime API calls (build-time only)
 - Fallback handling prevents build failures
@@ -342,6 +369,7 @@ The Sanity CMS integration is **production-ready** for Netlify deployment. All c
 **Status:** ✅ APPROVED FOR PRODUCTION
 
 **Next Steps:**
+
 1. Monitor Netlify deployment (commit ae77e7e)
 2. Test webhook functionality after deployment
 3. Configure Sanity Studio webhook settings
