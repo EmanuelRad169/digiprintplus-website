@@ -1,6 +1,11 @@
 import { sanityClient, getSanityClient } from "@/lib/sanity";
 import type { SiteSettings } from "@/types/siteSettings";
 
+// Module loading verification for Netlify debugging
+if (typeof window === "undefined") {
+  console.log("✅ Sanity fetchers module loaded successfully");
+}
+
 // Template Types
 export interface TemplateCategory {
   _id: string;
@@ -1624,4 +1629,19 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
     console.error("Error fetching site settings:", error);
     return null;
   }
+}
+
+// Export verification for Netlify debugging
+if (typeof window === "undefined") {
+  const exports = {
+    getAllTemplateCategories,
+    getAllTemplates,
+    getTemplateBySlug,
+    getAllBlogPosts,
+    getBlogPostBySlug,
+    getFeaturedBlogPosts,
+    getAllBlogSlugs,
+    getBlogCategories,
+  };
+  console.log("✅ Sanity fetchers exports:", Object.keys(exports).join(", "));
 }

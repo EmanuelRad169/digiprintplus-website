@@ -57,6 +57,7 @@ NEXT_PUBLIC_SITE_URL = "https://marvelous-treacle-ca0286.netlify.app"
 4. **Environment-Based Client Selection:**
    - Browser: Uses `sanityClientNoToken` (public access)
    - Server: Uses `sanityClient` (authenticated)
+
    - Draft Mode: Uses `visualEditingClient` (preview with Stega)
 
 **Client Configuration:**
@@ -87,6 +88,7 @@ All queries properly filter for published content:
 *[_type == "template" 
   && !(_id in path('drafts.**')) 
   && (!defined(status) || status == "published")
+
 ] | order(publishedAt desc)
 ```
 
@@ -154,6 +156,7 @@ export const revalidate = false;
 **Note:** Draft mode requires server-side rendering. For preview functionality, consider:
 
 - Using Sanity Studio's preview pane
+
 - Deploying a separate preview environment with `output: "standalone"`
 
 ---
@@ -170,6 +173,7 @@ export const revalidate = false;
 [build]
   base = "apps/web"
   command = "chmod +x netlify-prebuild.sh && ./netlify-prebuild.sh && NETLIFY=true npm run build"
+
   publish = "out"
 
 [functions]
@@ -188,7 +192,8 @@ export const revalidate = false;
 X-Frame-Options = "DENY"
 X-XSS-Protection = "1; mode=block"
 X-Content-Type-Options = "nosniff"
-Referrer-Policy = "strict-origin-when-cross-origin"
+
+Referrer-Polcy = "strict-origin-when-cross-origin"
 ```
 
 ---
@@ -208,6 +213,7 @@ Referrer-Policy = "strict-origin-when-cross-origin"
   - `apps/web/src/app/api/draft/route.ts`
   - `apps/web/src/app/api/webhook/route.ts` (already removed)
 - **Issue:** API routes incompatible with `output: "export"`
+
 - **Fix:** Removed all API routes; webhooks handled by Netlify Functions
 - **Commit:** `ae77e7e`
 
@@ -265,6 +271,7 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 │  • Verifies Sanity signature                │
 │  • Triggers Netlify build hook              │
 │  • Auto-rebuilds site on CMS updates        │
+
 └─────────────────────────────────────────────┘
 ```
 
@@ -275,6 +282,7 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 1. **Environment Isolation:** No local data leaks; proper env var management
 2. **Security:** API tokens server-side only; webhook signature verification
 3. **Performance:** Static export with ~200KB first load JS
+
 4. **SEO:** All pages pre-rendered with metadata
 5. **Scalability:** 150+ products pre-built without performance issues
 6. **Monitoring:** Console logging for build-time data fetching
