@@ -3,7 +3,7 @@
   # Base directory where the build will run
   base = "apps/web"
   # Build command
-  command = "chmod +x netlify-prebuild.sh && ./netlify-prebuild.sh && NETLIFY=true npm run build"
+  command = "NETLIFY=true npm run build"
   # Publish directory (relative to base)
   publish = "out"
 
