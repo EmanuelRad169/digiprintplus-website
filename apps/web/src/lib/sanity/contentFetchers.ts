@@ -41,7 +41,7 @@ export interface HeroSlide {
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {
   const query = `
-    *[_type == "heroSlide" && isActive == true] | order(order asc) {
+    *[_type == "heroSlide" && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       title,
       subtitle,
@@ -96,7 +96,7 @@ export interface Service {
 
 export async function getServices(): Promise<Service[]> {
   const query = `
-    *[_type == "service" && isActive == true] | order(order asc) {
+    *[_type == "service" && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       title,
       slug,
@@ -122,7 +122,7 @@ export async function getServices(): Promise<Service[]> {
 
 export async function getFeaturedServices(): Promise<Service[]> {
   const query = `
-    *[_type == "service" && isActive == true && isFeatured == true] | order(order asc) {
+    *[_type == "service" && isActive == true && isFeatured == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       title,
       slug,
@@ -148,7 +148,7 @@ export async function getFeaturedServices(): Promise<Service[]> {
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
   const query = `
-    *[_type == "service" && slug.current == $slug && isActive == true][0] {
+    *[_type == "service" && slug.current == $slug && isActive == true && !(_id in path('drafts.**'))][0] {
       _id,
       title,
       slug,
@@ -202,7 +202,7 @@ export interface AboutSection {
 
 export async function getAboutSections(): Promise<AboutSection[]> {
   const query = `
-    *[_type == "aboutSection" && isActive == true] | order(order asc) {
+    *[_type == "aboutSection" && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       sectionType,
       title,
@@ -227,7 +227,7 @@ export async function getAboutSectionByType(
   sectionType: string,
 ): Promise<AboutSection | null> {
   const query = `
-    *[_type == "aboutSection" && sectionType == $sectionType && isActive == true][0] {
+    *[_type == "aboutSection" && sectionType == $sectionType && isActive == true && !(_id in path('drafts.**'))][0] {
       _id,
       sectionType,
       title,
@@ -265,7 +265,7 @@ export interface ContactInfo {
 
 export async function getContactInfo(): Promise<ContactInfo[]> {
   const query = `
-    *[_type == "contactInfo" && isActive == true] | order(order asc) {
+    *[_type == "contactInfo" && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       type,
       title,
@@ -284,7 +284,7 @@ export async function getContactInfo(): Promise<ContactInfo[]> {
 
 export async function getMainContactInfo(): Promise<ContactInfo[]> {
   const query = `
-    *[_type == "contactInfo" && isActive == true && isMainContact == true] | order(order asc) {
+    *[_type == "contactInfo" && isActive == true && isMainContact == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       type,
       title,
@@ -319,7 +319,7 @@ export interface FAQItem {
 
 export async function getFAQItems(): Promise<FAQItem[]> {
   const query = `
-    *[_type == "faqItem" && isActive == true] | order(order asc) {
+    *[_type == "faqItem" && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       question,
       answer,
@@ -339,7 +339,7 @@ export async function getFAQItems(): Promise<FAQItem[]> {
 
 export async function getPopularFAQs(): Promise<FAQItem[]> {
   const query = `
-    *[_type == "faqItem" && isActive == true && isPopular == true] | order(order asc) {
+    *[_type == "faqItem" && isActive == true && isPopular == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       question,
       answer,
@@ -359,7 +359,7 @@ export async function getPopularFAQs(): Promise<FAQItem[]> {
 
 export async function getFAQsByCategory(category: string): Promise<FAQItem[]> {
   const query = `
-    *[_type == "faqItem" && category == $category && isActive == true] | order(order asc) {
+    *[_type == "faqItem" && category == $category && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       question,
       answer,
@@ -399,7 +399,7 @@ export interface CTASection {
 
 export async function getCTASections(): Promise<CTASection[]> {
   const query = `
-    *[_type == "ctaSection" && isActive == true] | order(sectionId asc) {
+    *[_type == "ctaSection" && isActive == true && !(_id in path('drafts.**'))] | order(sectionId asc) {
       _id,
       title,
       description,
@@ -418,7 +418,7 @@ export async function getCTASectionById(
   sectionId: string,
 ): Promise<CTASection | null> {
   const query = `
-    *[_type == "ctaSection" && sectionId == $sectionId && isActive == true][0] {
+    *[_type == "ctaSection" && sectionId == $sectionId && isActive == true && !(_id in path('drafts.**'))][0] {
       _id,
       title,
       description,
@@ -478,7 +478,7 @@ export interface QuoteSettings {
 
 export async function getQuoteSettings(): Promise<QuoteSettings | null> {
   const query = `
-    *[_type == "quoteSettings"][0] {
+    *[_type == "quoteSettings" && !(_id in path('drafts.**'))][0] {
       _id,
       formTitle,
       jobSpecsStep,
@@ -508,7 +508,7 @@ export async function getPageSettings(
   pageId: string,
 ): Promise<PageSettings | null> {
   const query = `
-    *[_type == "pageSettings" && pageId == $pageId][0] {
+    *[_type == "pageSettings" && pageId == $pageId && !(_id in path('drafts.**'))][0] {
       _id,
       pageId,
       title,
@@ -550,7 +550,7 @@ export interface AboutPageData {
 
 export async function getAboutPageData(): Promise<AboutPageData | null> {
   const query = `
-    *[_type == "aboutPage" && isActive == true][0] {
+    *[_type == "aboutPage" && isActive == true && !(_id in path('drafts.**'))][0] {
       _id,
       title,
       subtitle,

@@ -1301,7 +1301,7 @@ export async function getAllBlogPosts(isPreview = false): Promise<BlogPost[]> {
           publishedAt,
           featured
         }`
-      : `*[_type == "post" && !(_id in path('drafts.**'))] | order(publishedAt desc) {
+      : `*[_type == "post" && !(_id in path('drafts.**')) && defined(publishedAt)] | order(publishedAt desc) {
           _id,
           title,
           slug,
@@ -1400,7 +1400,7 @@ export async function getBlogPostBySlug(
             noIndex
           }
         }`
-      : `*[_type == "post" && slug.current == $slug && !(_id in path('drafts.**'))][0] {
+      : `*[_type == "post" && slug.current == $slug && !(_id in path('drafts.**')) && defined(publishedAt)][0] {
           _id,
           title,
           slug,

@@ -48,7 +48,7 @@ export async function getHomepageSettings(): Promise<HomepageSettings | null> {
   const client = getSanityClient();
   
   const query = `
-    *[_type == "homepageSettings"][0]{
+    *[_type == "homepageSettings" && !(_id in path('drafts.**'))][0]{
       _id,
       featuredProducts[isActive == true]{
         "id": product->slug.current,
@@ -79,7 +79,7 @@ export async function getFAQCategories(): Promise<FAQCategory[]> {
   const client = getSanityClient();
   
   const query = `
-    *[_type == "faqCategory" && isActive == true] | order(order asc) {
+    *[_type == "faqCategory" && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
       title,
       slug,
@@ -110,7 +110,7 @@ export async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
   const client = getSanityClient();
   
   const query = `
-    *[_type == "homepageSettings"][0].featuredProducts[isActive == true]{
+    *[_type == "homepageSettings" && !(_id in path('drafts.**'))][0].featuredProducts[isActive == true]{
       "id": product->slug.current,
       "title": coalesce(customTitle, product->title),
       "slug": product->slug.current,
@@ -127,7 +127,7 @@ export async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
     // If no featured products configured, fall back to first 15 product categories
     if (!products || products.length === 0) {
       const fallbackQuery = `
-        *[_type == "productCategory"][0...15] | order(_createdAt desc) {
+        *[_type == "productCategory" && !(_id in path('drafts.**'))][0...15] | order(_createdAt desc) {
           "id": slug.current,
           "title": title,
           "slug": slug.current,
