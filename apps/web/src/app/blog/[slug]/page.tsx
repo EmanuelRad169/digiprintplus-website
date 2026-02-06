@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import {
-  getAllBlogSlugs,
   getBlogPostBySlug,
   getAllBlogPosts,
 } from "@/lib/sanity/fetchers";
