@@ -1,0 +1,7 @@
+# Netlify redirects for Next.js static export
+
+# Handle 404s
+/*    /404.html   404
+
+# Spa fallback (disabled for static export)
+# /*    /index.html   200

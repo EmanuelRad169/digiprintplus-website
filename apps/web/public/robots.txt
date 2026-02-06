@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow admin and internal pages
+Disallow: /api/
+Disallow: /admin/
+Disallow: /studio/
+
+# Sitemap location
+Sitemap: https://magical-starburst-38d690.netlify.app/sitemap.xml
