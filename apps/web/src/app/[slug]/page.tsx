@@ -5,7 +5,6 @@ import Image from "next/image";
 import {
   getPageBySlug,
   getAboutPage,
-  getFinishingPage,
 } from "@/lib/sanity/fetchers";
 import { PortableTextRenderer } from "@/components/portable-text";
 

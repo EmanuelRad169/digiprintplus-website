@@ -1,6 +1,8 @@
 # Quick Setup: Sanity Webhook → Netlify Rebuild
 
 ## 🎯 Goal
+
+
 Automatically trigger Netlify rebuilds when templates are published in Sanity Studio.
 
 ---
@@ -8,8 +10,8 @@ Automatically trigger Netlify rebuilds when templates are published in Sanity St
 ## ⚡ Quick Steps (5 minutes)
 
 ### 1️⃣ Create Netlify Build Hook
-
-1. **Go to**: https://app.netlify.com → Your Site → **Site Settings**
+<https://app.netlify.com>
+1. **Go to**: <https://app.netlify.com> → Your Site → **Site Settings**
 2. Navigate to: **Build & deploy** → **Build hooks**
 3. Click: **Add build hook**
 4. Enter:
@@ -28,8 +30,8 @@ Automatically trigger Netlify rebuilds when templates are published in Sanity St
 5. **Important**: Trigger a manual deploy to apply the env variable
 
 ### 3️⃣ Configure Webhook in Sanity Studio
-
-1. **Go to**: https://dppadmin.sanity.studio
+<https://dppadmin.sanity.studio>
+1. **Go to**: <https://dppadmin.sanity.studio>
 2. Click **Manage** (top right) → **API** → **Webhooks**
 3. Click **Create webhook**
 4. Enter these details:
@@ -47,7 +49,7 @@ Automatically trigger Netlify rebuilds when templates are published in Sanity St
 
 5. Click **Save**
 
-### 4️⃣ Test It!
+### 4️⃣ Test It
 
 1. In Sanity webhook settings, click **Test webhook**
 2. Should return: `200 OK` with message "Webhook received and Netlify build triggered"
@@ -86,9 +88,9 @@ Updated content live! ✨
 ---
 
 ## 🔗 Useful Links
-
-- **Netlify Dashboard**: https://app.netlify.com
-- **Sanity Studio**: https://dppadmin.sanity.studio
+<https://app.netlify.com>
+- **Netlify Dashboard<https://dppadmin.sanity.studio>
+- **Sanity Studio**: <https://dppadmin.sanity.studio>
 - **Detailed Docs**: `/docs/sanity-webhook-setup.md`
 
 ---
