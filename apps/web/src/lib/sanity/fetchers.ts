@@ -1632,16 +1632,16 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
 }
 
 // Export verification for Netlify debugging
-if (typeof window === "undefined") {
-  const exports = {
-    getAllTemplateCategories,
-    getAllTemplates,
-    getTemplateBySlug,
-    getAllBlogPosts,
-    getBlogPostBySlug,
-    getFeaturedBlogPosts,
-    getAllBlogSlugs,
-    getBlogCategories,
-  };
-  console.log("✅ Sanity fetchers exports:", Object.keys(exports).join(", "));
-}
+// if (typeof window === "undefined") {
+//   const exports = {
+//     getAllTemplateCategories,
+//     getAllTemplates,
+//     getTemplateBySlug,
+//     getAllBlogPosts,
+//     getBlogPostBySlug,
+//     getFeaturedBlogPosts,
+//     getAllBlogSlugs,
+//     getBlogCategories,
+//   };
+//   console.log("✅ Sanity fetchers exports:", Object.keys(exports).join(", "));
+// }
