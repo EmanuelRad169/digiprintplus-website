@@ -1,5 +1,21 @@
 import { createClient, type SanityClient } from "@sanity/client";
 
+// 🧪 DEBUG: Log environment variables for Netlify troubleshooting
+if (typeof window === "undefined") {
+  console.log("📦 ENV DEBUG:", {
+    sanityProjectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    sanityDataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+    apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+    studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL,
+    tokenExists: Boolean(process.env.SANITY_API_TOKEN),
+    revalidateSecret: Boolean(process.env.SANITY_REVALIDATE_SECRET),
+    webhookSecret: Boolean(process.env.SANITY_WEBHOOK_SECRET),
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    nodeEnv: process.env.NODE_ENV,
+    netlify: Boolean(process.env.NETLIFY),
+  });
+}
+
 // Configuration interface
 interface SanityConfig {
   projectId: string;
