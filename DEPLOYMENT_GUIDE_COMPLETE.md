@@ -18,21 +18,23 @@ npm run verify:deployment https://your-site.netlify.app
 
 ## Scripts Overview
 
-| Script | Command | Purpose |
-|--------|---------|---------|
-| **Auto-Fix** | `npm run fix:deploy` | Automatically fixes common deployment issues |
-| **Audit** | `npm run audit:deploy` | Comprehensive 6-phase audit of deployment readiness |
-| **Verify Deployment** | `npm run verify:deployment [URL]` | Tests all routes after deployment |
-| **Verify Environment** | `npm run verify:env` | Quick Sanity connection check |
+| Script                 | Command                           | Purpose                                             |
+| ---------------------- | --------------------------------- | --------------------------------------------------- |
+| **Auto-Fix**           | `npm run fix:deploy`              | Automatically fixes common deployment issues        |
+| **Audit**              | `npm run audit:deploy`            | Comprehensive 6-phase audit of deployment readiness |
+| **Verify Deployment**  | `npm run verify:deployment [URL]` | Tests all routes after deployment                   |
+| **Verify Environment** | `npm run verify:env`              | Quick Sanity connection check                       |
 
 ## Complete Deployment Process
 
 ### Phase 1: Pre-Deployment Checks
 
 1. **Run Auto-Fix**
+
    ```bash
    npm run fix:deploy
    ```
+
    This will:
    - ✅ Update `robots.ts` to use environment variables
    - ✅ Update `sitemap.ts` to use environment variables
@@ -42,9 +44,11 @@ npm run verify:deployment https://your-site.netlify.app
    - ✅ Generate `DEPLOYMENT_CHECKLIST.md`
 
 2. **Run Comprehensive Audit**
+
    ```bash
    npm run audit:deploy
    ```
+
    This checks:
    - Environment variables (local vs Netlify)
    - Sanity connection & dataset
@@ -59,12 +63,14 @@ npm run verify:deployment https://your-site.netlify.app
 ### Phase 2: Local Testing
 
 1. **Test Static Build**
+
    ```bash
    cd apps/web
    npm run build
    ```
 
 2. **Serve Locally**
+
    ```bash
    npx serve@latest out
    ```
@@ -93,7 +99,8 @@ SANITY_API_TOKEN=your-token-here
 NEXT_PUBLIC_SITE_URL=https://your-site.netlify.app
 ```
 
-**Important**: 
+**Important**:
+
 - Get `SANITY_API_TOKEN` from Sanity.io dashboard
 - Update `NEXT_PUBLIC_SITE_URL` to your actual Netlify URL
 - Ensure all values match your production environment
@@ -105,9 +112,11 @@ NEXT_PUBLIC_SITE_URL=https://your-site.netlify.app
 3. **Node version**: `18` or higher
 
 Set these in:
+
 - **Settings** → **Build & deploy** → **Build settings**
 
 Or create/update `netlify.toml`:
+
 ```toml
 [build]
   command = "npm run build:netlify"
@@ -120,6 +129,7 @@ Or create/update `netlify.toml`:
 ### Phase 4: Deploy
 
 1. **Push to GitHub**
+
    ```bash
    git add .
    git commit -m "chore: deployment ready"
@@ -138,6 +148,7 @@ Or create/update `netlify.toml`:
 ### Phase 5: Post-Deployment Verification
 
 1. **Run Verification Script**
+
    ```bash
    npm run verify:deployment https://your-site.netlify.app
    ```
@@ -162,6 +173,7 @@ Or create/update `netlify.toml`:
 **Symptoms**: Product or blog pages show 404 errors
 
 **Solutions**:
+
 1. Check Netlify deploy logs for "Page not found" errors
 2. Verify `generateStaticParams()` exists in dynamic route files
 3. Ensure Sanity content has valid slugs:
@@ -176,6 +188,7 @@ Or create/update `netlify.toml`:
 **Symptoms**: Pages load but show no content from Sanity
 
 **Solutions**:
+
 1. Verify environment variables in Netlify dashboard
 2. Check `SANITY_API_TOKEN` has read permissions
 3. Ensure `NEXT_PUBLIC_SANITY_DATASET` is set to "production"
@@ -190,6 +203,7 @@ Or create/update `netlify.toml`:
 **Symptoms**: /robots.txt or /sitemap.xml return 404
 
 **Solutions**:
+
 1. Verify files have `dynamic = 'force-static'` export:
    - `apps/web/src/app/robots.ts`
    - `apps/web/src/app/sitemap.ts`
@@ -221,27 +235,28 @@ Or create/update `netlify.toml`:
 
 ### Required for Frontend (digiprint-main-web)
 
-| Variable | Example | Description |
-|----------|---------|-------------|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | `as5tildt` | Sanity project ID |
-| `NEXT_PUBLIC_SANITY_DATASET` | `production` | Sanity dataset name |
-| `NEXT_PUBLIC_SANITY_API_VERSION` | `2024-01-01` | Sanity API version |
-| `SANITY_API_TOKEN` | `sk...` | Sanity API token (read permissions) |
-| `NEXT_PUBLIC_SITE_URL` | `https://your-site.com` | Production site URL |
+| Variable                         | Example                 | Description                         |
+| -------------------------------- | ----------------------- | ----------------------------------- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID`  | `as5tildt`              | Sanity project ID                   |
+| `NEXT_PUBLIC_SANITY_DATASET`     | `production`            | Sanity dataset name                 |
+| `NEXT_PUBLIC_SANITY_API_VERSION` | `2024-01-01`            | Sanity API version                  |
+| `SANITY_API_TOKEN`               | `sk...`                 | Sanity API token (read permissions) |
+| `NEXT_PUBLIC_SITE_URL`           | `https://your-site.com` | Production site URL                 |
 
 ### Optional Variables
 
-| Variable | Purpose |
-|----------|---------|
+| Variable                   | Purpose                |
+| -------------------------- | ---------------------- |
 | `SANITY_REVALIDATE_SECRET` | For draft/preview mode |
-| `NEXT_PUBLIC_GA4_ID` | Google Analytics 4 |
-| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager |
+| `NEXT_PUBLIC_GA4_ID`       | Google Analytics 4     |
+| `NEXT_PUBLIC_GTM_ID`       | Google Tag Manager     |
 
 ## Sanity Configuration
 
 ### Required Permissions
 
 Your `SANITY_API_TOKEN` must have:
+
 - ✅ **Viewer** role (read access)
 - ✅ Access to the `production` dataset
 
@@ -262,6 +277,7 @@ Your `SANITY_API_TOKEN` must have:
 3. **All Content**: Must be published (not drafts)
 
 Check in Sanity Studio or run:
+
 ```bash
 npm run audit:deploy
 ```
@@ -299,6 +315,7 @@ npm run dev:studio              # Start Sanity Studio
 ## Support
 
 If you encounter issues not covered here:
+
 1. Check build logs in Netlify dashboard
 2. Run `npm run audit:deploy` for diagnostic info
 3. Review Sanity Studio content

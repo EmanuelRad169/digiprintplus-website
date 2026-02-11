@@ -20,6 +20,7 @@ When you test with a basic HTTP server (like Python's http.server), you get 404s
 ```
 
 **But on Netlify**, this is handled automatically:
+
 ```
 ✅ /about         → Serves about.html (automatic!)
 ✅ /products/foo  → Serves products/foo.html (automatic!)
@@ -35,7 +36,7 @@ Checked your `apps/web/out/` directory:
 
 - ✅ **index.html** - Homepage
 - ✅ **about.html** - About page
-- ✅ **services.html** - Services page  
+- ✅ **services.html** - Services page
 - ✅ **products.html** - Products listing
 - ✅ **contact.html** - Contact page
 - ✅ **robots.txt** - SEO file
@@ -45,6 +46,7 @@ Checked your `apps/web/out/` directory:
 ### 🧪 Local Testing Results
 
 Using basic HTTP server (python):
+
 - ✅ `/` (index.html) - Works
 - ✅ `/robots.txt` - Works
 - ✅ `/sitemap.xml` - Works
@@ -52,6 +54,7 @@ Using basic HTTP server (python):
 - ✅ `/products/business-cards-premium.html` - Works (with .html)
 
 Using clean URLs (without .html):
+
 - ❌ `/about` - 404 (expected with basic server)
 - ❌ `/products/business-cards-premium` - 404 (expected with basic server)
 
@@ -62,6 +65,7 @@ Using clean URLs (without .html):
 ## 🚀 Why This Will Work on Netlify
 
 Netlify automatically:
+
 1. **Rewrites URLs**: `/about` → `about.html`
 2. **Handles dynamic routes**: `/products/[slug]` → `products/[slug].html`
 3. **Serves clean URLs** without showing `.html` extensions
@@ -146,7 +150,7 @@ Before deploying to Netlify:
 - [x] All static pages generated
 - [x] All 301 product pages generated
 - [x] SEO files (robots.txt, sitemap.xml) present
-- [x] _redirects file included
+- [x] \_redirects file included
 - [ ] Environment variables set in Netlify
 - [ ] Build command configured: `npm run build:netlify`
 - [ ] Publish directory set: `out`
@@ -164,6 +168,7 @@ Before deploying to Netlify:
 ### Q: Will this work on Netlify?
 
 **A**: YES! Netlify handles:
+
 - Clean URLs (`/about` instead of `/about.html`)
 - Dynamic routes automatically
 - Proper 404 handling
