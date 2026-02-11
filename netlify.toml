@@ -7,9 +7,9 @@
   # Publish directory (relative to base)
   publish = "out"
 
-# Functions directory - relative to repository root, not build base
+# Functions directory - relative to base directory
 [functions]
-  directory = "netlify/functions"
+  directory = "apps/web/netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18.17.0"
@@ -29,7 +29,7 @@
   # NETLIFY_BUILD_HOOK_URL = "https://api.netlify.com/build_hooks/YOUR_HOOK_ID"
   
   # Site Configuration
-  NEXT_PUBLIC_SITE_URL = "https://marvelous-treacle-ca0286.netlify.app"
+  NEXT_PUBLIC_SITE_URL = "https://digiprint-main-web.netlify.app"
 
 # Increase build timeout
 [build.processing]
