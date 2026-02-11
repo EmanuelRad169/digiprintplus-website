@@ -1,16 +1,19 @@
-'use client'
+"use client";
 
-import { ComponentProps } from 'react'
-import Image from 'next/image'
-import { SanityImageSource } from '@sanity/image-url/lib/types/types'
-import { getOptimizedImageProps, getResponsiveImageProps } from '@/lib/sanity/image'
+import { ComponentProps } from "react";
+import Image from "next/image";
+import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import {
+  getOptimizedImageProps,
+  getResponsiveImageProps,
+} from "@/lib/sanity/image";
 
-interface SanityImageProps extends Omit<ComponentProps<typeof Image>, 'src'> {
-  src: SanityImageSource
-  responsive?: boolean
-  maxWidth?: number
-  quality?: number
-  format?: 'auto' | 'webp' | 'jpg' | 'png'
+interface SanityImageProps extends Omit<ComponentProps<typeof Image>, "src"> {
+  src: SanityImageSource;
+  responsive?: boolean;
+  maxWidth?: number;
+  quality?: number;
+  format?: "auto" | "webp" | "jpg" | "png";
 }
 
 export function SanityImage({
@@ -21,22 +24,25 @@ export function SanityImage({
   responsive = false,
   maxWidth = 1200,
   quality = 75,
-  format = 'auto',
+  format = "auto",
   priority = false,
   className,
   ...props
 }: SanityImageProps) {
   if (!src) {
-    return null
+    return null;
   }
 
   if (responsive) {
     const imageProps = getResponsiveImageProps(src, {
       maxWidth,
       quality,
-      aspectRatio: typeof width === 'number' && typeof height === 'number' ? width / height : undefined,
-    })
-    
+      aspectRatio:
+        typeof width === "number" && typeof height === "number"
+          ? width / height
+          : undefined,
+    });
+
     return (
       <Image
         {...imageProps}
@@ -47,7 +53,7 @@ export function SanityImage({
         className={className}
         {...props}
       />
-    )
+    );
   }
 
   const imageProps = getOptimizedImageProps(src, {
@@ -55,7 +61,7 @@ export function SanityImage({
     height: height as number,
     quality,
     format,
-  })
+  });
 
   return (
     <Image
@@ -67,7 +73,7 @@ export function SanityImage({
       className={className}
       {...props}
     />
-  )
+  );
 }
 
 // Helper component for hero images with optimized loading
@@ -76,7 +82,7 @@ export function SanityHeroImage({
   alt,
   className = "w-full h-64 md:h-96 object-cover",
   ...props
-}: Omit<SanityImageProps, 'width' | 'height'>) {
+}: Omit<SanityImageProps, "width" | "height">) {
   return (
     <SanityImage
       src={src}
@@ -89,7 +95,7 @@ export function SanityHeroImage({
       className={className}
       {...props}
     />
-  )
+  );
 }
 
 // Helper component for product images
@@ -98,7 +104,7 @@ export function SanityProductImage({
   alt,
   className = "w-full h-48 object-cover",
   ...props
-}: Omit<SanityImageProps, 'width' | 'height'>) {
+}: Omit<SanityImageProps, "width" | "height">) {
   return (
     <SanityImage
       src={src}
@@ -109,5 +115,5 @@ export function SanityProductImage({
       className={className}
       {...props}
     />
-  )
+  );
 }

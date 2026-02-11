@@ -5,7 +5,7 @@ import { getAllBlogPosts, getProducts, getProductCategories, getAllTemplates } f
 export const dynamic = 'force-static'
 export const revalidate = false
 
-const baseUrl = 'https://marvelous-treacle-ca0286.netlify.app'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://digiprintplus.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all dynamic content

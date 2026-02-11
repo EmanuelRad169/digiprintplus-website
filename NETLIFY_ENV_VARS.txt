@@ -1,0 +1,32 @@
+# Netlify Environment Variables
+# Copy these to your Netlify dashboard:
+# Settings → Environment variables → Add a variable
+
+## Required for digiprint-main-web (Frontend)
+
+# Sanity Configuration
+NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
+SANITY_API_TOKEN=***get-from-sanity-dashboard***
+
+# Site Configuration
+NEXT_PUBLIC_SITE_URL=https://digiprintplus.vercel.app
+
+# Optional: Sanity Preview
+SANITY_REVALIDATE_SECRET=preview-secret-key-2024
+
+# Optional: Analytics
+NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
+
+## Build Settings
+# Build command: npm run build:netlify
+# Publish directory: out
+# Node version: 18 or higher
+
+## Important Notes:
+# 1. Get SANITY_API_TOKEN from Sanity dashboard (needs read permissions)
+# 2. Update NEXT_PUBLIC_SITE_URL to your actual Netlify URL
+# 3. Ensure NEXT_PUBLIC_SANITY_DATASET is set to "production"
+# 4. After setting variables, trigger a new deploy

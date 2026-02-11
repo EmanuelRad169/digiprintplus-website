@@ -2,15 +2,17 @@
 export const dynamic = 'force-static'
 export const revalidate = false
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://digiprintplus.com'
+
 export default function robots() {
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/_next/'],
+        disallow: ['/api/', '/admin/', '/_next/', '/studio/'],
       },
     ],
-    sitemap: 'https://marvelous-treacle-ca0286.netlify.app/sitemap.xml',
+    sitemap: `${siteUrl}/sitemap.xml`,
   }
 }
