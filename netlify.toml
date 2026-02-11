@@ -16,20 +16,18 @@
   NPM_FLAGS = "--legacy-peer-deps --no-optional"
   NETLIFY = "true"
   
-  # Sanity Configuration
-  NEXT_PUBLIC_SANITY_PROJECT_ID = "as5tildt"
-  NEXT_PUBLIC_SANITY_DATASET = "production"
-  NEXT_PUBLIC_SANITY_API_VERSION = "2024-01-01"
-  NEXT_PUBLIC_SANITY_STUDIO_URL = "https://dppadmin.sanity.studio"
-  SANITY_API_TOKEN = "skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU"
-  SANITY_REVALIDATE_SECRET = "preview-secret-key-2024"
-  SANITY_WEBHOOK_SECRET = "sanity-webhook-secret-2024"
-  
-  # Netlify Build Hook (will be set in Netlify UI after creating the hook)
-  # NETLIFY_BUILD_HOOK_URL = "https://api.netlify.com/build_hooks/YOUR_HOOK_ID"
-  
-  # Site Configuration
-  NEXT_PUBLIC_SITE_URL = "https://digiprint-main-web.netlify.app"
+  # IMPORTANT: Sensitive environment variables should be set in Netlify UI
+  # Go to: Site settings → Environment variables → Add variables
+  # 
+  # Required variables to set in Netlify UI:
+  # - NEXT_PUBLIC_SANITY_PROJECT_ID
+  # - NEXT_PUBLIC_SANITY_DATASET
+  # - NEXT_PUBLIC_SANITY_API_VERSION
+  # - SANITY_API_TOKEN (⚠️ NEVER commit this to git!)
+  # - NEXT_PUBLIC_SITE_URL
+  # - NEXT_PUBLIC_SANITY_STUDIO_URL (optional)
+  # - SANITY_REVALIDATE_SECRET (optional)
+  # - SANITY_WEBHOOK_SECRET (optional)
 
 # Increase build timeout
 [build.processing]
