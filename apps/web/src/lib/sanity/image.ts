@@ -14,7 +14,7 @@ export function getOptimizedImageProps(
   {
     width,
     height,
-    quality = 80,
+    quality = 75,
     format = 'webp',
   }: {
     width?: number
@@ -23,7 +23,7 @@ export function getOptimizedImageProps(
     format?: 'auto' | 'webp' | 'jpg' | 'png'
   } = {}
 ) {
-  let imageBuilder = urlFor(source).auto('format').quality(quality)
+  let imageBuilder = urlFor(source).auto('format').fit('max').quality(quality)
   
   if (width) imageBuilder = imageBuilder.width(width)
   if (height) imageBuilder = imageBuilder.height(height)
@@ -41,7 +41,7 @@ export function getResponsiveImageProps(
   source: SanityImageSource,
   {
     maxWidth = 1200,
-    quality = 80,
+    quality = 75,
     aspectRatio,
   }: {
     maxWidth?: number
@@ -58,6 +58,7 @@ export function getResponsiveImageProps(
       let builder = urlFor(source)
         .width(width)
         .auto('format')
+        .fit('max')
         .quality(quality)
       
       if (height) builder = builder.height(height)
@@ -67,7 +68,7 @@ export function getResponsiveImageProps(
     .join(', ')
   
   return {
-    src: urlFor(source).width(maxWidth).auto('format').quality(quality).url(),
+    src: urlFor(source).width(maxWidth).auto('format').fit('max').quality(quality).url(),
     srcSet,
     sizes: `(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw`,
   }

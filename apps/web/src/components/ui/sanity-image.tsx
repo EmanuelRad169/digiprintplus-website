@@ -20,7 +20,7 @@ export function SanityImage({
   height,
   responsive = false,
   maxWidth = 1200,
-  quality = 80,
+  quality = 75,
   format = 'auto',
   priority = false,
   className,
@@ -81,11 +81,11 @@ export function SanityHeroImage({
     <SanityImage
       src={src}
       alt={alt}
-      width={1200}
-      height={400}
+      width={1920}
+      height={1080}
       responsive
       priority
-      quality={85}
+      quality={80}
       className={className}
       {...props}
     />
@@ -105,7 +105,7 @@ export function SanityProductImage({
       alt={alt}
       width={400}
       height={300}
-      quality={80}
+      quality={70}
       className={className}
       {...props}
     />
