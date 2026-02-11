@@ -52,10 +52,7 @@ function fix1_updateRobotsTs() {
 
   const content = fs.readFileSync(robotsPath, "utf-8");
 
-  if (
-    content.includes("marvelous-treacle-ca0286.netlify.app") ||
-    content.includes("digiprintplus.vercel.app")
-  ) {
+  if (content.includes("marvelous-treacle-ca0286.netlify.app")) {
     const newContent = `// Force static generation for static export
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -114,8 +111,7 @@ function fix2_updateSitemapTs() {
   if (
     content.includes(
       "const baseUrl = 'https://marvelous-treacle-ca0286.netlify.app'",
-    ) ||
-    content.includes("const baseUrl = 'https://digiprintplus.vercel.app'")
+    )
   ) {
     const updatedContent = content.replace(
       /const baseUrl = ['"]https:\/\/[^'"]+['"]/,
@@ -190,7 +186,7 @@ function fix3_validateEnvLocal() {
   );
   if (siteUrlLine) {
     const url = siteUrlLine.split("=")[1]?.trim();
-    if (url && (url.includes("localhost") || url.includes("vercel.app"))) {
+    if (url && url.includes("localhost")) {
       logFix({
         name: "NEXT_PUBLIC_SITE_URL",
         status: "skipped",

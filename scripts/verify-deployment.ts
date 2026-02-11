@@ -41,7 +41,7 @@ async function main() {
   const baseUrl =
     process.argv[2] ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://digiprintplus.vercel.app";
+    "https://digiprint-main-web.netlify.app";
 
   console.log("🔍 DigiPrint+ Post-Deployment Verification");
   console.log("=".repeat(60));

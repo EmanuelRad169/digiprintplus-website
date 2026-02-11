@@ -67,7 +67,7 @@ async function setupProductionDataset() {
 🔗 Next steps:
    1. Run 'npx sanity deploy' to deploy studio 
    2. Push code to GitHub
-   3. Deploy to Vercel
+   3. Deploy to Netlify
 `);
   } catch (error) {
     console.error("❌ Error setting up production dataset:", error);
