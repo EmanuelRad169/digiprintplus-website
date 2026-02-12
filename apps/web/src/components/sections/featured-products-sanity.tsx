@@ -26,33 +26,34 @@ interface ProductCarouselProps {
 
 /**
  * Featured Products Carousel - Now CMS-Driven via Sanity
- * 
+ *
  * ✅ Migrated from hardcoded array to Sanity CMS
- * 
+ *
  * Data flows from:
  * - Sanity Studio → homepageSettings document → featuredProducts array
  * - Falls back to default product categories if no featured products configured
  * - Editors can customize: title, image, category tag, and order
- * 
+ *
  * @param products - Featured products from Sanity CMS
  * @param carouselSettings - Carousel behavior settings (autoplay, speed, etc.)
  */
-export default function ProductCarousel({ 
-  products = [], 
+export default function ProductCarousel({
+  products = [],
   carouselSettings = {
     autoplaySpeed: 4,
     itemsPerView: 5,
     enableAutoplay: true,
-  }
+  },
 }: ProductCarouselProps) {
   // Create infinite scroll array by tripling the products
-  const infiniteProducts = products.length > 0 
-    ? [...products, ...products, ...products]
-    : [];
+  const infiniteProducts =
+    products.length > 0 ? [...products, ...products, ...products] : [];
 
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [startIndex, setStartIndex] = useState(products.length);
-  const [isAutoScrolling, setIsAutoScrolling] = useState(carouselSettings.enableAutoplay ?? true);
+  const [isAutoScrolling, setIsAutoScrolling] = useState(
+    carouselSettings.enableAutoplay ?? true,
+  );
   const [direction, setDirection] = useState(1);
   const [hasHydrated, setHasHydrated] = useState(false);
   const [windowWidth, setWindowWidth] = useState(1200);
@@ -87,31 +88,43 @@ export default function ProductCarousel({
     const startAutoScroll = () => {
       if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
 
-      autoScrollTimerRef.current = setInterval(() => {
-        if (isAutoScrolling) {
-          setStartIndex((prev) => {
-            const newIndex = prev + direction;
-            if (newIndex >= infiniteProducts.length - visibleItems)
-              return products.length;
-            if (newIndex < 0)
-              return infiniteProducts.length - products.length - visibleItems;
-            return newIndex;
-          });
-        }
-      }, (carouselSettings.autoplaySpeed ?? 4) * 1000);
+      autoScrollTimerRef.current = setInterval(
+        () => {
+          if (isAutoScrolling) {
+            setStartIndex((prev) => {
+              const newIndex = prev + direction;
+              if (newIndex >= infiniteProducts.length - visibleItems)
+                return products.length;
+              if (newIndex < 0)
+                return infiniteProducts.length - products.length - visibleItems;
+              return newIndex;
+            });
+          }
+        },
+        (carouselSettings.autoplaySpeed ?? 4) * 1000,
+      );
     };
 
     startAutoScroll();
     return () => {
       if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
     };
-  }, [isAutoScrolling, direction, visibleItems, products.length, infiniteProducts.length, carouselSettings.autoplaySpeed, carouselSettings.enableAutoplay]);
+  }, [
+    isAutoScrolling,
+    direction,
+    visibleItems,
+    products.length,
+    infiniteProducts.length,
+    carouselSettings.autoplaySpeed,
+    carouselSettings.enableAutoplay,
+  ]);
 
   const handlePrevious = () => {
     setIsAutoScrolling(false);
     setStartIndex((prev) => {
       const newIndex = prev - 1;
-      if (newIndex < 0) return infiniteProducts.length - products.length - visibleItems;
+      if (newIndex < 0)
+        return infiniteProducts.length - products.length - visibleItems;
       return newIndex;
     });
     setTimeout(() => setIsAutoScrolling(true), 5000);
@@ -121,7 +134,8 @@ export default function ProductCarousel({
     setIsAutoScrolling(false);
     setStartIndex((prev) => {
       const newIndex = prev + 1;
-      if (newIndex >= infiniteProducts.length - visibleItems) return products.length;
+      if (newIndex >= infiniteProducts.length - visibleItems)
+        return products.length;
       return newIndex;
     });
     setTimeout(() => setIsAutoScrolling(true), 5000);
@@ -137,10 +151,9 @@ export default function ProductCarousel({
               Print <span className="text-magenta-500">Products</span>
             </h2>
             <p className="text-base md:text-xl text-black/70 max-w-3xl mx-auto leading-relaxed px-4">
-              {products.length === 0 
-                ? "Loading our amazing products..." 
-                : "Discover our cutting-edge printing solutions designed for modern businesses"
-              }
+              {products.length === 0
+                ? "Loading our amazing products..."
+                : "Discover our cutting-edge printing solutions designed for modern businesses"}
             </p>
           </div>
         </div>
@@ -148,7 +161,10 @@ export default function ProductCarousel({
     );
   }
 
-  const visibleProducts = infiniteProducts.slice(startIndex, startIndex + visibleItems + 2);
+  const visibleProducts = infiniteProducts.slice(
+    startIndex,
+    startIndex + visibleItems + 2,
+  );
   const itemWidth = `calc(${100 / visibleItems}% - 1rem)`;
 
   return (
@@ -171,7 +187,8 @@ export default function ProductCarousel({
             viewport={{ once: true }}
             className="text-base md:text-xl text-black/70 max-w-3xl mx-auto leading-relaxed px-4"
           >
-            Discover our cutting-edge printing solutions designed for modern businesses
+            Discover our cutting-edge printing solutions designed for modern
+            businesses
           </motion.p>
         </div>
 
@@ -179,7 +196,7 @@ export default function ProductCarousel({
           {/* Navigation Buttons */}
           <button
             onClick={handlePrevious}
-            className="hidden md:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-16 lg:h-16 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl items-center justify-center text-white hover:bg-white/20 transition-all duration-300"
+            className="hidden md:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-16 lg:h-16 bg-white border-2 border-gray-200 rounded-2xl items-center justify-center text-gray-800 hover:bg-gray-50 hover:border-magenta-500 hover:text-magenta-600 transition-all duration-300 shadow-lg"
             aria-label="Previous products"
           >
             <ChevronLeft className="w-6 h-6 lg:w-8 lg:h-8" />
@@ -187,23 +204,26 @@ export default function ProductCarousel({
 
           <button
             onClick={handleNext}
-            className="hidden md:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-16 lg:h-16 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl items-center justify-center text-white hover:bg-white/20 transition-all duration-300"
+            className="hidden md:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-16 lg:h-16 bg-white border-2 border-gray-200 rounded-2xl items-center justify-center text-gray-800 hover:bg-gray-50 hover:border-magenta-500 hover:text-magenta-600 transition-all duration-300 shadow-lg"
             aria-label="Next products"
           >
             <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" />
           </button>
 
           {/* Product Carousel */}
-          <div className="overflow-hidden px-4 md:px-16 flex items-center" ref={carouselRef}>
+          <div
+            className="overflow-hidden px-4 md:px-16 flex items-center"
+            ref={carouselRef}
+          >
             <motion.div
               className="flex gap-4 md:gap-6 lg:gap-8"
               animate={{ x: 0 }}
               transition={{ type: "spring", stiffness: 100, damping: 20 }}
             >
               {visibleProducts.map((product, index) => {
-                const imageUrl = product.image 
+                const imageUrl = product.image
                   ? urlFor(product.image).width(400).height(400).url()
-                  : '/placeholder-product.png';
+                  : "/placeholder-product.png";
 
                 return (
                   <motion.div
@@ -217,7 +237,9 @@ export default function ProductCarousel({
                     <Link
                       href={product.href || `/products/${product.slug}`}
                       className="group relative w-full aspect-square rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer shadow-black/30 block"
-                      onMouseEnter={() => setHoveredItem(product._id || product.slug)}
+                      onMouseEnter={() =>
+                        setHoveredItem(product._id || product.slug)
+                      }
                       onMouseLeave={() => setHoveredItem(null)}
                     >
                       {/* Background gradient */}

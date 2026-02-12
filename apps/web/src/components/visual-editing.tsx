@@ -1,42 +1,30 @@
-'use client'
+"use client";
 
-import { VisualEditing as SanityVisualEditing } from '@sanity/visual-editing/react'
-import { useEffect, useState } from 'react'
+import { VisualEditing as SanityVisualEditing } from "@sanity/visual-editing/react";
+import { useEffect, useState } from "react";
 
 export function VisualEditing() {
-  const [isDraftMode, setIsDraftMode] = useState(false)
+  const [isDraftMode, setIsDraftMode] = useState(false);
 
   useEffect(() => {
-    // Detect various conditions that indicate visual editing should be enabled
-    const hasBypassCookie = document.cookie.includes('__prerender_bypass')
-    const isInFrame = window.parent !== window
-    const hasVisualEditingParams = window.location.search.includes('preview') || 
-                                   window.location.search.includes('sanity-preview') ||
-                                   window.location.search.includes('sanity-overlay')
-    const isFromStudio = document.referrer.includes('localhost:3335') || 
-                        document.referrer.includes('sanity.studio')
-    
-    const shouldEnableEditing = hasBypassCookie || isInFrame || hasVisualEditingParams || isFromStudio
-    
-    console.log('🎯 Visual editing setup conditions:', {
+    // Only enable visual editing if explicitly in draft mode via the API route
+    const hasBypassCookie = document.cookie.includes("__prerender_bypass");
+
+    console.log("🎯 Visual editing check:", {
       hasBypassCookie,
-      isInFrame,
-      hasVisualEditingParams,
-      isFromStudio,
-      referrer: document.referrer,
-      search: window.location.search,
-      cookies: document.cookie.includes('__prerender_bypass') ? 'Draft mode cookie present' : 'No draft mode cookie',
-      shouldEnableEditing,
-      url: window.location.href
-    })
-    
-    setIsDraftMode(shouldEnableEditing)
-    
-    if (shouldEnableEditing) {
-      console.log('✅ Visual editing component activated')
+      cookies: document.cookie.includes("__prerender_bypass")
+        ? "Draft mode cookie present"
+        : "No draft mode cookie",
+      url: window.location.href,
+    });
+
+    setIsDraftMode(hasBypassCookie);
+
+    if (hasBypassCookie) {
+      console.log("✅ Visual editing component activated (draft mode enabled)");
       // Add a visual indicator in development
-      if (process.env.NODE_ENV === 'development') {
-        const indicator = document.createElement('div')
+      if (process.env.NODE_ENV === "development") {
+        const indicator = document.createElement("div");
         indicator.style.cssText = `
           position: fixed;
           top: 10px;
@@ -49,22 +37,20 @@ export function VisualEditing() {
           font-size: 12px;
           z-index: 999999;
           pointer-events: none;
-        `
-        indicator.textContent = '👁️ Visual Editing Active'
-        document.body.appendChild(indicator)
-        
+        `;
+        indicator.textContent = "👁️ Draft Mode Active";
+        document.body.appendChild(indicator);
+
         // Remove after 3 seconds
         setTimeout(() => {
           if (document.body.contains(indicator)) {
-            document.body.removeChild(indicator)
+            document.body.removeChild(indicator);
           }
-        }, 3000)
+        }, 3000);
       }
-    } else {
-      console.log('ℹ️ Visual editing conditions not met, staying in normal mode')
     }
-  }, [])
+  }, []);
 
-  // Only render the Sanity Visual Editing component when in draft mode
-  return isDraftMode ? <SanityVisualEditing portal={true} /> : null
+  // Only render the Sanity Visual Editing component when explicitly in draft mode
+  return isDraftMode ? <SanityVisualEditing portal={true} /> : null;
 }
