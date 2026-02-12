@@ -1,5 +1,5 @@
 import { sanityClient, getSanityClient } from "../sanity";
-import type { SiteSettings } from "@/types/siteSettings";
+import type { SiteSettings } from "@workspace/types";
 
 // Template Types
 export interface TemplateCategory {

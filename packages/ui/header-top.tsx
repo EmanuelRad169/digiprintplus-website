@@ -122,7 +122,9 @@ export function HeaderTop() {
                   </a>
                   <div className="flex items-center gap-1 text-sm md:flex-1 md:justify-center">
                     <MapPin className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">670 Research Dr, Irvine, CA 92618</span>
+                    <span className="truncate">
+                      670 Research Dr, Irvine, CA 92618
+                    </span>
                   </div>
                 </>
               )}

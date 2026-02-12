@@ -6,16 +6,26 @@
     "declarationMap": true,
     "noEmit": false,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "ignoreDeprecations": "6.0",
+    "rootDir": "./",
+    "ignoreDeprecations": "5.0",
     "paths": {
       "@workspace/utils": [
         "../utils/src"
+      ],
+      "@workspace/utils/*": [
+        "../utils/*"
+      ],
+      "@workspace/types": [
+        "../types/src"
+      ],
+      "@workspace/types/*": [
+        "../types/src/*"
       ]
     }
   },
   "include": [
-    "src/**/*"
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules",
@@ -24,6 +34,9 @@
   "references": [
     {
       "path": "../utils"
+    },
+    {
+      "path": "../types"
     }
   ]
 }

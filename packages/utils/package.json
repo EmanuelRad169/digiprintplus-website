@@ -5,7 +5,8 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./sanity/*": "./sanity/*"
   },
   "scripts": {
     "type-check": "tsc --noEmit",
@@ -15,7 +16,8 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
-    "tailwind-merge": "^2.2.0"
+    "tailwind-merge": "^2.2.0",
+    "@workspace/types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

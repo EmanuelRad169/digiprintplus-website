@@ -6,11 +6,22 @@
     "declarationMap": true,
     "noEmit": false,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "ignoreDeprecations": "6.0"
+    "rootDir": ".",
+    "ignoreDeprecations": "5.0",
+    "paths": {
+      "@workspace/types": [
+        "../types/src"
+      ],
+      "@workspace/types/*": [
+        "../types/src/*"
+      ]
+    }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "sanity/**/*",
+    "sanity.ts",
+    "sanity.d.ts"
   ],
   "exclude": [
     "node_modules",

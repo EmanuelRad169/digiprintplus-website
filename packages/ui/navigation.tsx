@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { SanityImage } from "@/components/ui/sanity-image";
+import { SanityImage } from "./ui/sanity-image";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { getNavigationMenu, getSiteSettings } from "../utils/sanity/fetchers";
+import { getNavigationMenu, getSiteSettings } from "@workspace/utils";
 import {
   NavigationMenu,
   NavigationItem as SanityNavigationItem,
-} from "@/types/navigation";
-import type { SiteSettings } from "@/types/siteSettings";
+  SiteSettings,
+} from "@workspace/types";
 import MegaMenu from "./MegaMenu";
 
 export default function Navigation() {
