@@ -9,10 +9,11 @@
 
 # Functions directory - relative to base directory
 [functions]
-  directory = "apps/web/netlify/functions"
+  # Relative to the base directory above (apps/web)
+  directory = "netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "18.17.0"
+  NODE_VERSION = "20.11.1"
   NPM_FLAGS = "--legacy-peer-deps --no-optional"
   NETLIFY = "true"
   
