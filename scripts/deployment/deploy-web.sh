@@ -71,12 +71,14 @@ cd "$WEB_DIR"
 echo -e "${BLUE}🚀 Deploying to Netlify...${NC}"
 echo ""
 
+DEPLOY_DIR="$WEB_DIR/out"
+
 if [ -z "$PROD_FLAG" ]; then
     # Preview deployment
-    netlify deploy --dir=out
+    netlify deploy --dir="$DEPLOY_DIR"
 else
     # Production deployment
-    netlify deploy --prod --dir=out
+    netlify deploy --prod --dir="$DEPLOY_DIR"
 fi
 
 if [ $? -eq 0 ]; then
