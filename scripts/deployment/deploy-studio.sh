@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##############################################
-# 🎨 Deploy Sanity Studio to Vercel
+# 🎨 Deploy Sanity Studio (Sanity hosting)
 # Usage: ./scripts/deployment/deploy-studio.sh [--prod]
 ##############################################
 
@@ -19,7 +19,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 STUDIO_DIR="$PROJECT_ROOT/apps/studio"
 
-echo -e "${BLUE}🎨 Deploying Sanity Studio to Vercel...${NC}"
+echo -e "${BLUE}🎨 Deploying Sanity Studio...${NC}"
 echo ""
 
 # Check if we're in production mode
@@ -55,38 +55,14 @@ fi
 echo -e "${GREEN}✅ Local build successful${NC}"
 echo ""
 
-# Return to studio directory for Vercel CLI scope
-cd "$STUDIO_DIR"
-
-# Deploy with Vercel CLI
-echo -e "${BLUE}🚀 Deploying to Vercel...${NC}"
+# Deploy to Sanity hosting
 echo ""
-
-if [ -z "$PROD_FLAG" ]; then
-    # Preview deployment
-    vercel --yes
-else
-    # Production deployment
-    vercel --prod --yes
-fi
-
-if [ $? -eq 0 ]; then
-    echo ""
-    echo -e "${GREEN}✅ Deployment successful!${NC}"
-    echo ""
-    echo -e "${BLUE}📊 View deployment:${NC}"
-    echo -e "   Dashboard: https://vercel.com/dashboard"
-else
-    echo -e "${RED}❌ Deployment failed${NC}"
-    exit 1
-fi
-
-# Optional: Deploy to Sanity hosting
-echo ""
-read -p "$(echo -e ${YELLOW}❓ Also deploy to Sanity hosting? [y/N]: ${NC})" -n 1 -r
+read -p "$(echo -e ${YELLOW}❓ Deploy to Sanity hosting now? [y/N]: ${NC})" -n 1 -r
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${BLUE}🎨 Deploying to Sanity...${NC}"
     pnpm -w -F digiprintplus-studio run deploy
     echo -e "${GREEN}✅ Sanity deployment complete${NC}"
+else
+    echo -e "${YELLOW}⏭️  Skipped Sanity hosting deploy${NC}"
 fi

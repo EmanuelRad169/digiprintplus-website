@@ -268,7 +268,7 @@ EOF
 section "7. DEPLOYMENT ENVIRONMENT VARIABLES"
 
 echo ""
-info "Required environment variables for Netlify/Vercel:"
+info "Required environment variables for Netlify:"
 echo ""
 echo "  NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt"
 echo "  NEXT_PUBLIC_SANITY_DATASET=production"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##############################################
-# 🚀 Deploy Everything to Vercel
+# 🚀 Deploy Everything (Netlify + Sanity)
 # Usage: ./scripts/deployment/deploy-all.sh [--prod]
 ##############################################
 
@@ -42,20 +42,7 @@ fi
 
 echo ""
 echo -e "${BLUE}═══════════════════════════════════════${NC}"
-echo -e "${BLUE}  Step 1/3: Deploy Sanity Studio${NC}"
-echo -e "${BLUE}═══════════════════════════════════════${NC}"
-echo ""
-
-"$SCRIPT_DIR/deploy-studio.sh" $PROD_FLAG
-
-if [ $? -ne 0 ]; then
-    echo -e "${RED}❌ Studio deployment failed. Aborting.${NC}"
-    exit 1
-fi
-
-echo ""
-echo -e "${BLUE}═══════════════════════════════════════${NC}"
-echo -e "${BLUE}  Step 2/3: Deploy Web App${NC}"
+echo -e "${BLUE}  Step 1/3: Deploy Web App (Netlify)${NC}"
 echo -e "${BLUE}═══════════════════════════════════════${NC}"
 echo ""
 
@@ -63,6 +50,19 @@ echo ""
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Web deployment failed${NC}"
+    exit 1
+fi
+
+echo ""
+echo -e "${BLUE}═══════════════════════════════════════${NC}"
+echo -e "${BLUE}  Step 2/3: Deploy Sanity Studio${NC}"
+echo -e "${BLUE}═══════════════════════════════════════${NC}"
+echo ""
+
+"$SCRIPT_DIR/deploy-studio.sh" $PROD_FLAG
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ Studio deployment failed. Aborting.${NC}"
     exit 1
 fi
 
@@ -100,8 +100,8 @@ echo -e "${PURPLE}║  ✅ All Deployments Complete!          ║${NC}"
 echo -e "${PURPLE}╚════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "${GREEN}📊 Your Deployments:${NC}"
-echo -e "${BLUE}   Web App:${NC}    https://digiprintplus.vercel.app"
-echo -e "${BLUE}   Studio:${NC}     Check Vercel dashboard for URL"
+echo -e "${BLUE}   Web App:${NC}    Check Netlify dashboard for URL"
+echo -e "${BLUE}   Studio:${NC}     Check Sanity dashboard for URL"
 echo -e "${BLUE}   GitHub:${NC}     https://github.com/EmanuelRad169/Digiprintplus"
 echo ""
 echo -e "${GREEN}🎉 All systems deployed!${NC}"

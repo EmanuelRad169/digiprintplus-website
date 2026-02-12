@@ -40,29 +40,30 @@ The `SANITY_WEBHOOK_SECRET` is already set in the config file, but you should ad
 4. Configure the webhook:
 
    **Name**: `Netlify Rebuild on Template Update`
-   
+
    **URL**: `https://digiprint-main-web.netlify.app/api/webhook`
-   
+
    **Dataset**: `production`
-   
+
    **Trigger on**: Select the content types that should trigger rebuilds:
    - ✅ `template` (required)
    - ✅ `templateCategory` (optional)
    - ✅ `homepageSettings` (optional - for featured products)
    - ✅ `faqCategory` (optional)
    - ✅ Any other content types you want to trigger rebuilds
-   
+
    **HTTP method**: `POST`
-   
+
    **API version**: `v2021-06-07` or later
-   
+
    **Include drafts**: ❌ No (only trigger on published content)
-   
+
    **Secret**: `sanity-webhook-secret-2024` (must match your env variable)
-   
+
    **Headers**: (leave empty - webhook library handles this)
-   
+
    **Projection**: (optional) Leave empty or use:
+
    ```groq
    {
      _id,
@@ -95,10 +96,12 @@ The `SANITY_WEBHOOK_SECRET` is already set in the config file, but you should ad
 ## Webhook Endpoint Details
 
 **Endpoint**: `/api/webhook`
+
 - **Method**: `POST` - Receives Sanity webhook
 - **Method**: `GET` - Health check (returns configuration status)
 
 **Response Codes**:
+
 - `200` - Webhook received and Netlify build triggered successfully
 - `401` - Invalid signature or missing webhook secret
 - `500` - Internal error or failed to trigger Netlify build
@@ -136,16 +139,19 @@ This ensures the webhook endpoint is always available, even with static exports.
 ## Troubleshooting
 
 ### Webhook receives 404:
+
 - Ensure the site has been deployed with the new API route
 - Check that the URL is correct: `https://digiprint-main-web.netlify.app/api/webhook`
 - For static exports, consider using a Netlify function instead
 
 ### Webhook receives 401 (Unauthorized):
+
 - Verify `SANITY_WEBHOOK_SECRET` matches in both Sanity and Netlify
 - Check that the secret is set in Netlify's environment variables
 - Redeploy after changing environment variables
 
 ### Build not triggered:
+
 - Verify `NETLIFY_BUILD_HOOK_URL` is set correctly
 - Test the build hook directly with curl:
   ```bash
@@ -154,9 +160,9 @@ This ensures the webhook endpoint is always available, even with static exports.
 - Check Netlify build hooks are enabled
 
 ### Deployment takes too long:
+
 - Netlify builds typically take 3-5 minutes
-- Consider using ISR with Vercel instead of static export if real-time updates are critical
-- Or implement a revalidation webhook for specific pages
+- Consider using on-demand revalidation via webhook if real-time updates are critical
 
 ## Security Notes
 

@@ -4,14 +4,12 @@ This document tracks the security vulnerability fixes applied to address CVE iss
 
 ## Installation Status
 
-
 - **Status**: ✅ COMPLETED
 - **Date**: 2025-01-02
 - **Package Manager**: pnpm v9.15.0
 - **Node Version**: v24.5.0 (Note: Project specifies Node 20.x)
 
 ## Fixed Security Vulnerabilities
-
 
 ### Core Framework Updates
 
@@ -24,7 +22,6 @@ This document tracks the security vulnerability fixes applied to address CVE iss
   - Critical security patches for React ecosystem
   - Improved server-side rendering security
 
-
 ### Sanity CMS Security Updates
 
 - **@sanity/client**: `7.13.2` → `7.14.1` ✅
@@ -35,13 +32,11 @@ This document tracks the security vulnerability fixes applied to address CVE iss
   - Type safety and security enhancements
 
 - **@sanity/vision**: `3.62.0` → `3.62.4` ✅
-
   - Query security improvements
 
 ### UI Library Updates
 
 - **@radix-ui/react-dialog**: `1.1.14` → `1.1.15` ✅
-
   - Security fixe<http://localhost:3001>1>s
   - Accessibility a<http://192.168.0.36:3001>1>ements
 
@@ -56,14 +51,11 @@ This document tracks the security vulnerability fixes applied to address CVE iss
 
 ## Installation Results
 
-
 Successfully updated 27 packages with the following changes:
-
 
 - **Core packages updated**: Next.js, React, Sanity packages
 - **Installation time**: 3.9s
 - **Warnings**: Non-critical peer dependency warnings (do not affect security)
-
 
 ## Installation Warnings (Non-Critical)
 
@@ -74,20 +66,17 @@ The following warnings were encountered but do not affect security:
 
 - Deprecated packages that don't affect core functionality
 
-
 ## Next Steps
 
 1. ✅ Security packages updated and installed
 2. ✅ Development server verified working
 
-3. ⚠️ **PENDING**: Apply Vercel environment variables from `VERCEL_ENV_VARS.txt`
-4. ⚠️ **PENDING**: Depl<https://github.com/EmanuelRad169/digiprintplus-website>e>
+3. ⚠️ **PENDING**: Apply Netlify environment variables from `NETLIFY_ENV_VARS.txt`
+4. ⚠️ **PENDING**: Deploy to Netlify
 
-## Vercel Deployment Requirements
+## Netlify Deployment Requirements
 
-
-After applying environment variables from `VERCEL_ENV_VARS.txt`:
-
+After applying environment variables from `NETLIFY_ENV_VARS.txt`:
 
 - Redeploy to apply security fixes
 - Verify production site matches localhost functionality
@@ -95,7 +84,7 @@ After applying environment variables from `VERCEL_ENV_VARS.txt`:
 
 ## Documentation References
 
-- Environment variables: `VERCEL_ENV_VARS.txt`
+- Environment variables: `NETLIFY_ENV_VARS.txt`
 - Original CVE report: https://github.com/EmanuelRad169/digiprintplus-website
 
 ## Security Audit Status

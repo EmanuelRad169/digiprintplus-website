@@ -246,7 +246,7 @@ Or manually test:
 
 ### Environment Variable Updates Needed
 
-- **Issue**: `NEXT_PUBLIC_SITE_URL` currently points to Vercel
+- **Issue**: `NEXT_PUBLIC_SITE_URL` currently points to an outdated host
 - **Action**: Update to Netlify URL in both:
   - Netlify environment variables
   - Local `.env.local` (for consistency)

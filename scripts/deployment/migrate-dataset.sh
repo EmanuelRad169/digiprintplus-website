@@ -125,7 +125,7 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 echo ""
 echo "📋 Next Steps:"
 echo "  1. Update apps/web/.env.local: NEXT_PUBLIC_SANITY_DATASET=production"
-echo "  2. Update deployment environment variables (Netlify/Vercel)"
+echo "  2. Update deployment environment variables (Netlify)"
 echo "  3. Rebuild your Next.js app: cd apps/web && npm run build"
 echo "  4. Test locally before deploying"
 echo ""

@@ -13,6 +13,7 @@
 **File:** [apps/web/src/app/templates/page.tsx](../apps/web/src/app/templates/page.tsx)
 
 **Changes Applied:**
+
 ```typescript
 import { draftMode } from "next/headers";
 
@@ -23,6 +24,7 @@ export default async function TemplatesPage() {
 ```
 
 **Impact:**
+
 - ✅ Sanity Studio editors can now preview unpublished template changes
 - ✅ Live preview works in development mode
 - ✅ Consistent with other CMS-driven pages (blog, about, services, etc.)
@@ -32,9 +34,11 @@ export default async function TemplatesPage() {
 ### 2. ✅ Hardcoded Data Documented
 
 #### Featured Products Component
+
 **File:** [apps/web/src/components/sections/featured-products.tsx](../apps/web/src/components/sections/featured-products.tsx)
 
 **Documentation Added:**
+
 ```typescript
 /**
  * TODO: Consider migrating to Sanity CMS for dynamic management
@@ -42,7 +46,7 @@ export default async function TemplatesPage() {
  * - Create a 'featuredProduct' schema in Sanity Studio
  * - Fetch via GROQ: *[_type == 'featuredProduct' && isActive == true] | order(order asc)
  * - Benefits: Marketing team can update without code changes
- * 
+ *
  * Current: Hardcoded for curated homepage carousel (acceptable for now)
  */
 const products = [...]
@@ -53,9 +57,11 @@ const products = [...]
 ---
 
 #### FAQ Categories Component
+
 **File:** [apps/web/src/components/sections/faq-section.tsx](../apps/web/src/components/sections/faq-section.tsx)
 
 **Documentation Added:**
+
 ```typescript
 /**
  * OPTIONAL: Consider migrating to Sanity for easier editing by content team
@@ -74,9 +80,11 @@ const categories = [...]
 ### 3. ✅ Deployment Scripts Created
 
 #### Pre-Deployment Verification Script
+
 **File:** [scripts/deployment/pre-deploy-verification.sh](../scripts/deployment/pre-deploy-verification.sh)
 
 **Features:**
+
 - ✅ Validates all environment variables
 - ✅ Checks Next.js configuration (output mode, Sanity CDN)
 - ✅ Verifies Sanity Studio setup
@@ -86,6 +94,7 @@ const categories = [...]
 - ✅ Provides deployment checklist
 
 **Usage:**
+
 ```bash
 ./scripts/deployment/pre-deploy-verification.sh
 ```
@@ -93,9 +102,11 @@ const categories = [...]
 ---
 
 #### Dataset Migration Script
+
 **File:** [scripts/deployment/migrate-dataset.sh](../scripts/deployment/migrate-dataset.sh)
 
 **Features:**
+
 - ✅ Backs up production dataset before migration
 - ✅ Exports development dataset
 - ✅ Imports to production with --replace flag
@@ -103,6 +114,7 @@ const categories = [...]
 - ✅ Provides rollback instructions
 
 **Usage:**
+
 ```bash
 ./scripts/deployment/migrate-dataset.sh
 ```
@@ -114,6 +126,7 @@ const categories = [...]
 ## 📊 CURRENT CONFIGURATION STATUS
 
 ### Environment Variables (✅ Production Dataset)
+
 ```env
 NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
 NEXT_PUBLIC_SANITY_DATASET=production        ← ✅ Already using production
@@ -123,6 +136,7 @@ SANITY_API_TOKEN=sk...                      ← ✅ Configured
 ```
 
 ### Available Sanity Datasets
+
 - ✅ **production** (currently active)
 - development
 - development-comments
@@ -132,6 +146,7 @@ SANITY_API_TOKEN=sk...                      ← ✅ Configured
 ---
 
 ### Next.js Configuration
+
 ```javascript
 output: process.env.NETLIFY ? "export" : "standalone"  ← ✅ Configured
 images: {
@@ -147,6 +162,7 @@ images: {
 ### Netlify Deployment
 
 **Environment Variables to Set:**
+
 ```bash
 NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
 NEXT_PUBLIC_SANITY_DATASET=production
@@ -156,20 +172,9 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ```
 
 **Build Settings:**
+
 - Build command: `npm run build`
 - Publish directory: `apps/web/out` (for static export)
-- Node version: `18.x` or higher
-
----
-
-### Vercel Deployment
-
-**Environment Variables:** (Same as Netlify above)
-
-**Build Settings:**
-- Framework: Next.js
-- Build command: `cd apps/web && npm run build`
-- Output directory: `apps/web/.next`
 - Node version: `18.x` or higher
 
 ---
@@ -177,6 +182,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ## 🎯 POST-DEPLOYMENT TESTING
 
 ### Test 1: Live Updates via ISR (Incremental Static Regeneration)
+
 ```bash
 1. Go to Sanity Studio: https://dppadmin.sanity.studio
 2. Edit an existing template (change title or description)
@@ -189,6 +195,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ---
 
 ### Test 2: Draft Mode / Live Preview
+
 ```bash
 1. Create a new template in Sanity Studio
 2. DO NOT PUBLISH (keep as draft)
@@ -202,6 +209,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ---
 
 ### Test 3: Homepage CTA Rendering
+
 ```bash
 1. Visit: https://digiprint-main-web.netlify.app
 2. Scroll to bottom of homepage
@@ -212,6 +220,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ---
 
 ### Test 4: Templates & Categories
+
 ```bash
 1. Visit: https://digiprint-main-web.netlify.app/templates
 2. Check template grid displays
@@ -225,6 +234,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ## 📊 SANITY DATA SUMMARY
 
 ### Production Dataset Contains:
+
 - ✅ **8 templates** (all published)
 - ✅ **27 template categories** (all published)
 - ✅ **Homepage CTA** (active)
@@ -238,6 +248,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ## 🔧 ARCHITECTURE SUMMARY
 
 ### Data Flow: Sanity → Next.js
+
 ```
 ┌─────────────────┐
 │  Sanity Studio  │
@@ -271,6 +282,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ## ✅ FINAL VERIFICATION RESULTS
 
 ### Critical Checks
+
 - ✅ Environment variables configured
 - ✅ Next.js output mode set
 - ✅ Sanity CDN domain configured
@@ -282,6 +294,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 - ✅ Templates page shows data on live site
 
 ### Warnings (Non-Critical)
+
 - ⚠️ Featured products carousel is hardcoded (intentional)
 - ⚠️ FAQ categories are hardcoded (acceptable, rarely changes)
 
@@ -292,6 +305,7 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 **Your site is production-ready and can be deployed immediately!**
 
 ### Key Features:
+
 - ✅ 100% Sanity CMS integration for templates/categories
 - ✅ ISR enables content updates every 5 minutes without rebuild
 - ✅ Draft mode support for previewing unpublished content
@@ -305,18 +319,21 @@ SANITY_API_TOKEN=<your-token-from-.env.local>
 ## 📞 SUPPORT & NEXT STEPS
 
 ### If You Need to Merge Datasets (Optional)
+
 ```bash
 # Only run if you have content in 'development' you want to move to 'production'
 ./scripts/deployment/migrate-dataset.sh
 ```
 
 ### Before Deploying
+
 ```bash
 # Run final verification
 ./scripts/deployment/pre-deploy-verification.sh
 ```
 
 ### After Deployment
+
 1. Monitor build logs on Netlify dashboard
 2. Test all pages: /, /templates, /products, /about, /contact
 3. Verify Sanity Studio can still edit content
