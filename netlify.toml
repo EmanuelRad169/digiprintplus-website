@@ -2,8 +2,8 @@
 [build]
   # Base directory where the build will run
   base = "apps/web"
-  # Build command
-  command = "npm run build"
+  # Build command (Netlify auto-detects pnpm from pnpm-lock.yaml)
+  command = "pnpm build:netlify"
   # Publish directory (relative to base) - Next.js standalone output
   publish = ".next"
   
@@ -21,7 +21,11 @@
 
 [build.environment]
   NODE_VERSION = "20.11.1"
+  # Enable pnpm
   NPM_FLAGS = "--legacy-peer-deps --no-optional"
+  PNPM_FLAGS = "--frozen-lockfile"
+  # Enable pnpm in Netlify
+  NPM_VERSION = "latest"
   
   # IMPORTANT: Sensitive environment variables should be set in Netlify UI
   # Go to: Site settings → Environment variables → Add variables
