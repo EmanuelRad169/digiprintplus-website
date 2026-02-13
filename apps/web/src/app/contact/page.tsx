@@ -8,7 +8,6 @@ import { draftMode } from 'next/headers'
 const ContactForm = dynamic(
   () => import('@/components/contact-form').then((mod) => ({ default: mod.ContactForm })),
   {
-    ssr: false, // Form doesn't need SSR
     loading: () => (
       <div className="animate-pulse bg-gray-200 rounded-lg h-96"></div>
     ),
