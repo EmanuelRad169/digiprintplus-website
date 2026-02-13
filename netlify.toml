@@ -2,8 +2,8 @@
 [build]
   # Base directory - monorepo root for pnpm workspace
   base = "."
-  # Build command - install pnpm, then build web app
-  command = "npm install -g pnpm && cd apps/web && pnpm install && pnpm build:netlify"
+  # Build command - install pnpm globally, install workspace deps, then build web app
+  command = "npm install -g pnpm@9 && pnpm install --frozen-lockfile && cd apps/web && pnpm build:netlify"
   # Publish directory (from repo root) - Next.js standalone output
   publish = "apps/web/.next"
   
