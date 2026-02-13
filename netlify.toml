@@ -1,20 +1,25 @@
 # netlify.toml - Web App Configuration (Project "main")
+
+# Use Next.js Runtime for proper ISR/Standalone support
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [build]
-  # Base directory - monorepo root for pnpm workspace
-  base = "."
-  # Build command - install pnpm globally, install workspace deps, then build web app
-  command = "npm install -g pnpm@9 && pnpm install && cd apps/web && pnpm build:netlify"
-  # Publish directory (from repo root) - Next.js standalone output
-  publish = "apps/web/.next"
+  # Base directory - apps/web
+  base = "apps/web"
+  # Build command
+  command = "npm run build"
+  # Publish directory
+  publish = ".next"
   
   # Ignore certain paths to reduce deployment size
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
 
-# Functions directory - relative to repo root
+# Functions directory - relative to base (apps/web)
 [functions]
-  directory = "apps/web/netlify/functions"
+  directory = "netlify/functions"
   # Exclude unnecessary files from function bundle
-  included_files = ["apps/web/.next/standalone/**", "apps/web/.next/server/**", "apps/web/.next/static/**", "apps/web/public/**"]
+  included_files = [".next/standalone/**", ".next/server/**", ".next/static/**", "public/**"]
   # Increase function size limit (max 250MB after optimization)
   node_bundler = "esbuild"
 
