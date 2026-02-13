@@ -1,31 +1,26 @@
 # netlify.toml - Web App Configuration (Project "main")
 [build]
-  # Base directory where the build will run
-  base = "apps/web"
-  # Build command (Netlify auto-detects pnpm from pnpm-lock.yaml)
-  command = "pnpm build:netlify"
-  # Publish directory (relative to base) - Next.js standalone output
-  publish = ".next"
+  # Base directory - monorepo root for pnpm workspace
+  base = "."
+  # Build command - install pnpm, then build web app
+  command = "npm install -g pnpm && cd apps/web && pnpm install && pnpm build:netlify"
+  # Publish directory (from repo root) - Next.js standalone output
+  publish = "apps/web/.next"
   
   # Ignore certain paths to reduce deployment size
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
 
-# Functions directory - relative to base directory
+# Functions directory - relative to repo root
 [functions]
-  # Relative to the base directory above (apps/web)
-  directory = "netlify/functions"
+  directory = "apps/web/netlify/functions"
   # Exclude unnecessary files from function bundle
-  included_files = [".next/standalone/**", ".next/server/**", ".next/static/**", "public/**"]
+  included_files = ["apps/web/.next/standalone/**", "apps/web/.next/server/**", "apps/web/.next/static/**", "apps/web/public/**"]
   # Increase function size limit (max 250MB after optimization)
   node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "20.11.1"
-  # Enable pnpm
-  NPM_FLAGS = "--legacy-peer-deps --no-optional"
-  PNPM_FLAGS = "--frozen-lockfile"
-  # Enable pnpm in Netlify
-  NPM_VERSION = "latest"
+  NPM_FLAGS = "--legacy-peer-deps"
   
   # IMPORTANT: Sensitive environment variables should be set in Netlify UI
   # Go to: Site settings → Environment variables → Add variables
