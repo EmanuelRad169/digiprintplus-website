@@ -14,7 +14,15 @@ export async function POST(req: NextRequest) {
     if (!isValidSignature) {
       return NextResponse.json(
         { success: false, message: "Invalid signature" },
-        { status: 401 }
+        { status: 401 },
+      );
+    }
+
+    // Verify body exists
+    if (!body) {
+      return NextResponse.json(
+        { success: false, message: "Invalid request body" },
+        { status: 400 },
       );
     }
 
@@ -94,7 +102,7 @@ export async function POST(req: NextRequest) {
         success: false,
         message: err.message || "Internal server error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -107,7 +115,7 @@ export async function GET(req: NextRequest) {
   if (!path) {
     return NextResponse.json(
       { success: false, message: "Missing 'path' parameter" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -122,7 +130,7 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     return NextResponse.json(
       { success: false, message: err.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
