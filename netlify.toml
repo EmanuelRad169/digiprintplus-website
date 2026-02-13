@@ -15,7 +15,6 @@
 [build.environment]
   NODE_VERSION = "20.11.1"
   NPM_FLAGS = "--legacy-peer-deps --no-optional"
-  NETLIFY = "true"
   
   # IMPORTANT: Sensitive environment variables should be set in Netlify UI
   # Go to: Site settings → Environment variables → Add variables

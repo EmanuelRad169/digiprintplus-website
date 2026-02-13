@@ -1,35 +1,35 @@
-import { Suspense } from 'react'
-import Link from 'next/link'
-import { ArrowRight, Package, Tag } from 'lucide-react'
-import { getProductCategories } from '@/lib/sanity/fetchers'
-import * as LucideIcons from 'lucide-react'
-import Image from 'next/image'
+import { Suspense } from "react";
+import Link from "next/link";
+import { ArrowRight, Package, Tag } from "lucide-react";
+import { getProductCategories } from "@/lib/sanity/fetchers";
+import * as LucideIcons from "lucide-react";
+import Image from "next/image";
 
 // Enable ISR - revalidate every 60 seconds
 export const revalidate = 60;
 
 // Updated Category type to include image
 interface Category {
-  _id: string
-  title: string
-  slug: { current: string }
-  description?: string
-  icon?: string
-  count: number
-  image?: string // New field for category image
+  _id: string;
+  title: string;
+  slug: { current: string };
+  description?: string;
+  icon?: string;
+  count: number;
+  image?: string; // New field for category image
 }
 
 // Category card component
 function CategoryCard({ category }: { category: Category }) {
   // Get icon component from Lucide
   const getIconComponent = (iconName?: string) => {
-    if (!iconName) return Package
+    if (!iconName) return Package;
 
-    const IconComponent = (LucideIcons as any)[iconName]
-    return IconComponent || Package
-  }
+    const IconComponent = (LucideIcons as any)[iconName];
+    return IconComponent || Package;
+  };
 
-  const IconComponent = getIconComponent(category.icon)
+  const IconComponent = getIconComponent(category.icon);
 
   return (
     <Link href={`/products/category/${category.slug.current}`}>
@@ -67,7 +67,9 @@ function CategoryCard({ category }: { category: Category }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center text-sm text-gray-500">
               <Tag className="w-4 h-4 mr-2" />
-              <span>{category.count} product{category.count !== 1 ? 's' : ''}</span>
+              <span>
+                {category.count} product{category.count !== 1 ? "s" : ""}
+              </span>
             </div>
 
             <div className="flex items-center text-magenta-600 group-hover:text-magenta-700 transition-colors">
@@ -78,7 +80,7 @@ function CategoryCard({ category }: { category: Category }) {
         </div>
       </div>
     </Link>
-  )
+  );
 }
 
 // Loading component
@@ -86,7 +88,10 @@ function CategoriesLoading() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
       {[...Array(8)].map((_, i) => (
-        <div key={i} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+        <div
+          key={i}
+          className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse"
+        >
           <div className="bg-gray-300 h-32" />
           <div className="p-6">
             <div className="h-6 bg-gray-300 rounded mb-2" />
@@ -100,12 +105,12 @@ function CategoriesLoading() {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 // Main Products Page Component
 export default async function ProductsPage() {
-  const categories = await getProductCategories()
+  const categories = await getProductCategories();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -117,8 +122,9 @@ export default async function ProductsPage() {
               Product <span className="text-magenta-500">Categories</span>
             </h1>
             <p className="text-lg text-white max-w-3xl mx-auto">
-              Explore our comprehensive range of high-quality printing products and services.
-              Choose from our specialized categories to find exactly what you need for your business.
+              Explore our comprehensive range of high-quality printing products
+              and services. Choose from our specialized categories to find
+              exactly what you need for your business.
             </p>
           </div>
         </div>
@@ -131,10 +137,17 @@ export default async function ProductsPage() {
             <>
               <div className="flex items-center justify-between mb-8">
                 <p className="text-gray-600">
-                  Browse {categories.length} product categor{categories.length !== 1 ? 'ies' : 'y'}
+                  Browse {categories.length} product categor
+                  {categories.length !== 1 ? "ies" : "y"}
                 </p>
                 <div className="text-sm text-gray-500">
-                  Need help choosing? <Link href="/contact" className="text-magenta-600 hover:underline">Contact us</Link>
+                  Need help choosing?{" "}
+                  <Link
+                    href="/contact"
+                    className="text-magenta-600 hover:underline"
+                  >
+                    Contact us
+                  </Link>
                 </div>
               </div>
 
@@ -150,11 +163,12 @@ export default async function ProductsPage() {
                   Looking for something specific?
                 </h2>
                 <p className="text-magenta-100 mb-6">
-                  We offer custom printing solutions for unique requirements. Get in touch with our team for personalized assistance.
+                  We offer custom printing solutions for unique requirements.
+                  Get in touch with our team for personalized assistance.
                 </p>
                 <Link
                   href="/quote"
-                    className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <span>Request Custom Quote</span>
                   <ArrowRight className="w-4 h-4" />
@@ -170,7 +184,8 @@ export default async function ProductsPage() {
                 No categories available
               </h3>
               <p className="text-gray-500 mb-6">
-                We&apos;re currently setting up our product categories. Please check back soon or contact us for information.
+                We&apos;re currently setting up our product categories. Please
+                check back soon or contact us for information.
               </p>
               <Link
                 href="/contact"
@@ -183,5 +198,5 @@ export default async function ProductsPage() {
         </Suspense>
       </div>
     </div>
-  )
+  );
 }

@@ -10,7 +10,7 @@ export const revalidate = 60;
 
 export default async function TemplatesPage() {
   const { isEnabled } = await draftMode();
-  
+
   const [templates, categories] = await Promise.all([
     getAllTemplates(),
     getAllTemplateCategories(),

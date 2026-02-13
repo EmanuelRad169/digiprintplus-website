@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",
-    "build:netlify": "NETLIFY=true NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build:netlify": "NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
