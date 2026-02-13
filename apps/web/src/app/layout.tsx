@@ -100,7 +100,7 @@ export default async function RootLayout({
       <body className="font-sans">
         <Providers>
           <div className="min-h-screen flex flex-col">
-            <HeaderTop />
+            <HeaderTop siteSettings={siteSettings} />
             <Navigation
               navigationData={navigationData}
               siteSettings={siteSettings}

@@ -10,14 +10,15 @@ import {
   ChevronUp,
 } from "lucide-react";
 import Link from "next/link";
-import { getSiteSettings } from "@/lib/sanity/fetchers";
 import type { SiteSettings } from "@/types/siteSettings";
 
-export function HeaderTop() {
+interface HeaderTopProps {
+  siteSettings?: SiteSettings | null;
+}
+
+export function HeaderTop({ siteSettings }: HeaderTopProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -34,20 +35,7 @@ export function HeaderTop() {
     }
   }, []);
 
-  useEffect(() => {
-    async function loadSettings() {
-      try {
-        const settings = await getSiteSettings();
-        setSiteSettings(settings);
-      } catch (error) {
-        console.error("Error loading site settings:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
 
-    loadSettings();
-  }, []);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -93,7 +81,7 @@ export function HeaderTop() {
             )}
 
             {/* Show fallback contact information if loading or no data */}
-            {(loading || !siteSettings?.contact) && (
+            {!siteSettings?.contact && (
               <>
                 <a
                   href="tel:9497705000"

@@ -40,35 +40,14 @@ export function SanityProvider({ children }: SanityProviderProps) {
   const [connectionError, setConnectionError] = useState<string | null>(null)
   const [client] = useState(() => getSanityClient())
 
-  // Test connection on mount
+  // Set connection status (no client-side test needed for static sites)
   useEffect(() => {
-    async function testConnection() {
-      try {
-        // Simple query to test connection
-        await client.fetch('*[_type == "sanity.imageAsset"][0]')
-        setIsConnected(true)
-        setConnectionError(null)
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log('✅ Sanity Provider: Connection established')
-        }
-      } catch (error: any) {
-        setIsConnected(false)
-        setConnectionError(error.message)
-        
-        console.error('❌ Sanity Provider: Connection failed:', error.message)
-        
-        // Handle specific authentication errors
-        if (error.statusCode === 401) {
-          console.error('🔐 Authentication failed. Token may be invalid.')
-          console.error('💡 To fix this, ensure SANITY_API_TOKEN is set correctly.')
-        } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-          console.error('🌐 Network error. Check your internet connection or Sanity service status.')
-        }
-      }
+    setIsConnected(true)
+    setConnectionError(null)
+    
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.log('✅ Sanity Provider: Initialized (static mode)')
     }
-
-    testConnection()
   }, [client])
 
   // Query function with error handling
