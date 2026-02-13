@@ -148,7 +148,7 @@ export default function Navigation({
       isVisible: true,
       megaMenu: [
         {
-          sectionTitle: "Print Products",
+          sectionTitle: "",
           sectionDescription: "High-quality printing solutions",
           links: [
             {
@@ -441,25 +441,27 @@ export default function Navigation({
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="md:hidden border-t border-gray-200 bg-white shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div className="px-3 pt-3 pb-4 space-y-2">
             {navItems.map((item: SanityNavigationItem) => (
               <div key={item.name}>
                 {item.megaMenu && item.megaMenu.length > 0 ? (
                   <div className="space-y-2 mb-3">
-                    <div className="px-3 py-2 text-base font-medium text-gray-900 border-b border-gray-100">
+                    <div className="px-3 py-2 text-base font-semibold text-gray-900 bg-gray-50 rounded-lg">
                       {item.name}
                     </div>
-                    <div className="space-y-3 pl-3 pr-2">
+                    <div className="space-y-4">
                       {item.megaMenu.map((section: any) => (
                         <div
                           key={section?.sectionTitle || Math.random()}
-                          className="space-y-1"
+                          className="space-y-2"
                         >
-                          <div className="text-sm font-medium text-gray-700 mb-1">
-                            {section?.sectionTitle}
-                          </div>
-                          <div className="grid grid-cols-2 gap-1">
+                          {section?.sectionTitle && (
+                            <div className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                              {section.sectionTitle}
+                            </div>
+                          )}
+                          <div className="grid grid-cols-1 gap-0.5">
                             {section?.links &&
                               section.links
                                 .filter(
@@ -470,10 +472,10 @@ export default function Navigation({
                                   <Link
                                     key={link.name}
                                     href={link?.href || "#"}
-                                    className={`block px-2 py-1.5 text-sm ${
+                                    className={`block px-3 py-2.5 text-sm rounded-md transition-colors ${
                                       link?.isHighlighted
-                                        ? "text-magenta-700 font-medium"
-                                        : "text-gray-600 hover:text-gray-900"
+                                        ? "bg-magenta-50 text-magenta-700 font-semibold border-l-2 border-magenta-500"
+                                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                                     }`}
                                     onClick={() => setIsOpen(false)}
                                   >
@@ -487,10 +489,10 @@ export default function Navigation({
                   </div>
                 ) : item.submenu ? (
                   <div className="space-y-2 mb-3">
-                    <div className="px-3 py-2 text-base font-medium text-gray-900 border-b border-gray-100">
+                    <div className="px-3 py-2 text-base font-semibold text-gray-900 bg-gray-50 rounded-lg">
                       {item.name}
                     </div>
-                    <div className="pl-3 pr-2 space-y-1">
+                    <div className="space-y-0.5">
                       {item.submenu &&
                         item.submenu.length > 0 &&
                         item.submenu
@@ -531,7 +533,7 @@ export default function Navigation({
                                   ? subItem.href
                                   : `/services/${subItem.href}`;
                               })()}
-                              className="block px-2 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                              className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
                               onClick={() => setIsOpen(false)}
                             >
                               {subItem.name}
@@ -541,12 +543,12 @@ export default function Navigation({
                   </div>
                 ) : // Special styling for Quote button in mobile
                 item.name.toLowerCase().includes("quote") ? (
-                  <div className="px-3 py-2">
+                  <div className="px-2 py-2">
                     <Link
                       href={
                         item.href.startsWith("/") ? item.href : `/${item.href}`
                       }
-                      className="flex items-center justify-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200 w-full"
+                      className="flex items-center justify-center px-6 py-3.5 bg-magenta-600 text-white rounded-lg font-semibold hover:bg-magenta-700 transition-colors duration-200 w-full shadow-sm text-base"
                       onClick={() => setIsOpen(false)}
                     >
                       {item.name}
@@ -557,7 +559,7 @@ export default function Navigation({
                     href={
                       item.href.startsWith("/") ? item.href : `/${item.href}`
                     }
-                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                    className="block px-3 py-2.5 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     {item.name}

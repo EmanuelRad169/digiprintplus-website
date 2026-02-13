@@ -103,9 +103,9 @@ npm run verify:deployment https://digiprint-main-web.netlify.app
 
 Or manually test:
 
-- https://digiprint-main-web.netlify.app/products/raised-spot-uv-business-cards
-- https://digiprint-main-web.netlify.app/sitemap.xml
-- https://digiprint-main-web.netlify.app/robots.txt
+- [https://digiprint-main-web.netlify.app/products/raised-spot-uv-business-cards](https://digiprint-main-web.netlify.app/products/raised-spot-uv-business-cards)
+- [https://digiprint-main-web.netlify.app/sitemap.xml](https://digiprint-main-web.netlify.app/sitemap.xml)
+- [https://digiprint-main-web.netlify.app/robots.txt](https://digiprint-main-web.netlify.app/robots.txt)
 
 ### 3. Check for More Draft Products
 

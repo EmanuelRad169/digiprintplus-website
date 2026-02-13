@@ -217,8 +217,13 @@ export default function ProductCarousel({
           >
             <motion.div
               className="flex gap-4 md:gap-6 lg:gap-8"
-              animate={{ x: 0 }}
-              transition={{ type: "spring", stiffness: 100, damping: 20 }}
+              key={startIndex}
+              initial={{
+                x: direction === 1 ? 40 : -40,
+                opacity: 0,
+              }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 120, damping: 22 }}
             >
               {visibleProducts.map((product, index) => {
                 const imageUrl = product.image
@@ -236,7 +241,7 @@ export default function ProductCarousel({
                   >
                     <Link
                       href={product.href || `/products/${product.slug}`}
-                      className="group relative w-full aspect-square rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer shadow-black/30 block"
+                      className="group relative w-full aspect-square min-h-[180px] sm:min-h-[200px] rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer shadow-black/30 block"
                       onMouseEnter={() =>
                         setHoveredItem(product._id || product.slug)
                       }

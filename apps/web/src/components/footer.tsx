@@ -78,12 +78,12 @@ export function Footer({
   return (
     <footer className="bg-gray-50 text-black">
       <div className="container py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div className="space-y-5">
-            <Link href="/" className="group">
+        {/* Company Info - Full Width on Mobile */}
+        <div className="mb-8 md:mb-12">
+          <div className="space-y-5 max-w-md md:max-w-none">
+            <Link href="/" className="group inline-block">
               {siteSettings?.logo?.asset ? (
-                <div className="h-[45px]">
+                <div className="h-[60px] sm:h-[70px] md:h-[50px]">
                   <Image
                     src={urlForImage(siteSettings.logo)?.url() || ""}
                     alt={
@@ -91,10 +91,9 @@ export function Footer({
                       siteSettings.title ||
                       "Company Logo"
                     }
-                    width={0}
-                    height={45}
-                    style={{ width: "auto", height: "45px" }}
-                    className="object-contain transition-all duration-300 group-hover:opacity-90"
+                    width={200}
+                    height={70}
+                    className="h-full w-auto object-contain transition-all duration-300 group-hover:opacity-90"
                   />
                 </div>
               ) : (
@@ -125,9 +124,12 @@ export function Footer({
                   ))}
             </div>
           </div>
+        </div>
 
+        {/* Footer Links - 2 Columns on Mobile, 4 Columns on Desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Services */}
-          <div className="space-y-5">
+          <div className="space-y-3">
             <ul className="space-y-3 text-sm">
               {footerData.services
                 ?.filter((service) => service.isVisible !== false)
@@ -145,7 +147,7 @@ export function Footer({
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-5">
+          <div className="space-y-3">
             <ul className="space-y-3 text-sm">
               {footerData.quickLinks
                 ?.filter((link) => link.isVisible !== false)
@@ -163,7 +165,7 @@ export function Footer({
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-5">
+          <div className="space-y-3">
             <div className="space-y-2 text-sm">
               {siteSettings?.contact?.address && (
                 <div className="flex items-center space-x-3 group">
@@ -204,28 +206,28 @@ export function Footer({
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Business Hours */}
-            <div className="mt-6 pt-5 border-t border-gray-100">
-              <h4 className="font-medium mb-3 text-gray-800 flex items-center">
-                <div className="p-2 mr-2 rounded-full bg-magenta-500">
-                  <Clock className="w-3 h-3 text-white flex-shrink-0" />
-                </div>
-                Business Hours
-              </h4>
-              <div className="text-sm text-gray-800 space-y-2 pl-8">
-                {siteSettings?.contact?.businessHours &&
-                siteSettings.contact.businessHours.length > 0 ? (
-                  siteSettings.contact.businessHours.map((schedule, index) => (
-                    <p key={`hours-${index}`} className="flex justify-between">
-                      <span className="font-medium">{schedule.day}:</span>
-                      <span>{schedule.hours}</span>
-                    </p>
-                  ))
-                ) : (
-                  <></>
-                )}
+          {/* Business Hours */}
+          <div className="space-y-3">
+            <h4 className="font-medium text-gray-800 flex items-center">
+              <div className="p-2 mr-2 rounded-full bg-magenta-500">
+                <Clock className="w-3 h-3 text-white flex-shrink-0" />
               </div>
+              Business Hours
+            </h4>
+            <div className="text-sm text-gray-800 space-y-2">
+              {siteSettings?.contact?.businessHours &&
+              siteSettings.contact.businessHours.length > 0 ? (
+                siteSettings.contact.businessHours.map((schedule, index) => (
+                  <p key={`hours-${index}`} className="flex justify-between">
+                    <span className="font-medium">{schedule.day}:</span>
+                    <span>{schedule.hours}</span>
+                  </p>
+                ))
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>

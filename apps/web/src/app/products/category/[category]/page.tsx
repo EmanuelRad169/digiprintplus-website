@@ -1,20 +1,31 @@
-import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { draftMode } from 'next/headers'
-import Image from 'next/image'
-import Link from 'next/link'
-import { getProductsByCategory, getCategoryBySlug, getProductCategories } from '@/lib/sanity/fetchers'
-import { Product, ProductCategory } from '@/types/product'
-import { generateCategorySEO } from '@/lib/seo'
-import { ShoppingCart, Eye, ArrowLeft, Tag, Package, Sparkles } from 'lucide-react'
-import * as LucideIcons from 'lucide-react'
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  getProductsByCategory,
+  getCategoryBySlug,
+  getProductCategories,
+} from "@/lib/sanity/fetchers";
+import { Product, ProductCategory } from "@/types/product";
+import { generateCategorySEO } from "@/lib/seo";
+import {
+  ShoppingCart,
+  Eye,
+  ArrowLeft,
+  Tag,
+  Package,
+  Sparkles,
+} from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
-export const revalidate = 60
+export const revalidate = 60;
 
 interface CategoryPageProps {
   params: {
-    category: string
-  }
+    category: string;
+  };
 }
 
 // Product Card Component
@@ -38,7 +49,7 @@ function ProductCard({ product }: { product: Product }) {
             </div>
           </div>
         )}
-        
+
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.featured && (
@@ -59,16 +70,17 @@ function ProductCard({ product }: { product: Product }) {
       <div className="p-6">
         {/* Title & Description */}
         <div className="mb-4">
-          <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-magenta-600 transition-colors">
-            {product.title}
-          </h3>
+          <Link href={`/products/${product.slug?.current}`}>
+            <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-magenta-600 transition-colors cursor-pointer hover:underline">
+              {product.title}
+            </h3>
+          </Link>
         </div>
-        
+
         {/* Description */}
         <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed pb-6">
           {product.description}
         </p>
-    
 
         {/* Action Buttons */}
         <div className="flex gap-3">
@@ -80,7 +92,7 @@ function ProductCard({ product }: { product: Product }) {
             View Details
           </Link>
           <Link
-            href={product.formLink || `/quote?product=${product.slug?.current}`}
+            href="/quote"
             className="flex-1 bg-magenta-500 text-white px-4 py-2.5 rounded-lg font-medium text-center text-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:shadow-xl transform hover:-translate-y-0.5"
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
@@ -89,30 +101,30 @@ function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { category } = params
-  const { isEnabled } = await draftMode()
-  
+  const { category } = params;
+  const { isEnabled } = await draftMode();
+
   // Get category info and products
-  const currentCategory = await getCategoryBySlug(category, isEnabled)
-  const products = await getProductsByCategory(category, isEnabled)
-  const categories = await getProductCategories(isEnabled)
+  const currentCategory = await getCategoryBySlug(category, isEnabled);
+  const products = await getProductsByCategory(category, isEnabled);
+  const categories = await getProductCategories(isEnabled);
 
   if (!currentCategory) {
-    notFound()
+    notFound();
   }
 
   // Get icon component from Lucide
   const getIconComponent = (iconName?: string) => {
-    if (!iconName) return Package
-    const IconComponent = (LucideIcons as any)[iconName]
-    return IconComponent || Package
-  }
+    if (!iconName) return Package;
+    const IconComponent = (LucideIcons as any)[iconName];
+    return IconComponent || Package;
+  };
 
-  const IconComponent = getIconComponent(currentCategory.icon)
+  const IconComponent = getIconComponent(currentCategory.icon);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -120,11 +132,23 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <div className="border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm">
-            <Link href="/" className="text-gray-500 hover:text-gray-900 transition-colors">Home</Link>
+            <Link
+              href="/"
+              className="text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              Home
+            </Link>
             <span className="text-gray-400">/</span>
-            <Link href="/products" className="text-gray-500 hover:text-gray-900 transition-colors">Products</Link>
+            <Link
+              href="/products"
+              className="text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              Products
+            </Link>
             <span className="text-gray-400">/</span>
-            <span className="text-gray-900 font-medium">{currentCategory.title}</span>
+            <span className="text-gray-900 font-medium">
+              {currentCategory.title}
+            </span>
           </nav>
         </div>
       </div>
@@ -188,12 +212,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             </h2>
             <div className="prose prose-lg prose-gray mx-auto">
               <p className="text-gray-600 leading-relaxed">
-                {currentCategory.description ? (
-                  `Discover our comprehensive range of ${currentCategory.title.toLowerCase()} solutions designed to meet your business needs. 
+                {currentCategory.description
+                  ? `Discover our comprehensive range of ${currentCategory.title.toLowerCase()} solutions designed to meet your business needs. 
                   Each product is crafted with precision and attention to detail, ensuring professional results that make a lasting impression.`
-                ) : (
-                  `Explore our professional ${currentCategory.title.toLowerCase()} collection with a variety of options to suit different requirements and budgets.`
-                )}
+                  : `Explore our professional ${currentCategory.title.toLowerCase()} collection with a variety of options to suit different requirements and budgets.`}
               </p>
             </div>
           </div>
@@ -205,7 +227,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {products.length > 0 ? (
             <>
-
               {/* Products Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {products.map((product: Product) => (
@@ -223,8 +244,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   Products Coming Soon
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  We&apos;re currently adding products to this category. 
-                  In the meantime, contact us for custom solutions.
+                  We&apos;re currently adding products to this category. In the
+                  meantime, contact us for custom solutions.
                 </p>
                 <Link
                   href="/contact"
@@ -247,13 +268,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 Need Custom {currentCategory.title}?
               </h2>
               <p className="text-magenta-100 mb-8 max-w-3xl mx-auto text-base">
-                Our expert team specializes in creating custom {currentCategory.title.toLowerCase()} solutions 
-                tailored to your unique requirements. Get professional results with personalized service.
+                Our expert team specializes in creating custom{" "}
+                {currentCategory.title.toLowerCase()} solutions tailored to your
+                unique requirements. Get professional results with personalized
+                service.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link 
+                <Link
                   href="/quote"
-                    className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   Get Custom Quote
@@ -264,37 +287,39 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Generate metadata
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const { category } = params
+export async function generateMetadata({
+  params,
+}: CategoryPageProps): Promise<Metadata> {
+  const { category } = params;
   const [currentCategory, products] = await Promise.all([
     getCategoryBySlug(category),
-    getProductsByCategory(category)
-  ])
-  
+    getProductsByCategory(category),
+  ]);
+
   if (!currentCategory) {
     return {
-      title: 'Category Not Found - DigiPrintPlus',
-      description: 'The requested product category could not be found.',
-    }
+      title: "Category Not Found - DigiPrintPlus",
+      description: "The requested product category could not be found.",
+    };
   }
 
   return generateCategorySEO({
     category: currentCategory,
     products,
-  })
+  });
 }
 
 // Generate static params for categories
 export async function generateStaticParams() {
-  const categories = await getProductCategories()
-  
+  const categories = await getProductCategories();
+
   return categories
     .filter((category: ProductCategory) => category.slug?.current)
     .map((category: ProductCategory) => ({
       category: category.slug!.current,
-    }))
+    }));
 }

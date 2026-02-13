@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -14,19 +18,43 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@web/*": ["apps/web/*"],
-      "@studio/*": ["apps/studio/*"],
-      "@shared/*": ["packages/shared/*"],
-      "@components/*": ["components/*"],
-      "@ui/*": ["components/ui/*"],
-      "@lib/*": ["lib/*"],
-      "@hooks/*": ["hooks/*"],
-      "@utils/*": ["lib/utils.ts"]
+      "@/*": [
+        "*"
+      ],
+      "@web/*": [
+        "apps/web/*"
+      ],
+      "@studio/*": [
+        "apps/studio/*"
+      ],
+      "@shared/*": [
+        "packages/shared/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@ui/*": [
+        "components/ui/*"
+      ],
+      "@lib/*": [
+        "lib/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@utils/*": [
+        "lib/utils.ts"
+      ]
     }
   },
-  "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

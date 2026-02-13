@@ -133,7 +133,7 @@ export default async function AboutPage() {
 
             {/* Team Image */}
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden">
+              <div className="aspect-square rounded-2xl overflow-hidden relative">
                 <Image
                   src={
                     enhancedData?.teamImage?.asset?.url ||

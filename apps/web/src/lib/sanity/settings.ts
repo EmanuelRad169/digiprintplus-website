@@ -1,57 +1,59 @@
-import { sanityClient } from '@/lib/sanity'
-import imageUrlBuilder from '@sanity/image-url'
+import { getSanityClient, sanityClientNoToken } from "@/lib/sanity";
+import imageUrlBuilder from "@sanity/image-url";
 
 // Type definitions for site settings
 export interface SiteSettings {
-  _id: string
-  title: string
-  description: string
+  _id: string;
+  title: string;
+  description: string;
   logo?: {
     asset: {
-      _ref: string
-    }
+      _ref: string;
+    };
     hotspot?: {
-      x: number
-      y: number
-      height: number
-      width: number
-    }
-    alt?: string
-  }
+      x: number;
+      y: number;
+      height: number;
+      width: number;
+    };
+    alt?: string;
+  };
   contact?: {
-    email: string
-    phone: string
-    address: string
+    email: string;
+    phone: string;
+    address: string;
     businessHours?: {
-      day: string
-      hours: string
-    }[]
-  }
+      day: string;
+      hours: string;
+    }[];
+  };
   social?: {
-    facebook?: string
-    twitter?: string
-    instagram?: string
-    linkedin?: string
-    youtube?: string
-  }
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+    youtube?: string;
+  };
 }
 
 // Image URL Builder for Sanity images
-const builder = imageUrlBuilder(sanityClient)
+const builder = imageUrlBuilder(sanityClientNoToken);
 
 // Generate image URL from Sanity image reference
 export const urlForImage = (source: any) => {
   if (!source || !source.asset) {
-    return null
+    return null;
   }
-  
-  return builder.image(source)
-}
+
+  return builder.image(source);
+};
 
 // Fetch site settings from Sanity
 export const getSiteSettings = async (): Promise<SiteSettings | null> => {
   try {
-    return await sanityClient.fetch(
+    const client = getSanityClient();
+
+    return await client.fetch(
       `*[_type == "siteSettings"][0] {
         _id,
         title,
@@ -79,25 +81,27 @@ export const getSiteSettings = async (): Promise<SiteSettings | null> => {
       {
         // Enable ISR with 5 minute revalidation
         next: { revalidate: 300 },
-      }
-    )
+      },
+    );
   } catch (error) {
-    console.error('Error fetching site settings:', error)
-    return null
+    console.error("Error fetching site settings:", error);
+    return null;
   }
-}
+};
 
 // Real-time site settings updates hook
-export const subscribeToSiteSettings = (callback: () => void): { unsubscribe: () => void } => {
-  return sanityClient
-    .listen('*[_type == "siteSettings"]')
-    .subscribe({
-      next: () => {
-        console.log('Site settings updated, refreshing...')
-        callback()
-      },
-      error: (error) => {
-        console.error('Site settings subscription error:', error)
-      }
-    })
-}
+export const subscribeToSiteSettings = (
+  callback: () => void,
+): { unsubscribe: () => void } => {
+  const client = getSanityClient();
+
+  return client.listen('*[_type == "siteSettings"]').subscribe({
+    next: () => {
+      console.log("Site settings updated, refreshing...");
+      callback();
+    },
+    error: (error) => {
+      console.error("Site settings subscription error:", error);
+    },
+  });
+};

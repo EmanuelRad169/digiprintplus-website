@@ -117,7 +117,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
   }
 
   return (
-    <section className="relative h-[60vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden bg-slate-900">
+    <section className="relative min-h-[500px] h-auto sm:h-[70vh] lg:h-[80vh] overflow-hidden bg-slate-900">
       {/* Background Images */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -128,7 +128,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
           transition={{ duration: 1.2, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-slate-900/40 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-slate-900/95 via-slate-900/80 sm:via-slate-900/60 to-slate-900/70 sm:to-slate-900/40 z-10" />
           {slides[currentSlide].image?.asset?.url ? (
             <SanityHeroImage
               src={slides[currentSlide].image}
@@ -144,7 +144,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
       {/* Main Content */}
       <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center h-full py-8 sm:py-12 lg:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center h-full py-10 sm:py-12 lg:py-20">
             {/* Content Column */}
             <AnimatePresence mode="wait">
               <motion.div
@@ -153,7 +153,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 100, opacity: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-white space-y-4 sm:space-y-6 lg:space-y-8"
+                className="text-white space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8"
               >
                 {/* Subtitle */}
                 <motion.div
@@ -173,7 +173,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.7 }}
-                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight sm:leading-none tracking-tight"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] sm:leading-tight tracking-tight"
                 >
                   {slides[currentSlide].title.split(" ").map((word, index) => (
                     <span
@@ -193,7 +193,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.6 }}
-                  className="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-xl lg:max-w-2xl"
+                  className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl lg:max-w-2xl"
                 >
                   {slides[currentSlide].description}
                 </motion.p>
@@ -203,15 +203,15 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.6 }}
-                  className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4"
+                  className="flex flex-wrap gap-1.5 sm:gap-2 lg:gap-3"
                 >
                   {slides[currentSlide].features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-center space-x-1.5 sm:space-x-2 bg-white/10 backdrop-blur-sm px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20"
+                      className="flex items-center space-x-1 sm:space-x-1.5 bg-white/10 backdrop-blur-sm px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20"
                     >
                       <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-magenta-500 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm font-medium">
+                      <span className="text-xs sm:text-sm font-medium whitespace-nowrap">
                         {feature}
                       </span>
                     </div>
@@ -223,11 +223,11 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.6, duration: 0.6 }}
-                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1 sm:pt-2"
                 >
                   <Link
                     href={slides[currentSlide].ctaLink}
-                    className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-base sm:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-sm sm:text-base lg:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     {slides[currentSlide].ctaText}
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -244,10 +244,10 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -100, opacity: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                className="relative flex justify-center lg:justify-end mt-8 lg:mt-0"
+                className="relative flex justify-center lg:justify-end mt-4 sm:mt-6 lg:mt-0"
               >
                 {/* Large Stat Display */}
-                <div className="relative">
+                <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-none">
                   <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -255,10 +255,10 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                     className="bg-white/95 backdrop-blur-sm text-slate-900 p-4 sm:p-6 lg:p-8 rounded-none shadow-2xl border-l-4 sm:border-l-8 border-magenta-500"
                   >
                     <div className="text-center">
-                      <div className="text-3xl sm:text-4xl lg:text-6xl font-bold text-magenta-500 mb-1 sm:mb-2">
+                      <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-magenta-500 mb-1 sm:mb-2">
                         {slides[currentSlide].stats.number}
                       </div>
-                      <div className="text-sm sm:text-lg lg:text-xl font-bold text-slate-700 uppercase tracking-wide">
+                      <div className="text-base sm:text-lg lg:text-xl font-bold text-slate-700 uppercase tracking-wide">
                         {slides[currentSlide].stats.text}
                       </div>
                     </div>
@@ -311,7 +311,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
 
       {/* Slide Indicators */}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex space-x-2">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex space-x-2">
           {slides.map((_, index) => (
             <button
               key={index}
@@ -319,7 +319,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
               aria-label={`Go to slide ${index + 1}`}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-magenta-500 w-6"
+                  ? "bg-magenta-500 w-6 sm:w-8"
                   : "bg-white/50 hover:bg-white/75"
               }`}
             />
@@ -328,7 +328,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
       )}
 
       {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 w-full h-0.5 sm:h-1 bg-white/20 z-30">
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20 z-30">
         <motion.div
           key={currentSlide}
           initial={{ width: 0 }}

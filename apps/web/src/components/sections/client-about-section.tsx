@@ -1,10 +1,11 @@
-'use client'
+"use client";
 
-import { useRef } from 'react'
-import { motion, cubicBezier, useInView } from 'framer-motion'
-import { Award, Clock, Shield, Users, Star, CheckCircle } from 'lucide-react'
-import type { AboutSection } from '@/lib/sanity/contentFetchers'
-import { PortableText } from '@portabletext/react'
+import { useRef } from "react";
+import { motion, cubicBezier, useInView } from "framer-motion";
+import { Award, Clock, Shield, Users, Star, CheckCircle } from "lucide-react";
+import LiteYouTube from "@/components/media/lite-youtube";
+import type { AboutSection } from "@/lib/sanity/contentFetchers";
+import { PortableText } from "@portabletext/react";
 
 // Icon mapping
 const iconMap = {
@@ -14,30 +15,31 @@ const iconMap = {
   users: Users,
   star: Star,
   checkCircle: CheckCircle,
-}
+};
 
 interface ClientAboutSectionProps {
-  sections: AboutSection[]
+  sections: AboutSection[];
 }
 
-export default function ClientAboutSection({ sections }: ClientAboutSectionProps) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-50px' })
-  const easeOut = cubicBezier(0.33, 1, 0.68, 1)
+export default function ClientAboutSection({
+  sections,
+}: ClientAboutSectionProps) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const easeOut = cubicBezier(0.33, 1, 0.68, 1);
 
   // Find statistics section
-  const statsSection = sections.find(s => s.sectionType === 'statistics')
+  const statsSection = sections.find((s) => s.sectionType === "statistics");
 
   if (!statsSection) {
-    return null
+    return null;
   }
 
   return (
     <section className="relative pb-16 overflow-hidden">
-
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6, ease: easeOut }}
@@ -47,20 +49,20 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
             <Star className="w-4 h-4 mr-2" />
             {statsSection.title}
           </div>
-          
+
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-8 leading-tight">
-            {statsSection.subtitle?.split(' ').map((word, index) => (
+            {statsSection.subtitle?.split(" ").map((word, index) => (
               <span key={index}>
-                {word.toLowerCase().includes('digiprintplus') ? (
+                {word.toLowerCase().includes("digiprintplus") ? (
                   <span className="text-magenta-500 ">{word} </span>
                 ) : (
-                  word + ' '
+                  word + " "
                 )}
               </span>
             ))}
           </h2>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2, ease: easeOut }}
@@ -73,7 +75,9 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
         {/* Video Showcase with enhanced design - 2 Column Layout */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+          animate={
+            isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }
+          }
           transition={{ duration: 0.8, delay: 0.3, ease: easeOut }}
           className="max-w-7xl mx-auto"
         >
@@ -83,7 +87,7 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
               {/* Decorative elements */}
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full opacity-20 blur-xl"></div>
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-r from-pink-400 to-orange-400 rounded-full opacity-20 blur-xl"></div>
-              
+
               {/* Video container */}
               <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl border border-white/50 overflow-hidden">
                 <div className="aspect-video bg-gradient-to-br from-gray-900 via-indigo-900 to-purple-900 relative overflow-hidden">
@@ -91,15 +95,13 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
                   <div className="absolute inset-0 opacity-30">
                     <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent"></div>
                   </div>
-                  
-                  <iframe
-                    className="w-full h-full relative z-10"
-                    src="https://www.youtube.com/embed/7MscwWMYfi0?autoplay=1&mute=1&modestbranding=1&rel=0&showinfo=0&controls=1"
+
+                  <LiteYouTube
+                    className="relative z-10"
+                    videoId="7MscwWMYfi0"
                     title="DigiPrintPlus Company Overview"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  ></iframe>
+                    params="autoplay=1&mute=1&controls=1&rel=0&modestbranding=1"
+                  />
                 </div>
               </div>
             </div>
@@ -112,16 +114,19 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
                   Discover DigiPrintPlus in Action
                 </h3>
                 <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                  Watch our company story and see how we bring your printing visions to life with 
-                  cutting-edge technology and exceptional service.
+                  Watch our company story and see how we bring your printing
+                  visions to life with cutting-edge technology and exceptional
+                  service.
                 </p>
               </div>
 
               {/* Stats cards */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                  animate={
+                    isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
+                  }
                   transition={{ duration: 0.5, delay: 0.5 }}
                   className="flex items-center p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200/50"
                 >
@@ -134,9 +139,11 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
                   </div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                  animate={
+                    isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
+                  }
                   transition={{ duration: 0.5, delay: 0.6 }}
                   className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50"
                 >
@@ -149,9 +156,11 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
                   </div>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                  animate={
+                    isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
+                  }
                   transition={{ duration: 0.5, delay: 0.7 }}
                   className="flex items-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200/50"
                 >
@@ -159,7 +168,9 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
                     <Award className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-xl font-bold text-gray-900">Industry</div>
+                    <div className="text-xl font-bold text-gray-900">
+                      Industry
+                    </div>
                     <div className="text-sm text-gray-600">Leader</div>
                   </div>
                 </motion.div>
@@ -169,5 +180,5 @@ export default function ClientAboutSection({ sections }: ClientAboutSectionProps
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,8 +1,5 @@
 import { Metadata } from "next";
-import {
-  getBlogPostBySlug,
-  getAllBlogPosts,
-} from "@/lib/sanity/fetchers";
+import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/sanity/fetchers";
 import { PortableTextRenderer } from "@/components/portable-text";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
@@ -37,7 +34,8 @@ interface BlogPostPageProps {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { isEnabled } = await draftMode();
-  const post = await getBlogPostBySlug(params.slug, isEnabled);
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug, isEnabled);
 
   if (!post) {
     notFound();
@@ -318,7 +316,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
-  const post = await getBlogPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug);
 
   if (!post) {
     return {

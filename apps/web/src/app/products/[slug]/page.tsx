@@ -46,6 +46,7 @@ import {
   HelpCircle,
   ChevronDown,
 } from "lucide-react";
+import LiteYouTube from "@/components/media/lite-youtube";
 
 export const revalidate = 60;
 
@@ -72,7 +73,7 @@ interface ProductPageProps {
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { slug } = params;
+  const { slug } = await params;
   const { isEnabled } = await draftMode();
 
   const [product, siteSettings] = await Promise.all([
@@ -130,6 +131,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
   };
 
   const priceDisplay = getPriceDisplay();
+  const getYouTubeId = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+
+      if (parsedUrl.hostname.includes("youtu.be")) {
+        return parsedUrl.pathname.replace("/", "");
+      }
+
+      const vParam = parsedUrl.searchParams.get("v");
+      if (vParam) return vParam;
+
+      if (parsedUrl.pathname.includes("/embed/")) {
+        return parsedUrl.pathname.split("/embed/")[1]?.split("/")[0] || null;
+      }
+    } catch {
+      return null;
+    }
+
+    return null;
+  };
+
+  const youTubeId = product.videoUrl ? getYouTubeId(product.videoUrl) : null;
   const hasRating = product.rating && product.rating > 0;
   const hasTestimonials =
     product.testimonials && product.testimonials.length > 0;
@@ -432,22 +455,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
               )}
 
               {/* Primary CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="flex flex-col gap-3 pt-2">
                 <Link
-                  href={
-                    product.formLink ||
-                    `/quote?product=${product.slug?.current}`
-                  }
-                  className="flex-1 inline-flex items-center justify-center px-6 py-4 bg-magenta-600 text-white font-bold rounded-xl hover:bg-magenta-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  href="/quote"
+                  className="w-full inline-flex items-center justify-center px-6 py-4 sm:py-4 bg-magenta-600 text-white font-bold text-base sm:text-lg rounded-xl hover:bg-magenta-700 transition-all shadow-lg hover:shadow-xl active:scale-95"
                 >
-                  <Quote className="w-5 h-5 mr-2" />
-                  Request Quote
+                  <Quote className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                  Get Free Quote
                 </Link>
                 <Link
                   href="/contact"
-                  className="flex-1 inline-flex items-center justify-center px-6 py-4 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-magenta-500 hover:text-magenta-600 transition-all"
+                  className="w-full inline-flex items-center justify-center px-6 py-3.5 sm:py-4 border-2 border-gray-300 text-gray-700 font-semibold sm:font-bold text-base sm:text-lg rounded-xl hover:border-magenta-500 hover:text-magenta-600 hover:bg-magenta-50 transition-all active:scale-95"
                 >
-                  <Phone className="w-5 h-5 mr-2" />
+                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                   Contact Sales
                 </Link>
               </div>
@@ -578,33 +598,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     <FileText className="w-5 h-5 text-magenta-500 mr-2" />
                     Related Templates
                   </h2>
-                  <div className="grid grid-cols-2 gap-3">
-                    {product.templates.slice(0, 4).map((template: any) => (
-                      <Link
-                        key={template._id}
-                        href={`/templates/${template.slug?.current}`}
-                        className="group bg-white rounded-lg p-3 border border-gray-200 hover:shadow-md transition-all hover:border-magenta-200"
-                      >
-                        {template.previewImage?.asset?.url && (
-                          <div className="aspect-video rounded-md overflow-hidden mb-2 bg-gray-100">
-                            <Image
-                              src={template.previewImage.asset.url}
-                              alt={template.title}
-                              width={200}
-                              height={150}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                            />
-                          </div>
-                        )}
-                        <h3 className="font-semibold text-gray-900 text-xs line-clamp-1">
-                          {template.title}
-                        </h3>
-                        <span className="text-magenta-600 text-xs font-medium group-hover:underline">
-                          View →
-                        </span>
-                      </Link>
+                  <ul className="space-y-2">
+                    {product.templates.map((template: any) => (
+                      <li key={template._id}>
+                        <Link
+                          href={`/templates/${template.slug?.current}`}
+                          className="text-magenta-600 hover:text-magenta-700 hover:underline font-medium text-sm transition-colors inline-flex items-center"
+                        >
+                          {template.title} →
+                        </Link>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               )}
 
@@ -705,16 +710,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </p>
             </div>
             <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
-              {product.videoUrl?.includes("youtube.com") ||
-              product.videoUrl?.includes("youtu.be") ? (
-                <iframe
-                  title={`${product.title} Product Video`}
-                  src={product.videoUrl
-                    .replace("watch?v=", "embed/")
-                    .replace("youtu.be/", "youtube.com/embed/")}
+              {youTubeId ? (
+                <LiteYouTube
                   className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                  videoId={youTubeId}
+                  title={`${product.title} Product Video`}
+                  params="autoplay=1&controls=1&rel=0&modestbranding=1"
                 />
               ) : product.videoUrl?.includes("vimeo.com") ? (
                 <iframe
@@ -838,31 +839,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Enhanced CTA Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="relative bg-magenta-500 rounded-3xl overflow-hidden">
-          <div className="relative px-8 lg:px-16 py-12 lg:py-16">
-            <div className="grid lg:grid-cols-3 gap-8 items-center">
+        <div className="relative bg-magenta-500 rounded-2xl lg:rounded-3xl overflow-hidden">
+          <div className="relative px-4 sm:px-8 lg:px-16 py-8 sm:py-12 lg:py-16">
+            <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start lg:items-center">
               {/* Content */}
-              <div className="col-span-2 text-center lg:text-left">
-                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4">
+              <div className="lg:col-span-2 text-center lg:text-left">
+                <h2 className="text-3xl sm:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4">
                   Ready to Order {product.title}?
                 </h2>
-                <p className="text-cyan-100 text-base leading-relaxed mb-8">
+                <p className="text-cyan-100 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8">
                   Get a custom quote tailored to your specific needs. Our expert
                   team will help you choose the perfect options and provide
                   competitive pricing with fast turnaround times.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <div className="flex flex-col gap-3 sm:gap-4">
                   <a
                     href="/quote"
-                    className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="w-full inline-flex items-center justify-center bg-black text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-base transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95"
                   >
                     <ShoppingCart className="w-5 h-5 mr-2" />
                     Get Free Quote
                   </a>
                   <a
                     href="/contact"
-                    className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="w-full inline-flex items-center justify-center bg-white text-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-base transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95"
                   >
                     <Phone className="w-5 h-5 mr-2" />
                     Contact Us
@@ -871,19 +872,29 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
 
               {/* Contact Info */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <h3 className="text-xl font-semibold text-white mb-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl lg:rounded-2xl p-5 sm:p-6 border border-white/20">
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
                   Need Help?
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex items-center text-white">
-                    <Phone className="w-5 h-5 mr-3 text-cyan-200" />
-                    <span>Call us: {contactInfo.phone}</span>
-                  </div>
-                  <div className="flex items-center text-white">
-                    <Mail className="w-5 h-5 mr-3 text-cyan-200" />
-                    <span>Email: {contactInfo.email}</span>
-                  </div>
+                  <a
+                    href={`tel:${contactInfo.phone}`}
+                    className="flex items-center text-white hover:text-cyan-200 transition-colors"
+                  >
+                    <Phone className="w-5 h-5 mr-3 text-cyan-200 flex-shrink-0" />
+                    <span className="text-sm sm:text-base break-all">
+                      {contactInfo.phone}
+                    </span>
+                  </a>
+                  <a
+                    href={`mailto:${contactInfo.email}`}
+                    className="flex items-center text-white hover:text-cyan-200 transition-colors"
+                  >
+                    <Mail className="w-5 h-5 mr-3 text-cyan-200 flex-shrink-0" />
+                    <span className="text-sm sm:text-base break-all">
+                      {contactInfo.email}
+                    </span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -898,7 +909,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
 
   if (!product) {

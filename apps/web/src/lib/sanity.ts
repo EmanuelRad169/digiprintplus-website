@@ -170,7 +170,9 @@ async function testConnection(client: SanityClient): Promise<boolean> {
 }
 
 // Client instances
-export const sanityClient = createSanityClient({ useToken: true });
+const isBrowser = typeof window !== "undefined";
+
+export const sanityClient = createSanityClient({ useToken: !isBrowser });
 export const sanityClientNoToken = createSanityClient({ useToken: false });
 export const visualEditingClient = createSanityClient({
   useToken: true,
