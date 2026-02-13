@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { SanityImage } from "@/components/ui/sanity-image";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -10,7 +11,12 @@ import {
   NavigationItem as SanityNavigationItem,
 } from "@/types/navigation";
 import type { SiteSettings } from "@/types/siteSettings";
-import MegaMenuNew from "@/components/MegaMenuNew";
+
+// Dynamic import for MegaMenu (575 lines, only needed on hover)
+const MegaMenuNew = dynamic(() => import("@/components/MegaMenuNew"), {
+  ssr: true, // Keep SSR for SEO
+  loading: () => null, // No loading state needed for hover interaction
+});
 
 interface NavigationProps {
   navigationData: NavigationMenu | null;

@@ -1,8 +1,19 @@
 import { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import { getPageBySlug, getSiteSettings } from '@/lib/sanity/fetchers'
 import { PortableTextRenderer } from '@/components/portable-text'
-import { ContactForm } from '@/components/contact-form'
 import { draftMode } from 'next/headers'
+
+// Dynamic import for contact form (286 lines)
+const ContactForm = dynamic(
+  () => import('@/components/contact-form').then((mod) => ({ default: mod.ContactForm })),
+  {
+    ssr: false, // Form doesn't need SSR
+    loading: () => (
+      <div className="animate-pulse bg-gray-200 rounded-lg h-96"></div>
+    ),
+  }
+);
 
 export const revalidate = 60;
 
