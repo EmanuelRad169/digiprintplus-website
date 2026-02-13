@@ -35,8 +35,6 @@ export function HeaderTop({ siteSettings }: HeaderTopProps) {
     }
   }, []);
 
-
-
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };

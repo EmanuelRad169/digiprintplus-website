@@ -1,7 +1,6 @@
 'use client'
 
 import { ReactNode, createContext, useContext, useState, useEffect } from 'react'
-import { SanityProvider } from '@/lib/sanityProvider'
 
 // Create a theme context with a default value
 const ThemeContext = createContext({
@@ -43,11 +42,9 @@ export default function Providers({ children }: ProvidersProps) {
 
   try {
     return (
-      <SanityProvider>
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-          {children}
-        </ThemeContext.Provider>
-      </SanityProvider>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        {children}
+      </ThemeContext.Provider>
     )
   } catch (error) {
     console.error('Error in Providers:', error)
