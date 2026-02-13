@@ -7,9 +7,8 @@ import { getHeroSlides, getCTASectionById } from "@/lib/sanity/contentFetchers";
 import { getProductCategories } from "@/lib/sanity/fetchers";
 import { draftMode } from "next/headers";
 
-// Mark page as static for export
-export const dynamic = "force-static";
-export const revalidate = false; // No revalidation for static export
+// Enable ISR - revalidate every 60 seconds
+export const revalidate = 60;
 
 export default async function HomePage() {
   const { isEnabled: isDraftMode } = await draftMode();

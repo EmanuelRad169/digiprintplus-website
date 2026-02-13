@@ -3,9 +3,9 @@
   # Base directory where the build will run
   base = "apps/web"
   # Build command
-  command = "NETLIFY=true npm run build"
-  # Publish directory (relative to base)
-  publish = "out"
+  command = "npm run build"
+  # Publish directory (relative to base) - Next.js standalone output
+  publish = ".next"
 
 # Functions directory - relative to base directory
 [functions]
@@ -33,12 +33,6 @@
 # Increase build timeout
 [build.processing]
   skip_processing = false
-
-# Fallback for non-existent routes
-[[redirects]]
-  from = "/*"
-  to = "/404.html"
-  status = 404
 
 # Headers for security
 [[headers]]

@@ -5,6 +5,9 @@ import { getProductCategories } from '@/lib/sanity/fetchers'
 import * as LucideIcons from 'lucide-react'
 import Image from 'next/image'
 
+// Enable ISR - revalidate every 60 seconds
+export const revalidate = 60;
+
 // Updated Category type to include image
 interface Category {
   _id: string
