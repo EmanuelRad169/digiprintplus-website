@@ -45,7 +45,8 @@ cd "$PROJECT_ROOT"
 pnpm -w install --frozen-lockfile
 
 echo -e "${BLUE}🔨 Building locally to catch errors...${NC}"
-pnpm -w -F digiprintplus-web run build:netlify
+cd "$WEB_DIR"
+pnpm build:netlify
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Local build failed. Please fix errors before deploying.${NC}"
@@ -65,20 +66,16 @@ if ! command -v netlify &> /dev/null; then
     exit 1
 fi
 
-# Return to web directory for Netlify CLI deploy
-cd "$WEB_DIR"
-
-echo -e "${BLUE}🚀 Deploying to Netlify...${NC}"
+echo -e "${BLUE}🚀 Triggering Netlify build...${NC}"
 echo ""
 
-DEPLOY_DIR="$WEB_DIR/out"
-
+# Use Netlify's build command which handles ISR/Standalone mode
 if [ -z "$PROD_FLAG" ]; then
-    # Preview deployment
-    netlify deploy --dir="$DEPLOY_DIR"
+    # Preview deployment - trigger build
+    netlify deploy --build
 else
-    # Production deployment
-    netlify deploy --prod --dir="$DEPLOY_DIR"
+    # Production deployment - trigger build
+    netlify deploy --build --prod
 fi
 
 if [ $? -eq 0 ]; then
