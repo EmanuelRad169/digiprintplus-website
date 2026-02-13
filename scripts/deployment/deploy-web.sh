@@ -42,10 +42,13 @@ fi
 
 echo -e "${BLUE}📦 Installing dependencies with pnpm workspace...${NC}"
 cd "$PROJECT_ROOT"
-pnpm -w install --frozen-lockfile
+pnpm -w install
+
+echo -e "${BLUE}📦 Ensuring web app dependencies are installed...${NC}"
+cd "$WEB_DIR"
+pnpm install
 
 echo -e "${BLUE}🔨 Building locally to catch errors...${NC}"
-cd "$WEB_DIR"
 pnpm build:netlify
 
 if [ $? -ne 0 ]; then
