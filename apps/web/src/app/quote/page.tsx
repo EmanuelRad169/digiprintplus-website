@@ -15,18 +15,42 @@ import {
 } from "lucide-react";
 
 // Dynamic imports for quote step components (each ~200-300 lines)
-const ContactStep = dynamic(() => import("@/components/quote/contact-step").then((mod) => ({ default: mod.ContactStep })), {
-  ssr: false,
-});
-const JobSpecsStep = dynamic(() => import("@/components/quote/job-specs-step").then((mod) => ({ default: mod.JobSpecsStep })), {
-  ssr: false,
-});
-const FileUploadStep = dynamic(() => import("@/components/quote/file-upload-step").then((mod) => ({ default: mod.FileUploadStep })), {
-  ssr: false,
-});
-const ReviewStep = dynamic(() => import("@/components/quote/review-step").then((mod) => ({ default: mod.ReviewStep })), {
-  ssr: false,
-});
+const ContactStep = dynamic(
+  () =>
+    import("@/components/quote/contact-step").then((mod) => ({
+      default: mod.ContactStep,
+    })),
+  {
+    ssr: false,
+  },
+);
+const JobSpecsStep = dynamic(
+  () =>
+    import("@/components/quote/job-specs-step").then((mod) => ({
+      default: mod.JobSpecsStep,
+    })),
+  {
+    ssr: false,
+  },
+);
+const FileUploadStep = dynamic(
+  () =>
+    import("@/components/quote/file-upload-step").then((mod) => ({
+      default: mod.FileUploadStep,
+    })),
+  {
+    ssr: false,
+  },
+);
+const ReviewStep = dynamic(
+  () =>
+    import("@/components/quote/review-step").then((mod) => ({
+      default: mod.ReviewStep,
+    })),
+  {
+    ssr: false,
+  },
+);
 
 const FORM_NAME = "quote-request";
 
