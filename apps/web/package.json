@@ -2,21 +2,31 @@
   "name": "digiprintplus-web",
   "version": "2.0.0",
   "private": true,
+  "sideEffects": [
+    "*.css",
+    "*.scss",
+    "./src/styles/**/*"
+  ],
   "engines": {
     "node": "20.x"
   },
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "next build",
-    "build:netlify": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "next build && ./scripts/post-build-cleanup.sh",
+    "build:netlify": "NODE_OPTIONS='--max-old-space-size=4096' next build && ./scripts/post-build-cleanup.sh",
+    "build:analyze": "ANALYZE=true next build",
+    "analyze": "ANALYZE=true next build",
+    "analyze:server": "ANALYZE=true BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "ANALYZE=true BUNDLE_ANALYZE=both next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "check-deps": "pnpm list --depth=0",
+    "check-dups": "pnpm dedupe --check",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.10.0",
     "@portabletext/react": "^3.2.1",
@@ -47,7 +57,6 @@
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.303.0",
     "next": "^15.5.12",
-    "next-auth": "^4.24.5",
     "next-sanity": "^9.12.3",
     "next-seo": "^6.8.0",
     "react": "^18.3.1",
@@ -63,7 +72,7 @@
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
     "@chromatic-com/storybook": "^4.0.1",
-    "@next/bundle-analyzer": "^14.0.4",
+    "@next/bundle-analyzer": "^14.2.35",
     "@next/swc-darwin-arm64": "15.5.12",
     "@next/swc-linux-arm64-gnu": "15.5.12",
     "@next/swc-linux-x64-gnu": "15.5.12",

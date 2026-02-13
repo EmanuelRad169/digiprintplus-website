@@ -6,11 +6,18 @@
   command = "npm run build"
   # Publish directory (relative to base) - Next.js standalone output
   publish = ".next"
+  
+  # Ignore certain paths to reduce deployment size
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
 
 # Functions directory - relative to base directory
 [functions]
   # Relative to the base directory above (apps/web)
   directory = "netlify/functions"
+  # Exclude unnecessary files from function bundle
+  included_files = [".next/standalone/**", ".next/server/**", ".next/static/**", "public/**"]
+  # Increase function size limit (max 250MB after optimization)
+  node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "20.11.1"
