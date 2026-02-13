@@ -33,6 +33,14 @@
 [build.processing]
   skip_processing = false
 
+# Configure Next.js plugin for forms support
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  
+  [plugins.inputs]
+    # Disable form detection in plugin (forms are in public/__forms.html)
+    disableFormDetection = true
+
 # Headers for security
 [[headers]]
   for = "/*"

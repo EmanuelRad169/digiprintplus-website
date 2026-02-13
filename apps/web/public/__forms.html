@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Form Definitions</title>
+</head>
+<body>
+  <!-- Contact Form -->
+  <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="tel" name="phone" />
+    <input type="text" name="company" />
+    <textarea name="message"></textarea>
+    <input type="text" name="bot-field" />
+  </form>
+
+  <!-- Quote Request Form -->
+  <form name="quote" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="tel" name="phone" />
+    <input type="text" name="company" />
+    <select name="productType">
+      <option value="business-cards">Business Cards</option>
+      <option value="brochures">Brochures</option>
+      <option value="flyers">Flyers</option>
+      <option value="posters">Posters</option>
+      <option value="banners">Banners</option>
+      <option value="other">Other</option>
+    </select>
+    <input type="number" name="quantity" />
+    <textarea name="details"></textarea>
+    <input type="text" name="bot-field" />
+  </form>
+
+  <!-- Custom Design Request Form -->
+  <form name="custom-design" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="tel" name="phone" />
+    <input type="text" name="company" />
+    <input type="text" name="projectType" />
+    <textarea name="designRequirements"></textarea>
+    <input type="text" name="deadline" />
+    <input type="text" name="bot-field" />
+  </form>
+
+  <!-- Template Download Form -->
+  <form name="template-download" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="text" name="template" />
+    <input type="text" name="bot-field" />
+  </form>
+</body>
+</html>
