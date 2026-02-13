@@ -1,5 +1,5 @@
 const { createClient } = require("@sanity/client");
-require("dotenv").config({ path: "../web/.env.local" });
+require("dotenv").config({ path: "../../web/.env.local" });
 
 const sanityClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "as5tildt",

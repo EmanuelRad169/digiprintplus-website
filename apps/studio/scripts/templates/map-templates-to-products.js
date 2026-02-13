@@ -1,5 +1,5 @@
 const { createClient } = require("@sanity/client");
-require("dotenv").config({ path: "../web/.env.local" });
+require("dotenv").config({ path: "../../web/.env.local" });
 
 // Create sanity client
 const sanityClient = createClient({
