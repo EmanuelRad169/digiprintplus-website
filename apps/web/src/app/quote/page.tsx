@@ -185,6 +185,7 @@ export default function QuotePage() {
         return (
           <FileUploadStep
             formData={formData}
+            updateFormData={updateFormData}
             fileInputRef={fileInputRef}
             onRemoveFile={removeFile}
           />

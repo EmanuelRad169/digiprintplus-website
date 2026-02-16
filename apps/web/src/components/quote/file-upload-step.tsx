@@ -5,12 +5,14 @@ import { Upload, File, X } from "lucide-react";
 
 interface FileUploadStepProps {
   formData: any;
+  updateFormData: (data: any) => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
   onRemoveFile: (index: number) => void;
 }
 
 export function FileUploadStep({
   formData,
+  updateFormData,
   fileInputRef,
   onRemoveFile,
 }: FileUploadStepProps) {
