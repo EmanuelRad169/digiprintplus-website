@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
@@ -84,6 +84,7 @@ const steps = [
 export default function QuotePage() {
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     // Contact Info
     firstName: "",
@@ -138,6 +139,26 @@ export default function QuotePage() {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
+  const syncInputFiles = (files: File[]) => {
+    if (!fileInputRef.current) return;
+    const dataTransfer = new DataTransfer();
+    files.forEach((file) => dataTransfer.items.add(file));
+    fileInputRef.current.files = dataTransfer.files;
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const nextFiles = [...formData.files, ...files];
+    updateFormData({ files: nextFiles });
+    syncInputFiles(nextFiles);
+  };
+
+  const removeFile = (index: number) => {
+    const newFiles = formData.files.filter((_: any, i: number) => i !== index);
+    updateFormData({ files: newFiles });
+    syncInputFiles(newFiles);
+  };
+
   const handleFormSubmit = () => {
     // Allow the browser to POST the form to Netlify.
     // Track conversion just before the navigation happens.
@@ -162,7 +183,11 @@ export default function QuotePage() {
         );
       case 3:
         return (
-          <FileUploadStep formData={formData} updateFormData={updateFormData} />
+          <FileUploadStep
+            formData={formData}
+            fileInputRef={fileInputRef}
+            onRemoveFile={removeFile}
+          />
         );
       case 4:
         return (
@@ -262,6 +287,15 @@ export default function QuotePage() {
             onSubmit={handleFormSubmit}
           >
             <input type="hidden" name="form-name" value={FORM_NAME} />
+            <input
+              ref={fileInputRef}
+              type="file"
+              name="files"
+              multiple
+              accept=".pdf,.ai,.eps,.jpg,.jpeg,.png,.psd"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
             <p className="hidden">
               <label>
                 Don’t fill this out if you’re human: <input name="bot-field" />

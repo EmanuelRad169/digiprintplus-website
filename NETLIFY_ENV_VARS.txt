@@ -11,18 +11,18 @@ NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
 SANITY_API_TOKEN=***get-from-sanity-dashboard***
 
 # Site Configuration
-NEXT_PUBLIC_SITE_URL=https://digiprintplus.vercel.app
+NEXT_PUBLIC_SITE_URL=https://digiprint-main-web.netlify.app
 
-# Optional: Sanity Preview
-SANITY_REVALIDATE_SECRET=preview-secret-key-2024
+# Webhook Security
+SANITY_REVALIDATE_SECRET=***set-a-strong-secret***
 
 # Optional: Analytics
 NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 
 ## Build Settings
-# Build command: npm run build:netlify
-# Publish directory: out
+# Build command: npm run build
+# Publish directory: .next
 # Node version: 18 or higher
 
 ## Important Notes:

@@ -1,40 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef } from "react";
 import { Upload, File, X } from "lucide-react";
 
 interface FileUploadStepProps {
   formData: any;
-  updateFormData: (data: any) => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
+  onRemoveFile: (index: number) => void;
 }
 
 export function FileUploadStep({
   formData,
-  updateFormData,
+  fileInputRef,
+  onRemoveFile,
 }: FileUploadStepProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const syncInputFiles = (files: File[]) => {
-    if (!fileInputRef.current) return;
-    const dataTransfer = new DataTransfer();
-    files.forEach((file) => dataTransfer.items.add(file));
-    fileInputRef.current.files = dataTransfer.files;
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const nextFiles = [...formData.files, ...files];
-    updateFormData({ files: nextFiles });
-    syncInputFiles(nextFiles);
-  };
-
-  const removeFile = (index: number) => {
-    const newFiles = formData.files.filter((_: any, i: number) => i !== index);
-    updateFormData({ files: newFiles });
-    syncInputFiles(newFiles);
-  };
-
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -71,15 +50,6 @@ export function FileUploadStep({
         <p className="text-sm text-gray-400">
           Supported formats: PDF, AI, EPS, JPG, PNG, PSD (Max 50MB per file)
         </p>
-        <input
-          ref={fileInputRef}
-          type="file"
-          name="files"
-          multiple
-          accept=".pdf,.ai,.eps,.jpg,.jpeg,.png,.psd"
-          onChange={handleFileUpload}
-          className="hidden"
-        />
       </div>
 
       {/* Uploaded Files */}
@@ -104,7 +74,7 @@ export function FileUploadStep({
                   </div>
                 </div>
                 <button
-                  onClick={() => removeFile(index)}
+                  onClick={() => onRemoveFile(index)}
                   className="text-red-500 hover:text-red-700 transition-colors duration-200"
                 >
                   <X className="w-5 h-5" />

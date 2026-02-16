@@ -20,15 +20,18 @@ Sanity Studio → Webhook → Netlify API → On-Demand Revalidation → Live in
 ## ✅ Part 1: Already Implemented
 
 ### 1. ISR (Incremental Static Regeneration)
+
 - All pages have 60-second automatic revalidation
 - Fallback if webhook fails
 
 ### 2. Draft Mode
+
 - Preview unpublished changes instantly
 - Enable: `/api/draft?secret=YOUR_SECRET&slug=/page-path`
 - Disable: `/api/draft/disable`
 
 ### 3. **NEW: On-Demand Revalidation API**
+
 - Located: `apps/web/src/app/api/revalidate/route.ts`
 - Triggers instant page updates
 - Validates webhook signatures for security
@@ -48,14 +51,16 @@ Sanity Studio → Webhook → Netlify API → On-Demand Revalidation → Live in
 
 **Name**: `Netlify On-Demand Revalidation`
 
-**URL**: 
+**URL**:
+
 ```
 https://digiprint-main-web.netlify.app/api/revalidate
 ```
 
 **Dataset**: `production`
 
-**Trigger on**: 
+**Trigger on**:
+
 - ✅ Create
 - ✅ Update
 - ✅ Delete
@@ -63,21 +68,25 @@ https://digiprint-main-web.netlify.app/api/revalidate
 **HTTP method**: `POST`
 
 **HTTP Headers**: (optional, for debugging)
+
 ```
 X-Webhook-Source: sanity-studio
 ```
 
 **Secret**: (copy from your environment)
+
 ```
 so26GsMt0Fr9|1puбeUQ
 ```
 
 **Filter** (optional - send webhook only for specific types):
+
 ```groq
 _type in ["post", "product", "service", "page", "siteSettings", "navigation", "megaMenu"]
 ```
 
 **Projection** (optional - reduce payload size):
+
 ```groq
 {
   _type,
@@ -107,12 +116,13 @@ Go to: **Netlify Dashboard** → **Site Settings** → **Environment Variables**
 NEXT_PUBLIC_SANITY_PROJECT_ID="as5tildt"
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
+NEXT_PUBLIC_SITE_URL="https://digiprint-main-web.netlify.app"
 
 # API Tokens
 SANITY_API_TOKEN=skiHFAHXZ8LXn7ouA5eW6IaCUqjdYoTL2NR6hjW51ljZNzxYVzsf8FLheiBOiK3TtYASCy58Zq3CsKUxyR6yZhGiKAjxT3cWhHs2q1vIb1KScOUoWSMvy5cz2KrcRp5RGquVQQuunI4pYBry3hkDRUgWamrhugMQ8JLe3pRsl2UAQhOxVSsG
 
 # Webhook Security
-SANITY_WEBHOOK_SECRET="so26GsMt0Fr9|1puбeUQ"
+SANITY_REVALIDATE_SECRET="so26GsMt0Fr9|1puбeUQ"
 
 # Preview Mode
 SANITY_PREVIEW_SECRET="D0Mpx6k/4rW0Rl8fVhEOlmQYP5sUBY0wr44QDJHsKuM="
@@ -143,6 +153,7 @@ node scripts/test-revalidation.js siteSettings
 ```
 
 Expected output:
+
 ```
 🧪 Testing Revalidation Webhook
 ================================
@@ -187,26 +198,26 @@ Status: 200
 
 The API intelligently revalidates paths based on document type:
 
-| Document Type | Paths Revalidated |
-|---------------|-------------------|
-| **post** | `/blog`, `/blog/[slug]` |
-| **product** | `/products`, `/products/[slug]` |
-| **service** | `/services`, `/services/[slug]` |
-| **page** | `/[slug]` |
-| **siteSettings** | All pages (layout) |
-| **navigation** | All pages (layout) |
-| **megaMenu** | All pages (layout) |
+| Document Type    | Paths Revalidated               |
+| ---------------- | ------------------------------- |
+| **post**         | `/blog`, `/blog/[slug]`         |
+| **product**      | `/products`, `/products/[slug]` |
+| **service**      | `/services`, `/services/[slug]` |
+| **page**         | `/[slug]`                       |
+| **siteSettings** | All pages (layout)              |
+| **navigation**   | All pages (layout)              |
+| **megaMenu**     | All pages (layout)              |
 
 ---
 
 ## ⚡ Performance Expectations
 
-| Action | Time to Live | Method |
-|--------|--------------|--------|
-| **Publish change** | 1-3 seconds | On-demand revalidation |
-| **Draft preview** | Instant | Draft mode |
-| **Webhook failure** | 0-60 seconds | ISR fallback |
-| **First visit (cached)** | <100ms | CDN edge cache |
+| Action                   | Time to Live | Method                 |
+| ------------------------ | ------------ | ---------------------- |
+| **Publish change**       | 1-3 seconds  | On-demand revalidation |
+| **Draft preview**        | Instant      | Draft mode             |
+| **Webhook failure**      | 0-60 seconds | ISR fallback           |
+| **First visit (cached)** | <100ms       | CDN edge cache         |
 
 ---
 
@@ -215,7 +226,7 @@ The API intelligently revalidates paths based on document type:
 ✅ **Webhook signature verification**: Prevents unauthorized revalidation  
 ✅ **Secret validation**: Only Sanity can trigger revalidation  
 ✅ **HTTPS only**: Encrypted communication  
-✅ **Type-safe**: TypeScript validation  
+✅ **Type-safe**: TypeScript validation
 
 ---
 
@@ -224,12 +235,14 @@ The API intelligently revalidates paths based on document type:
 ### Issue: "Changes not appearing live"
 
 **Check**:
+
 1. Webhook is configured correctly in Sanity
 2. Webhook shows successful deliveries (200 status)
 3. Environment variables are set on Netlify
 4. Clear browser cache (Cmd+Shift+R)
 
 **Test webhook manually**:
+
 ```bash
 curl -X POST https://digiprint-main-web.netlify.app/api/revalidate?path=/blog \
   -H "Content-Type: application/json"
@@ -237,14 +250,16 @@ curl -X POST https://digiprint-main-web.netlify.app/api/revalidate?path=/blog \
 
 ### Issue: "401 Invalid signature"
 
-**Fix**: 
-- Verify `SANITY_WEBHOOK_SECRET` matches in both:
+**Fix**:
+
+- Verify `SANITY_REVALIDATE_SECRET` matches in both:
   - Netlify environment variables
   - Sanity webhook configuration
 
 ### Issue: "Webhook times out"
 
 **Check**:
+
 - Site is deployed and accessible
 - API route exists: `https://your-site.netlify.app/api/revalidate`
 - Netlify functions are not blocked
@@ -252,6 +267,7 @@ curl -X POST https://digiprint-main-web.netlify.app/api/revalidate?path=/blog \
 ### Issue: "Some pages update, others don't"
 
 **Check**:
+
 - Document type is handled in `/api/revalidate/route.ts`
 - Slug structure matches your routing
 
@@ -329,6 +345,7 @@ experimental: {
 ### 3. Monitor Webhook Health
 
 Create a dashboard to track:
+
 - Webhook delivery success rate
 - Revalidation response times
 - Failed webhooks
@@ -342,7 +359,7 @@ For more granular control:
 export const generateTags = (type: string, id: string) => [
   `${type}:${id}`,
   `${type}:list`,
-  'global'
+  "global",
 ];
 
 // Revalidate by tag
@@ -362,11 +379,13 @@ revalidateTag(`product:${id}`);
 ## 🆘 Support
 
 **Webhook not working?** Check:
+
 1. Sanity webhook deliveries for error messages
 2. Netlify function logs for errors
 3. Run local test: `node scripts/test-revalidation.js post test`
 
-**Need help?** 
+**Need help?**
+
 - Sanity Webhooks Docs: https://www.sanity.io/docs/webhooks
 - Next.js Revalidation: https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration
 

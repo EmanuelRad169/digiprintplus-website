@@ -5,6 +5,7 @@
 **New Feature**: WordPress-like instant content updates (1-3 seconds instead of 30-60 seconds)
 
 ### Files Created:
+
 1. `/api/revalidate/route.ts` - On-demand revalidation API endpoint
 2. `scripts/test-revalidation.js` - Local testing script
 3. `scripts/verify-realtime-updates.sh` - E2E verification script
@@ -28,12 +29,14 @@ Sanity Studio Edit → Webhook → Your Site API → Instant Page Update
 ### Step 1: Wait for Deployment
 
 Netlify is currently deploying your changes. Check status:
+
 - Dashboard: https://app.netlify.com/
 - Look for: Build in progress
 
 ### Step 2: Verify Environment Variables
 
 Already set on Netlify (no action needed):
+
 ```bash
 SANITY_WEBHOOK_SECRET="so26GsMt0Fr9|1puбeUQ"
 SANITY_PREVIEW_SECRET="D0Mpx6k/4rW0Rl8fVhEOlmQYP5sUBY0wr44QDJHsKuM="
@@ -49,7 +52,7 @@ SANITY_PREVIEW_SECRET="D0Mpx6k/4rW0Rl8fVhEOlmQYP5sUBY0wr44QDJHsKuM="
    - **Dataset**: `production`
    - **Trigger on**: Create, Update, Delete (all checked ✅)
    - **Secret**: `so26GsMt0Fr9|1puбeUQ`
-   - **Filter** (optional): 
+   - **Filter** (optional):
      ```groq
      _type in ["post", "product", "service", "page", "siteSettings", "navigation"]
      ```
@@ -94,14 +97,14 @@ cd /Applications/MAMP/htdocs/FredCMs/apps/web
 
 ## 📊 What Gets Revalidated
 
-| Document Type | Paths Updated |
-|---------------|--------------|
-| Blog post | `/blog`, `/blog/[slug]` |
-| Product | `/products`, `/products/[slug]` |
-| Service | `/services`, `/services/[slug]` |
-| Page | `/[slug]` |
-| Site Settings | All pages |
-| Navigation | All pages |
+| Document Type | Paths Updated                   |
+| ------------- | ------------------------------- |
+| Blog post     | `/blog`, `/blog/[slug]`         |
+| Product       | `/products`, `/products/[slug]` |
+| Service       | `/services`, `/services/[slug]` |
+| Page          | `/[slug]`                       |
+| Site Settings | All pages                       |
+| Navigation    | All pages                       |
 
 ---
 
@@ -121,12 +124,14 @@ cd /Applications/MAMP/htdocs/FredCMs/apps/web
 ### "Changes not appearing"
 
 Run diagnostic:
+
 ```bash
 cd /Applications/MAMP/htdocs/FredCMs/apps/web
 ./scripts/verify-realtime-updates.sh
 ```
 
 Check:
+
 1. ✅ Netlify deployment finished?
 2. ✅ Sanity webhook saved and active?
 3. ✅ Webhook deliveries show 200 status?
@@ -135,6 +140,7 @@ Check:
 ### "Test fails"
 
 Common fixes:
+
 - Wait for Netlify deployment to complete
 - Verify environment variables are set
 - Check webhook URL matches your site URL
@@ -143,6 +149,7 @@ Common fixes:
 ### "Webhook shows error"
 
 Check Sanity webhook deliveries:
+
 - 401 = Wrong secret
 - 404 = API route not deployed yet
 - 500 = Server error (check Netlify logs)
@@ -152,11 +159,13 @@ Check Sanity webhook deliveries:
 ## 📈 Performance
 
 **Before** (Static builds):
+
 - Time to live: 30-60 seconds
 - CDN cache: 24 hours
 - Resource cost: Full rebuild every time
 
 **After** (ISR + On-Demand):
+
 - Time to live: **1-3 seconds** ⚡
 - CDN cache: Refreshes on publish
 - Resource cost: Only revalidates changed pages
@@ -168,6 +177,7 @@ Check Sanity webhook deliveries:
 **Full Guide**: [`docs/deployment/REALTIME_UPDATES_GUIDE.md`](../docs/deployment/REALTIME_UPDATES_GUIDE.md)
 
 Topics covered:
+
 - Complete setup walkthrough
 - Security best practices
 - Advanced optimization

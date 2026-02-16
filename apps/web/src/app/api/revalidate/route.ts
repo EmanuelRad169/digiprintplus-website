@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const { isValidSignature, body } = await parseBody<{
       _type: string;
       slug?: { current?: string };
-    }>(req, process.env.SANITY_WEBHOOK_SECRET);
+    }>(req, process.env.SANITY_REVALIDATE_SECRET);
 
     // Verify webhook signature
     if (!isValidSignature) {
