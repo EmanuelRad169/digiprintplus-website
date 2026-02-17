@@ -33,7 +33,7 @@ function CategoryCard({ category }: { category: Category }) {
 
   return (
     <Link href={`/products/category/${category.slug.current}`}>
-      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 hover:border-magenta-200">
+      <div className="bg-white shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 hover:border-magenta-200">
         {/* Category Image or Icon */}
         <div className="bg-gradient-to-br from-magenta-50 to-magenta-100 aspect-square flex items-center justify-center group-hover:from-magenta-100 group-hover:to-magenta-200 transition-colors relative">
           {category.image ? (
@@ -50,9 +50,9 @@ function CategoryCard({ category }: { category: Category }) {
           )}
         </div>
 
-        <div className="p-6">
+        <div className="p-3">
           {/* Category Title */}
-          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-magenta-600 transition-colors">
+          <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-magenta-600 transition-colors">
             {category.title}
           </h3>
 

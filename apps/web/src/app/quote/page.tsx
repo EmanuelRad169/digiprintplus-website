@@ -157,11 +157,9 @@ export default function QuotePage() {
     }
 
     if (step === 2) {
-      if (!formData.productType.trim())
-        return "Product type is required.";
+      if (!formData.productType.trim()) return "Product type is required.";
       if (!formData.quantity.trim()) return "Quantity is required.";
-      if (!formData.turnaround.trim())
-        return "Turnaround time is required.";
+      if (!formData.turnaround.trim()) return "Turnaround time is required.";
     }
 
     if (step === 3) {

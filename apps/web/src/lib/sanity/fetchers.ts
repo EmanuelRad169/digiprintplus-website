@@ -601,8 +601,11 @@ export async function getProductBySlug(slug: string, isPreview = false) {
             slug
           },
           tags,
+          "shortDescription": coalesce(shortDescription, description),
           description,
           longDescription,
+          "content": coalesce(content, productDetails, detailedSpecs),
+          "quickSpecs": coalesce(quickSpecs, specifications[]{name, value, unit}),
           specifications[] {
             name,
             value,
@@ -610,6 +613,13 @@ export async function getProductBySlug(slug: string, isPreview = false) {
           },
           features,
           useCases,
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
           image {
             asset->{
               _id,
@@ -631,6 +641,7 @@ export async function getProductBySlug(slug: string, isPreview = false) {
           currency,
           inStock,
           leadTime,
+          "quote": coalesce(quote, {"enabled": inStock, "leadTime": leadTime, "options": quoteOptions}),
           rating,
           reviewCount,
           testimonials[] {
@@ -639,13 +650,21 @@ export async function getProductBySlug(slug: string, isPreview = false) {
             company,
             rating
           },
-          qualityGuarantee,
-          fastDelivery,
-          awardWinning,
+          "flags": coalesce(flags, {
+            "featured": featured,
+            "popular": popular,
+            "new": newProduct,
+            "fastDelivery": fastDelivery,
+            "qualityGuarantee": qualityGuarantee,
+            "awardWinning": awardWinning
+          }),
+          qualityGuarantee: coalesce(flags.qualityGuarantee, qualityGuarantee),
+          fastDelivery: coalesce(flags.fastDelivery, fastDelivery),
+          awardWinning: coalesce(flags.awardWinning, awardWinning),
           certifications,
-          popular,
-          featured,
-          newProduct,
+          popular: coalesce(flags.popular, popular),
+          featured: coalesce(flags.featured, featured),
+          newProduct: coalesce(flags.new, newProduct),
           seo {
             metaTitle,
             metaDescription,
@@ -654,6 +673,8 @@ export async function getProductBySlug(slug: string, isPreview = false) {
           template {
             hasTemplate,
             description,
+            "file": coalesce(file, downloadFile),
+            "previewHtml": coalesce(previewHtml, htmlEmbed),
             htmlEmbed,
             downloadFile {
               asset->{
@@ -718,8 +739,11 @@ export async function getProductBySlug(slug: string, isPreview = false) {
             slug
           },
           tags,
+          "shortDescription": coalesce(shortDescription, description),
           description,
           longDescription,
+          "content": coalesce(content, productDetails, detailedSpecs),
+          "quickSpecs": coalesce(quickSpecs, specifications[]{name, value, unit}),
           specifications[] {
             name,
             value,
@@ -727,6 +751,13 @@ export async function getProductBySlug(slug: string, isPreview = false) {
           },
           features,
           useCases,
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
           image {
             asset->{
               _id,
@@ -748,6 +779,7 @@ export async function getProductBySlug(slug: string, isPreview = false) {
           currency,
           inStock,
           leadTime,
+          "quote": coalesce(quote, {"enabled": inStock, "leadTime": leadTime, "options": quoteOptions}),
           rating,
           reviewCount,
           testimonials[] {
@@ -756,13 +788,21 @@ export async function getProductBySlug(slug: string, isPreview = false) {
             company,
             rating
           },
-          qualityGuarantee,
-          fastDelivery,
-          awardWinning,
+          "flags": coalesce(flags, {
+            "featured": featured,
+            "popular": popular,
+            "new": newProduct,
+            "fastDelivery": fastDelivery,
+            "qualityGuarantee": qualityGuarantee,
+            "awardWinning": awardWinning
+          }),
+          qualityGuarantee: coalesce(flags.qualityGuarantee, qualityGuarantee),
+          fastDelivery: coalesce(flags.fastDelivery, fastDelivery),
+          awardWinning: coalesce(flags.awardWinning, awardWinning),
           certifications,
-          popular,
-          featured,
-          newProduct,
+          popular: coalesce(flags.popular, popular),
+          featured: coalesce(flags.featured, featured),
+          newProduct: coalesce(flags.new, newProduct),
           seo {
             metaTitle,
             metaDescription,
@@ -771,6 +811,8 @@ export async function getProductBySlug(slug: string, isPreview = false) {
           template {
             hasTemplate,
             description,
+            "file": coalesce(file, downloadFile),
+            "previewHtml": coalesce(previewHtml, htmlEmbed),
             htmlEmbed,
             downloadFile {
               asset->{
@@ -852,12 +894,13 @@ export async function getProducts(category?: string, isPreview = false) {
             title,
             slug
           },
+          "shortDescription": coalesce(shortDescription, description),
           description,
           status,
           inStock,
-          featured,
-          popular,
-          newProduct,
+          featured: coalesce(flags.featured, featured),
+          popular: coalesce(flags.popular, popular),
+          newProduct: coalesce(flags.new, newProduct),
           tags,
           basePrice,
           priceRange,
@@ -865,6 +908,13 @@ export async function getProducts(category?: string, isPreview = false) {
           rating,
           reviewCount,
           leadTime,
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
           image {
             asset->{
               _id,
@@ -882,12 +932,13 @@ export async function getProducts(category?: string, isPreview = false) {
             title,
             slug
           },
+          "shortDescription": coalesce(shortDescription, description),
           description,
           status,
           inStock,
-          featured,
-          popular,
-          newProduct,
+          featured: coalesce(flags.featured, featured),
+          popular: coalesce(flags.popular, popular),
+          newProduct: coalesce(flags.new, newProduct),
           tags,
           basePrice,
           priceRange,
@@ -895,6 +946,13 @@ export async function getProducts(category?: string, isPreview = false) {
           rating,
           reviewCount,
           leadTime,
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
           image {
             asset->{
               _id,
@@ -943,15 +1001,23 @@ export async function getProductCategories(isPreview = false) {
 export async function getFeaturedProducts(isPreview = false) {
   try {
     const query = isPreview
-      ? `*[_type == "product" && featured == true] | order(title asc) {
+      ? `*[_type == "product" && (featured == true || flags.featured == true)] | order(title asc) {
           _id,
           title,
           slug,
+          "shortDescription": coalesce(shortDescription, description),
           description,
           category->{
             _id,
             title,
             slug
+          },
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
           },
           image {
             asset->{
@@ -965,15 +1031,23 @@ export async function getFeaturedProducts(isPreview = false) {
             value
           }
         }`
-      : `*[_type == "product" && featured == true && !(_id in path('drafts.**'))] | order(title asc) {
+      : `*[_type == "product" && (featured == true || flags.featured == true) && !(_id in path('drafts.**'))] | order(title asc) {
           _id,
           title,
           slug,
+          "shortDescription": coalesce(shortDescription, description),
           description,
           category->{
             _id,
             title,
             slug
+          },
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
           },
           image {
             asset->{
@@ -1013,6 +1087,7 @@ export async function getProductsByCategory(
             slug
           },
           tags,
+          "shortDescription": coalesce(shortDescription, description),
           description,
           specifications[] {
             name,
@@ -1020,6 +1095,13 @@ export async function getProductsByCategory(
             unit
           },
           features,
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
           image {
             asset->{
               _id,
@@ -1030,9 +1112,9 @@ export async function getProductsByCategory(
           basePrice,
           priceRange,
           currency,
-          featured,
-          popular,
-          newProduct,
+          featured: coalesce(flags.featured, featured),
+          popular: coalesce(flags.popular, popular),
+          newProduct: coalesce(flags.new, newProduct),
           rating,
           reviewCount
         }`
@@ -1047,6 +1129,7 @@ export async function getProductsByCategory(
             slug
           },
           tags,
+          "shortDescription": coalesce(shortDescription, description),
           description,
           specifications[] {
             name,
@@ -1054,6 +1137,13 @@ export async function getProductsByCategory(
             unit
           },
           features,
+          "mainImage": coalesce(mainImage, image) {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
           image {
             asset->{
               _id,
@@ -1064,9 +1154,9 @@ export async function getProductsByCategory(
           basePrice,
           priceRange,
           currency,
-          featured,
-          popular,
-          newProduct,
+          featured: coalesce(flags.featured, featured),
+          popular: coalesce(flags.popular, popular),
+          newProduct: coalesce(flags.new, newProduct),
           rating,
           reviewCount
         }`;

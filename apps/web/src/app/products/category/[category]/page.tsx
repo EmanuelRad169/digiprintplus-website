@@ -10,14 +10,7 @@ import {
 } from "@/lib/sanity/fetchers";
 import { Product, ProductCategory } from "@/types/product";
 import { generateCategorySEO } from "@/lib/seo";
-import {
-  ShoppingCart,
-  Eye,
-  ArrowLeft,
-  Tag,
-  Package,
-  Sparkles,
-} from "lucide-react";
+import { ShoppingCart, ArrowLeft, Tag, Package, Sparkles } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 export const revalidate = 60;
@@ -31,15 +24,15 @@ interface CategoryPageProps {
 // Product Card Component
 function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="bg-gray-50 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100">
+    <div className="group overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
       {/* Product Image */}
-      <div className="aspect-video bg-gradient-to-br from-magenta-50 to-magenta-100 relative overflow-hidden">
+      <div className="relative aspect-square overflow-hidden bg-gray-50">
         {product.image?.asset?.url ? (
           <Image
             src={product.image.asset.url}
             alt={product.image.alt || product.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex items-center justify-center h-full">
@@ -49,56 +42,23 @@ function ProductCard({ product }: { product: Product }) {
             </div>
           </div>
         )}
-
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.featured && (
-            <span className="bg-cyan-300 text-black text-xs font-semibold px-2 py-1 rounded-full flex items-center">
-              <Sparkles className="w-3 h-3 mr-1" />
-              Featured
-            </span>
-          )}
-          {product.popular && (
-            <span className="bg-yellow-300 text-black text-xs font-semibold px-2 py-1 rounded-full">
-              Popular
-            </span>
-          )}
-        </div>
       </div>
 
       {/* Product Info */}
-      <div className="p-6">
+      <div className="p-3">
         {/* Title & Description */}
-        <div className="mb-4">
+        <div className="mb-2">
           <Link href={`/products/${product.slug?.current}`}>
-            <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-magenta-600 transition-colors cursor-pointer hover:underline">
+            <h3 className="text-base font-semibold text-gray-900 transition-colors group-hover:text-magenta-600 cursor-pointer">
               {product.title}
             </h3>
           </Link>
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed pb-6">
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
           {product.description}
         </p>
-
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          <Link
-            href={`/products/${product.slug?.current}`}
-            className="flex-1 bg-black text-white px-4 py-2.5 rounded-lg font-medium  text-center text-sm flex items-center justify-center transition-all duration-200 hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            View Details
-          </Link>
-          <Link
-            href="/quote"
-            className="flex-1 bg-magenta-500 text-white px-4 py-2.5 rounded-lg font-medium text-center text-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            Get Quote
-          </Link>
-        </div>
       </div>
     </div>
   );
@@ -228,7 +188,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           {products.length > 0 ? (
             <>
               {/* Products Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                 {products.map((product: Product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}

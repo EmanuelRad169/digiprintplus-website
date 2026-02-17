@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { SanityProductImage } from "@/components/ui/sanity-image";
+import { SanityImage } from "@/components/ui/sanity-image";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -210,9 +210,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {/* Main Image */}
               <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-xl relative group">
                 {product.image && product.image.asset && (
-                  <SanityProductImage
+                  <SanityImage
                     src={product.image}
                     alt={product.image.alt || product.title}
+                    width={900}
+                    height={900}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 )}
@@ -233,53 +235,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         key={index}
                         className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-md hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-magenta-500"
                       >
-                        <SanityProductImage
+                        <SanityImage
                           src={image}
                           alt={
                             image.alt || `${product.title} view ${index + 1}`
                           }
+                          width={300}
+                          height={300}
                           className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                         />
                       </div>
                     ))}
                 </div>
               )}
-
-              {/* Trust Badges - Compact */}
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-5 border border-slate-200">
-                <div className="grid grid-cols-3 gap-3">
-                  {product.qualityGuarantee && (
-                    <div className="text-center">
-                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-1.5">
-                        <Shield className="w-5 h-5 text-green-600" />
-                      </div>
-                      <p className="text-xs font-medium text-gray-700">
-                        Quality
-                      </p>
-                    </div>
-                  )}
-                  {product.fastDelivery && (
-                    <div className="text-center">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-1.5">
-                        <Truck className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <p className="text-xs font-medium text-gray-700">
-                        Fast Ship
-                      </p>
-                    </div>
-                  )}
-                  {product.awardWinning && (
-                    <div className="text-center">
-                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-1.5">
-                        <Award className="w-5 h-5 text-purple-600" />
-                      </div>
-                      <p className="text-xs font-medium text-gray-700">
-                        Awarded
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
 
             {/* RIGHT: Product Information - Scrollable Content */}
@@ -380,7 +348,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   {product.leadTime && (
                     <div className="flex items-center text-gray-700">
                       <Clock className="w-4 h-4 mr-1.5 text-blue-600" />
-                      <span className="font-medium">Lead Time:</span>
+                      <span className="font-medium">Delivery Time:</span>
                       <span className="ml-1">{product.leadTime}</span>
                     </div>
                   )}
