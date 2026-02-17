@@ -85,6 +85,7 @@ export default function QuotePage() {
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [stepError, setStepError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     // Contact Info
     firstName: "",
@@ -124,6 +125,11 @@ export default function QuotePage() {
   }, [searchParams]);
 
   const nextStep = () => {
+    const error = validateStep(currentStep);
+    if (error) {
+      setStepError(error);
+      return;
+    }
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
@@ -137,6 +143,40 @@ export default function QuotePage() {
 
   const updateFormData = (data: Partial<typeof formData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
+    if (stepError) {
+      setStepError(null);
+    }
+  };
+
+  const validateStep = (step: number) => {
+    if (step === 1) {
+      if (!formData.firstName.trim()) return "First name is required.";
+      if (!formData.lastName.trim()) return "Last name is required.";
+      if (!formData.email.trim()) return "Email is required.";
+      if (!formData.phone.trim()) return "Phone number is required.";
+    }
+
+    if (step === 2) {
+      if (!formData.productType.trim())
+        return "Product type is required.";
+      if (!formData.quantity.trim()) return "Quantity is required.";
+      if (!formData.turnaround.trim())
+        return "Turnaround time is required.";
+    }
+
+    if (step === 3) {
+      if (!formData.needsDesignAssistance && formData.files.length === 0) {
+        return "Upload at least one file or select design assistance.";
+      }
+    }
+
+    if (step === 4) {
+      if (!formData.agreeToTerms) {
+        return "You must agree to the terms to submit.";
+      }
+    }
+
+    return null;
   };
 
   const syncInputFiles = (files: File[]) => {
@@ -160,6 +200,11 @@ export default function QuotePage() {
   };
 
   const handleFormSubmit = () => {
+    const error = validateStep(4);
+    if (error) {
+      setStepError(error);
+      return;
+    }
     // Allow the browser to POST the form to Netlify.
     // Track conversion just before the navigation happens.
     if (typeof window !== "undefined" && (window as any).gtag) {
@@ -315,6 +360,12 @@ export default function QuotePage() {
               </motion.div>
             </AnimatePresence>
 
+            {stepError && (
+              <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {stepError}
+              </div>
+            )}
+
             {/* Navigation */}
             <div className="flex justify-between mt-8 pt-8 border-t border-gray-200">
               <button
@@ -335,7 +386,8 @@ export default function QuotePage() {
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="flex items-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200"
+                  disabled={!!validateStep(currentStep)}
+                  className="flex items-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <ChevronRight className="w-5 h-5 ml-2" />
@@ -343,7 +395,8 @@ export default function QuotePage() {
               ) : (
                 <button
                   type="submit"
-                  className="flex items-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200"
+                  disabled={!!validateStep(4)}
+                  className="flex items-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Submit Quote Request
                   <Send className="w-5 h-5 ml-2" />
