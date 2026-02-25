@@ -1,22 +1,42 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { CheckCircle } from "lucide-react";
 
 export default function FormsSuccessPage() {
   const searchParams = useSearchParams();
   const form = searchParams.get("form");
+  const requestId = searchParams.get("requestId");
 
   return (
     <div className="min-h-[70vh] bg-gray-50 py-16">
       <div className="container max-w-2xl">
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Thanks!</h1>
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 text-green-600" />
+            </div>
+          </div>
+
+          <h1 className="text-3xl font-bold text-gray-900">Thank You!</h1>
           <p className="mt-3 text-gray-600">
             Your <span className="font-semibold">{form || "form"}</span>{" "}
-            submission was received.
+            submission was received successfully.
           </p>
-          <p className="mt-2 text-gray-600">
-            We’ll review it and get back to you shortly.
+
+          {requestId && (
+            <div className="mt-4 p-3 bg-magenta-50 rounded-lg">
+              <p className="text-sm text-magenta-800">
+                <span className="font-semibold">Request ID:</span> {requestId}
+              </p>
+              <p className="text-xs text-magenta-600 mt-1">
+                Please save this ID for your records
+              </p>
+            </div>
+          )}
+
+          <p className="mt-4 text-gray-600">
+            We&apos;ll review your request and get back to you within 24 hours.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
