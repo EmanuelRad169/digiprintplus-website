@@ -23,7 +23,7 @@ export function FileUploadStep({
     setIsVisible(true);
 
     // Prevent default drag behavior on the entire page
-    const preventDefaults = (e: DragEvent) => {
+    const preventDefaults = (e: Event) => {
       e.preventDefault();
       e.stopPropagation();
     };
