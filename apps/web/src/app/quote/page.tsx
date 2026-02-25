@@ -86,6 +86,7 @@ export default function QuotePage() {
   const [currentStep, setCurrentStep] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [stepError, setStepError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     // Contact Info
     firstName: "",
@@ -186,9 +187,23 @@ export default function QuotePage() {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+
+    // Validate PDF files only
+    const invalidFiles = files.filter(
+      (file) =>
+        !file.type.includes("pdf") && !file.name.toLowerCase().endsWith(".pdf"),
+    );
+    if (invalidFiles.length > 0) {
+      setStepError(
+        `Please upload PDF files only. Invalid files: ${invalidFiles.map((f) => f.name).join(", ")}`,
+      );
+      return;
+    }
+
     const nextFiles = [...formData.files, ...files];
     updateFormData({ files: nextFiles });
     syncInputFiles(nextFiles);
+    setStepError(null);
   };
 
   const removeFile = (index: number) => {
@@ -197,20 +212,53 @@ export default function QuotePage() {
     syncInputFiles(newFiles);
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     const error = validateStep(4);
     if (error) {
       setStepError(error);
       return;
     }
-    // Allow the browser to POST the form to Netlify.
-    // Track conversion just before the navigation happens.
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", "quote_submit", {
-        event_category: "engagement",
-        event_label: formData.productType,
-        value: 1,
+
+    setIsSubmitting(true);
+    setStepError(null);
+
+    try {
+      // Track conversion
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "quote_submit", {
+          event_category: "engagement",
+          event_label: formData.productType,
+          value: 1,
+        });
+      }
+
+      // Submit to our Netlify function
+      const response = await fetch("/.netlify/functions/submit-quote", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit quote request");
+      }
+
+      // Redirect to success page
+      window.location.href = `/forms/success?form=${encodeURIComponent(FORM_NAME)}&requestId=${encodeURIComponent(data.requestId || "")}`;
+    } catch (error) {
+      console.error("Error submitting quote:", error);
+      setStepError(
+        error instanceof Error
+          ? error.message
+          : "Failed to submit quote request. Please try again.",
+      );
+      setIsSubmitting(false);
     }
   };
 
@@ -336,7 +384,7 @@ export default function QuotePage() {
               type="file"
               name="files"
               multiple
-              accept=".pdf,.ai,.eps,.jpg,.jpeg,.png,.psd"
+              accept=".pdf,application/pdf"
               onChange={handleFileUpload}
               className="hidden"
             />
@@ -393,10 +441,10 @@ export default function QuotePage() {
               ) : (
                 <button
                   type="submit"
-                  disabled={!!validateStep(4)}
+                  disabled={!!validateStep(4) || isSubmitting}
                   className="flex items-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Submit Quote Request
+                  {isSubmitting ? "Submitting..." : "Submit Quote Request"}
                   <Send className="w-5 h-5 ml-2" />
                 </button>
               )}

@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@netlify/functions": "^2.8.2",
-    "@sanity/webhook": "^4.0.4"
+    "@sanity/webhook": "^4.0.4",
+    "@sanity/client": "^6.4.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
   }
 }
