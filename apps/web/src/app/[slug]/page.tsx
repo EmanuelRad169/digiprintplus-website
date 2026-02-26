@@ -2,10 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
 import Image from "next/image";
-import {
-  getPageBySlug,
-  getAboutPage,
-} from "../../lib/sanity/fetchers";
+import { getPageBySlug, getAboutPage } from "../../lib/sanity/fetchers";
 import { PortableTextRenderer } from "../../components/portable-text";
 
 export const revalidate = 60;

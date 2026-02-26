@@ -6,8 +6,8 @@ import { CheckCircle } from "lucide-react";
 
 export default function FormsSuccessPage() {
   const searchParams = useSearchParams();
-  const form = searchParams.get("form");
-  const requestId = searchParams.get("requestId");
+  const form = searchParams?.get("form") ?? null;
+  const requestId = searchParams?.get("requestId") ?? null;
 
   return (
     <div className="min-h-[70vh] bg-gray-50 py-16">
