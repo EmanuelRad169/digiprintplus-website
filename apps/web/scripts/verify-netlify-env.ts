@@ -1,13 +1,15 @@
 #!/usr/bin/env tsx
 /**
  * Netlify Build-Time Environment Variable Verification
- * 
+ *
  * Validates all required environment variables are present before building.
  * Fails the build with clear error messages if anything is missing.
- * 
+ *
  * Usage: Add to package.json scripts:
  *   "prebuild": "tsx scripts/verify-netlify-env.ts"
  */
+
+// cSpell:ignore as5tildt
 
 interface EnvVar {
   name: string;
@@ -104,7 +106,7 @@ function validateEnvironment(): ValidationResult {
   };
 
   console.log("\n🔍 Validating Netlify Environment Variables...\n");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
 
   // Check required variables
   for (const envVar of REQUIRED_ENV_VARS) {
@@ -113,12 +115,12 @@ function validateEnvironment(): ValidationResult {
     if (!value) {
       if (envVar.defaultValue) {
         result.warnings.push(
-          `⚠️  ${envVar.name} not set, using default: ${envVar.defaultValue}`
+          `⚠️  ${envVar.name} not set, using default: ${envVar.defaultValue}`,
         );
         result.info[envVar.name] = envVar.defaultValue;
       } else {
         result.errors.push(
-          `❌ MISSING: ${envVar.name}\n   Description: ${envVar.description}\n   Set in: Netlify Dashboard → Site Settings → Environment Variables`
+          `❌ MISSING: ${envVar.name}\n   Description: ${envVar.description}\n   Set in: Netlify Dashboard → Site Settings → Environment Variables`,
         );
         result.success = false;
       }
@@ -126,15 +128,16 @@ function validateEnvironment(): ValidationResult {
       // Validate format if validator provided
       if (envVar.validateFormat && !envVar.validateFormat(value)) {
         result.errors.push(
-          `❌ INVALID FORMAT: ${envVar.name}\n   Current value: ${value}\n   Expected: ${envVar.description}`
+          `❌ INVALID FORMAT: ${envVar.name}\n   Current value: ${value}\n   Expected: ${envVar.description}`,
         );
         result.success = false;
       } else {
         // Mask sensitive values in output
-        const displayValue = envVar.name.includes("SECRET") || envVar.name.includes("TOKEN")
-          ? `${value.substring(0, 8)}...`
-          : value;
-        
+        const displayValue =
+          envVar.name.includes("SECRET") || envVar.name.includes("TOKEN")
+            ? `${value.substring(0, 8)}...`
+            : value;
+
         result.info[envVar.name] = displayValue;
         console.log(`✅ ${envVar.name}: ${displayValue}`);
       }
@@ -159,7 +162,7 @@ function validateEnvironment(): ValidationResult {
     }
   }
 
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
 
   // Validate Sanity configuration consistency
   const sanityProjectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
@@ -168,13 +171,13 @@ function validateEnvironment(): ValidationResult {
 
   if (sanityProjectId && sanityProjectId !== "as5tildt") {
     result.warnings.push(
-      `⚠️  SANITY_PROJECT_ID mismatch: env has '${sanityProjectId}' but code expects 'as5tildt'`
+      `⚠️  SANITY_PROJECT_ID mismatch: env has '${sanityProjectId}' but code expects 'as5tildt'`,
     );
   }
 
   if (sanityDataset && sanityDataset !== "production") {
     result.warnings.push(
-      `⚠️  Using NON-PRODUCTION dataset: '${sanityDataset}' - ensure this is intentional!`
+      `⚠️  Using NON-PRODUCTION dataset: '${sanityDataset}' - ensure this is intentional!`,
     );
   }
 
@@ -186,18 +189,22 @@ function validateEnvironment(): ValidationResult {
   // This prevents SEO issues from inconsistent fallback URLs
   if (process.env.NETLIFY === "true" && !siteUrl) {
     result.errors.push(
-      `❌ CRITICAL: NEXT_PUBLIC_SITE_URL must be set in production Netlify builds\n   Required for: SEO metadata, Open Graph tags, sitemap.xml, robots.txt\n   Set to: https://digiprint-main-web.netlify.app\n   Location: Netlify Dashboard → Site Settings → Environment Variables`
+      `❌ CRITICAL: NEXT_PUBLIC_SITE_URL must be set in production Netlify builds\n   Required for: SEO metadata, Open Graph tags, sitemap.xml, robots.txt\n   Set to: https://digiprint-main-web.netlify.app\n   Location: Netlify Dashboard → Site Settings → Environment Variables`,
     );
     result.success = false;
   } else if (siteUrl && !siteUrl.includes(".netlify.app")) {
     result.warnings.push(
-      `⚠️  NEXT_PUBLIC_SITE_URL is not a Netlify subdomain: ${siteUrl}\n   Expected format: https://[site-name].netlify.app`
+      `⚠️  NEXT_PUBLIC_SITE_URL is not a Netlify subdomain: ${siteUrl}\n   Expected format: https://[site-name].netlify.app`,
     );
   }
 
-  if (studioUrl && !studioUrl.includes(".netlify.app") && !studioUrl.includes("sanity.studio")) {
+  if (
+    studioUrl &&
+    !studioUrl.includes(".netlify.app") &&
+    !studioUrl.includes("sanity.studio")
+  ) {
     result.warnings.push(
-      `⚠️  SANITY_STUDIO_URL should be Netlify subdomain: ${studioUrl}`
+      `⚠️  SANITY_STUDIO_URL should be Netlify subdomain: ${studioUrl}`,
     );
   }
 
@@ -207,7 +214,7 @@ function validateEnvironment(): ValidationResult {
 function printResults(result: ValidationResult): void {
   console.log("\n");
   console.log("📊 VALIDATION SUMMARY");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
 
   if (result.warnings.length > 0) {
     console.log("\n⚠️  WARNINGS:\n");
@@ -219,9 +226,11 @@ function printResults(result: ValidationResult): void {
     result.errors.forEach((error) => console.log(error));
     console.log("\n");
     console.log("🚨 BUILD CANNOT CONTINUE");
-    console.log("=" .repeat(60));
+    console.log("=".repeat(60));
     console.log("\nTo fix:");
-    console.log("1. Go to: https://app.netlify.com/sites/[your-site]/settings/deploys#environment");
+    console.log(
+      "1. Go to: https://app.netlify.com/sites/[your-site]/settings/deploys#environment",
+    );
     console.log("2. Add the missing environment variables");
     console.log("3. Trigger a new deployment\n");
   } else if (result.warnings.length > 0) {
@@ -230,7 +239,7 @@ function printResults(result: ValidationResult): void {
     console.log("\n✅ ALL ENVIRONMENT VARIABLES VALID!\n");
   }
 
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
 }
 
 // Main execution
@@ -248,7 +257,10 @@ function main(): void {
     if (process.env.NETLIFY) {
       const fs = require("fs");
       const path = require("path");
-      const outputPath = path.join(process.cwd(), ".netlify-env-validation.json");
+      const outputPath = path.join(
+        process.cwd(),
+        ".netlify-env-validation.json",
+      );
       fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
       console.log(`\n📝 Validation results saved to: ${outputPath}\n`);
     }
@@ -263,4 +275,5 @@ if (require.main === module) {
   main();
 }
 
-export { validateEnvironment, ValidationResult };
+export { validateEnvironment };
+export type { ValidationResult };

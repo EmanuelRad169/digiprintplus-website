@@ -10,6 +10,7 @@
 This guide walks you through configuring Sanity webhooks to trigger instant content updates on your Netlify-hosted website.
 
 **What You'll Achieve**:
+
 - ⚡ Content updates in **1-5 seconds** (vs 1-2 minutes)
 - 🔄 Automatic cache invalidation when content changes
 - 🛡️ Secure webhook validation with signatures
@@ -26,6 +27,7 @@ Before starting, ensure you have completed:
 - ✅ You have the `SANITY_WEBHOOK_SECRET` value saved
 
 **Required Values**:
+
 - Webhook URL: `https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook`
 - Secret: Your `SANITY_WEBHOOK_SECRET` from environment variables
 
@@ -48,13 +50,13 @@ Before starting, ensure you have completed:
 
 2. **Configure Basic Settings**:
 
-   | Field | Value |
-   |-------|-------|
-   | **Name** | `Netlify Instant Updates` |
-   | **Description** | `Triggers instant revalidation on content changes` |
-   | **URL** | `https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook` |
-   | **Dataset** | `production` |
-   | **HTTP Method** | `POST` |
+   | Field           | Value                                                                      |
+   | --------------- | -------------------------------------------------------------------------- |
+   | **Name**        | `Netlify Instant Updates`                                                  |
+   | **Description** | `Triggers instant revalidation on content changes`                         |
+   | **URL**         | `https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook` |
+   | **Dataset**     | `production`                                                               |
+   | **HTTP Method** | `POST`                                                                     |
 
 3. **Set the Secret**:
    - In the "Secret" field, paste the value of your `SANITY_WEBHOOK_SECRET`
@@ -73,6 +75,7 @@ Select which document types and operations should trigger the webhook:
 #### Document Types to Watch
 
 Check ALL of these:
+
 - ✅ `product` - Product pages
 - ✅ `post` - Blog posts
 - ✅ `service` - Service pages
@@ -83,11 +86,13 @@ Check ALL of these:
 #### Operations to Watch
 
 Check ALL of these:
+
 - ✅ **Create** - When a new document is created
 - ✅ **Update** - When a document is modified
 - ✅ **Delete** - When a document is deleted
 
 **Why all three?**
+
 - Create: New content needs to appear on site
 - Update: Changes need to reflect immediately
 - Delete: Removed content should disappear from site
@@ -97,16 +102,19 @@ Check ALL of these:
 ### Step 4: Advanced Configuration (Optional)
 
 #### Projection (Leave Default)
+
 - Leave blank or use default
 - The webhook function handles path determination automatically
 
 #### HTTP Headers (Optional)
+
 - Add custom headers if needed for debugging:
   ```
   X-Webhook-Source: sanity-cms
   ```
 
 #### On Failure
+
 - **Retry**: Enabled (recommended)
 - **Max Retries**: 3 (default)
 - **Retry Delay**: Exponential backoff (default)
@@ -131,6 +139,7 @@ Check ALL of these:
 ### Verify Webhook is Active
 
 #### Option 1: Test from Sanity Dashboard
+
 ```
 1. Go to Sanity Manage → API → Webhooks
 2. Click on "Netlify Instant Updates"
@@ -146,6 +155,7 @@ Check ALL of these:
 ```
 
 #### Option 2: Test via cURL
+
 ```bash
 # Simple health check (no signature required for GET/HEAD)
 curl https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook
@@ -177,10 +187,11 @@ curl https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook
    - 🔄 1-2 minutes: Fallback to full rebuild (if instant fails)
 
 4. **Check Function Logs** (for debugging):
+
    ```bash
    # Via Netlify CLI
    netlify functions:log sanity-webhook --site digiprint-main-web
-   
+
    # Expected output:
    # 📥 Sanity webhook received
    # ✅ Instant revalidation successful: {"revalidated":true,"path":"/products/..."}
@@ -220,14 +231,14 @@ curl https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook
 
 The webhook function automatically maps document types to paths:
 
-| Document Type | Path(s) Revalidated |
-|---------------|-------------------|
-| `product` | `/products/[slug]`, `/products` |
-| `post` | `/blog/[slug]`, `/blog` |
-| `service` | `/services/[slug]`, `/services` |
-| `page` | `/[slug]` |
-| `template` | `/templates/[slug]`, `/templates` |
-| `category` | Triggers related pages rebuild |
+| Document Type | Path(s) Revalidated               |
+| ------------- | --------------------------------- |
+| `product`     | `/products/[slug]`, `/products`   |
+| `post`        | `/blog/[slug]`, `/blog`           |
+| `service`     | `/services/[slug]`, `/services`   |
+| `page`        | `/[slug]`                         |
+| `template`    | `/templates/[slug]`, `/templates` |
+| `category`    | Triggers related pages rebuild    |
 
 ---
 
@@ -242,6 +253,7 @@ The webhook function automatically maps document types to paths:
 3. Invalid signatures are rejected (401 Unauthorized)
 
 **This prevents**:
+
 - Unauthorized rebuild triggers
 - Malicious cache invalidation
 - Replay attacks
@@ -251,6 +263,7 @@ The webhook function automatically maps document types to paths:
 If you need to rotate the secret:
 
 1. **Generate new secret**:
+
    ```bash
    openssl rand -base64 32
    ```
@@ -304,10 +317,11 @@ If you need to rotate the secret:
 **Diagnosis**:
 
 1. **Check if instant revalidation is configured**:
+
    ```bash
    # Check function logs
    netlify functions:log sanity-webhook --site digiprint-main-web
-   
+
    # Look for:
    # ✅ Instant revalidation successful
    # vs
@@ -338,9 +352,11 @@ If you need to rotate the secret:
    - If no recent deliveries: Webhook not firing
 
 2. **Check function logs**:
+
    ```bash
    netlify functions:log sanity-webhook --site digiprint-main-web --tail
    ```
+
    - Make a content change
    - Look for: `📥 Sanity webhook received`
    - If nothing: Webhook not reaching function
@@ -361,24 +377,30 @@ If you need to rotate the secret:
 **Common Error Messages**:
 
 #### "Invalid signature"
+
 ```
 ❌ Webhook signature validation failed
 ```
+
 - **Cause**: `SANITY_WEBHOOK_SECRET` mismatch
 - **Fix**: Ensure secret matches in both Sanity and Netlify
 
 #### "Missing build hook URL"
+
 ```
 ⚠️  NETLIFY_BUILD_HOOK_URL not configured
 ```
+
 - **Cause**: Fallback rebuild won't work
 - **Fix**: Add `NETLIFY_BUILD_HOOK_URL` env var
 - **Impact**: Instant revalidation still works, just no fallback
 
 #### "Revalidation endpoint returned 401"
+
 ```
 ⚠️  Revalidation failed: 401 Unauthorized
 ```
+
 - **Cause**: `SANITY_REVALIDATE_SECRET` mismatch
 - **Fix**: Check revalidate endpoint secret matches env var
 - **Impact**: Falls back to full rebuild (slower)
@@ -390,32 +412,37 @@ If you need to rotate the secret:
 ### Check Recent Deliveries
 
 **Via Sanity Dashboard**:
+
 1. Go to: Manage → API → Webhooks
 2. Click: "Netlify Instant Updates"
 3. View: Deliveries tab
 4. Look for: Green checkmarks (200 OK)
 
 **Healthy webhook shows**:
+
 - ✅ 200 OK responses
 - ✅ Fast response times (<1 second)
 - ✅ No failed retries
 
 **Unhealthy webhook shows**:
+
 - ❌ 4xx/5xx errors
-- ⚠️  Slow response times (>5 seconds)
-- ⚠️  Multiple retry attempts
+- ⚠️ Slow response times (>5 seconds)
+- ⚠️ Multiple retry attempts
 
 ---
 
 ### Check Function Logs
 
 **Via Netlify Dashboard**:
+
 1. Go to: https://app.netlify.com/sites/digiprint-main-web/functions
 2. Click: `sanity-webhook`
 3. View: Recent invocations
 4. Check: Logs for each execution
 
 **Via Netlify CLI** (real-time):
+
 ```bash
 # Follow logs in real-time
 netlify functions:log sanity-webhook --site digiprint-main-web --tail
@@ -432,13 +459,13 @@ netlify functions:log sanity-webhook --site digiprint-main-web --tail
 
 ### Expected Response Times
 
-| Event | Expected Time |
-|-------|---------------|
-| Webhook receives request | ~100-300ms |
-| Signature validation | ~10-50ms |
-| Instant revalidation call | ~500ms-2s |
-| Cache cleared (ISR) | ~1-5s total |
-| Full rebuild (fallback) | ~1-2 minutes |
+| Event                     | Expected Time |
+| ------------------------- | ------------- |
+| Webhook receives request  | ~100-300ms    |
+| Signature validation      | ~10-50ms      |
+| Instant revalidation call | ~500ms-2s     |
+| Cache cleared (ISR)       | ~1-5s total   |
+| Full rebuild (fallback)   | ~1-2 minutes  |
 
 ### Success Rate Targets
 
@@ -477,16 +504,19 @@ After webhook setup, verify:
 If webhook causes issues:
 
 ### Option 1: Disable Webhook (Temporary)
+
 1. Sanity Manage → API → Webhooks
 2. Click on webhook → Toggle "Enabled" to OFF
 3. Impact: Content updates require manual deploy
 
 ### Option 2: Remove Webhook (Permanent)
+
 1. Sanity Manage → API → Webhooks
 2. Click on webhook → Delete
 3. Impact: No automatic updates, deploy manually
 
 ### Option 3: Keep Webhook but Remove Instant Revalidation
+
 1. Netlify → Environment Variables
 2. Remove: `SANITY_REVALIDATE_SECRET`
 3. Redeploy

@@ -10,6 +10,7 @@
 This guide details ALL environment variables required for both Netlify sites to function correctly with instant Sanity content updates.
 
 **Two Sites to Configure**:
+
 1. **Web App** (digiprint-main-web)
 2. **Studio** (digiprint-admin-cms)
 
@@ -24,9 +25,11 @@ This guide details ALL environment variables required for both Netlify sites to 
 ### Required Variables (8 total)
 
 #### 1. NEXT_PUBLIC_SANITY_PROJECT_ID ⭐ REQUIRED
+
 ```bash
 NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
 ```
+
 - **Description**: Your Sanity project ID
 - **Where to find**: Sanity Dashboard → Project Settings
 - **Impact if missing**: Build fails, cannot fetch content
@@ -35,9 +38,11 @@ NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
 ---
 
 #### 2. NEXT_PUBLIC_SANITY_DATASET ⭐ REQUIRED
+
 ```bash
 NEXT_PUBLIC_SANITY_DATASET=production
 ```
+
 - **Description**: Sanity dataset name
 - **Common values**: `production`, `development`, `staging`
 - **Impact if missing**: Uses default "production"
@@ -46,9 +51,11 @@ NEXT_PUBLIC_SANITY_DATASET=production
 ---
 
 #### 3. NEXT_PUBLIC_SANITY_API_VERSION ⭐ REQUIRED
+
 ```bash
 NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
 ```
+
 - **Description**: Sanity API version for queries
 - **Format**: ISO date (YYYY-MM-DD)
 - **Current**: `2024-01-01` (locked across web and studio)
@@ -58,9 +65,11 @@ NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
 ---
 
 #### 4. NEXT_PUBLIC_SANITY_STUDIO_URL ⭐ REQUIRED
+
 ```bash
 NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app
 ```
+
 - **Description**: URL where Sanity Studio is hosted
 - **Value**: Your studio Netlify subdomain
 - **Impact if missing**: CORS errors, preview links broken
@@ -70,9 +79,11 @@ NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app
 ---
 
 #### 5. NEXT_PUBLIC_SITE_URL ⭐ REQUIRED
+
 ```bash
 NEXT_PUBLIC_SITE_URL=https://digiprint-main-web.netlify.app
 ```
+
 - **Description**: Canonical URL of your website
 - **Value**: Your web app Netlify subdomain
 - **Impact if missing**: SEO issues, Open Graph broken
@@ -83,9 +94,11 @@ NEXT_PUBLIC_SITE_URL=https://digiprint-main-web.netlify.app
 ---
 
 #### 6. SANITY_API_TOKEN 🔒 SECRET
+
 ```bash
 SANITY_API_TOKEN=skXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
+
 - **Description**: Sanity read token for build-time content fetching
 - **How to create**:
   1. Go to: https://www.sanity.io/manage/personal/tokens
@@ -100,9 +113,11 @@ SANITY_API_TOKEN=skXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ---
 
 #### 7. SANITY_WEBHOOK_SECRET 🔒 SECRET
+
 ```bash
 SANITY_WEBHOOK_SECRET=$(openssl rand -base64 32)
 ```
+
 - **Description**: Secret for validating Sanity webhook signatures
 - **How to generate**:
   ```bash
@@ -117,9 +132,11 @@ SANITY_WEBHOOK_SECRET=$(openssl rand -base64 32)
 ---
 
 #### 8. SANITY_REVALIDATE_SECRET 🔒 SECRET ⚡ NEW
+
 ```bash
 SANITY_REVALIDATE_SECRET=$(openssl rand -base64 32)
 ```
+
 - **Description**: Secret for authenticating instant revalidation requests
 - **How to generate**:
   ```bash
@@ -134,9 +151,11 @@ SANITY_REVALIDATE_SECRET=$(openssl rand -base64 32)
 ---
 
 #### 9. NETLIFY_BUILD_HOOK_URL 🔒 SECRET
+
 ```bash
 NETLIFY_BUILD_HOOK_URL=https://api.netlify.com/build_hooks/XXXXXXXXXXXXX
 ```
+
 - **Description**: Netlify build hook URL for triggering full rebuilds
 - **How to create**:
   1. Go to: https://app.netlify.com/sites/digiprint-main-web/settings/deploys#build-hooks
@@ -153,9 +172,11 @@ NETLIFY_BUILD_HOOK_URL=https://api.netlify.com/build_hooks/XXXXXXXXXXXXX
 ### Optional Variables (Analytics, Optimization)
 
 #### NEXT_PUBLIC_GA4_ID
+
 ```bash
 NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
 ```
+
 - **Description**: Google Analytics 4 tracking ID
 - **Impact if missing**: No analytics tracking
 - **Visibility**: Public
@@ -163,9 +184,11 @@ NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
 ---
 
 #### NEXT_PUBLIC_GTM_ID
+
 ```bash
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 ```
+
 - **Description**: Google Tag Manager container ID
 - **Impact if missing**: No GTM tracking
 - **Visibility**: Public
@@ -181,9 +204,11 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 ### Required Variables (1 total)
 
 #### SANITY_STUDIO_PRODUCTION_URL
+
 ```bash
 SANITY_STUDIO_PRODUCTION_URL=https://digiprint-admin-cms.netlify.app
 ```
+
 - **Description**: URL where the studio is hosted (for CORS)
 - **Impact if missing**: CORS errors when accessing from other origins
 - **Visibility**: Used by Sanity Studio config
@@ -268,6 +293,7 @@ Build can proceed safely.
 **Cause**: Environment variable not set or misspelled
 
 **Fix**:
+
 1. Check Netlify Dashboard → Environment Variables
 2. Ensure exact name: `NEXT_PUBLIC_SANITY_PROJECT_ID` (case-sensitive)
 3. Ensure value is set (not empty)
@@ -280,6 +306,7 @@ Build can proceed safely.
 **Cause**: `SANITY_WEBHOOK_SECRET` mismatch
 
 **Fix**:
+
 1. Verify secret in Netlify matches Sanity webhook config
 2. Generate a new secret if needed:
    ```bash
@@ -296,6 +323,7 @@ Build can proceed safely.
 **Cause**: `SANITY_REVALIDATE_SECRET` not set
 
 **Fix**:
+
 1. Generate secret:
    ```bash
    openssl rand -base64 32
@@ -311,6 +339,7 @@ Build can proceed safely.
 **Cause**: `NEXT_PUBLIC_SANITY_STUDIO_URL` or `SANITY_STUDIO_PRODUCTION_URL` incorrect
 
 **Fix**:
+
 1. Ensure web app has: `NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app`
 2. Ensure studio has: `SANITY_STUDIO_PRODUCTION_URL=https://digiprint-admin-cms.netlify.app`
 3. No trailing slashes

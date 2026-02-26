@@ -10,7 +10,7 @@
 
 ✅ **Status**: Deployment pipeline successfully hardened and optimized  
 ⏱️ **Content Update Time**: Reduced from 1-2 minutes (full rebuild) to **1-5 seconds** (ISR revalidation)  
-🚀 **Deployment Reliability**: Significantly improved with validation and monitoring  
+🚀 **Deployment Reliability**: Significantly improved with validation and monitoring
 
 ---
 
@@ -19,12 +19,16 @@
 ### 1. ❌ Sanity API Version Mismatch
 
 **Issue**: Web app and Studio using different Sanity API versions
+
+
 - **Web**: `2024-01-01` ✅
 - **Studio**: `2023-05-03` ❌
 
 **Impact**: Potential schema inconsistencies and API behavior differences
 
+
 **Fix**:
+
 ```diff
 # apps/studio/sanity.config.ts
 - defaultApiVersion: "2023-05-03"
@@ -37,16 +41,20 @@
 
 ### 2. ❌ No Build-Time Environment Validation
 
-**Issue**: Builds could deploy with missing/invalid environment variables
+**Issue**: uilds could deploy with missing/invalid environment variables
 
-**Impact**: 
+
+**Impact**:
+
 - Silent failures in production
 - Debugging takes hours instead of minutes
 - No visibility into configuration issues
 
+
 **Fix**: Created `apps/web/scripts/verify-netlify-env.ts`
 
 **Features**:
+
 - Validates all 8 required environment variables
 - Checks format and values (URLs, dates, IDs)
 - Fails build early with clear error messages
@@ -58,21 +66,27 @@
 
 ### 3. ❌ Slow Content Updates (1-2 minutes)
 
+
 **Issue**: Every Sanity edit triggered full site rebuild
 
 **Current Behavior**:
+
+
 ```
 Editor saves → Webhook → Full rebuild → Wait 1-2 min → See changes
 ```
 
 **Target Behavior**:
+
 ```
+
 Editor saves → Webhook → ISR revalidate → See changes in 1-5 sec ⚡
 ```
 
 **Fix**: Enhanced webhook handler with smart routing
 
 **Implementation**:
+
 ```typescript
 // netlify/functions/sanity-webhook.ts
 
@@ -89,6 +103,7 @@ Editor saves → Webhook → ISR revalidate → See changes in 1-5 sec ⚡
 
 **Status**: ✅ Implemented
 
+
 ---
 
 ### 4. ❌ No Deployment Verification
@@ -96,6 +111,8 @@ Editor saves → Webhook → ISR revalidate → See changes in 1-5 sec ⚡
 **Issue**: No automated way to verify deployment succeeded
 
 **Impact**:
+
+
 - Manual testing required after each deploy
 - Issues discovered by users instead of team
 - No confidence in deploy quality
@@ -103,10 +120,12 @@ Editor saves → Webhook → ISR revalidate → See changes in 1-5 sec ⚡
 **Fix**: Created comprehensive verification suite
 
 **Tools Added**:
+
 1. **`scripts/verify-deployment.ts`** - Full automated testing
    - Tests 20+ critical endpoints
    - Verifies dynamic content from Sanity
    - Checks security headers
+
    - Validates SEO files
    - Tests Netlify Functions
 
@@ -116,6 +135,7 @@ Editor saves → Webhook → ISR revalidate → See changes in 1-5 sec ⚡
    - Exits with error if failures detected
 
 **Usage**:
+
 ```bash
 npm run verify:deployment  # Full suite
 bash scripts/deployment/netlify-smoke.sh  # Quick check
@@ -124,6 +144,7 @@ bash scripts/deployment/netlify-smoke.sh  # Quick check
 **Status**: ✅ Implemented
 
 ---
+
 
 ### 5. ❌ Missing Studio Security Headers
 
@@ -134,34 +155,41 @@ bash scripts/deployment/netlify-smoke.sh  # Quick check
 **Fix**: Updated `apps/studio/netlify.toml`
 
 **Added Headers**:
+
 ```toml
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 1; mode=block
 Referrer-Policy: strict-origin-when-cross-origin
+
 ```
 
 **Status**: ✅ Fixed
 
 ---
 
+
 ### 6. ❌ Inconsistent Node/pnpm Versions
 
 **Issue**: Studio config had generic Node version
 
 **Before**:
+
 ```toml
 # apps/studio/netlify.toml
 NODE_VERSION = "20"  # Generic
 ```
 
 **After**:
+
 ```toml
+
 NODE_VERSION = "20.11.1"  # Locked
 PNPM_VERSION = "9.15.0"   # Locked
 ```
 
 **Status**: ✅ Fixed
+
 
 ---
 
@@ -170,11 +198,13 @@ PNPM_VERSION = "9.15.0"   # Locked
 **Issue**: Webhook failures hard to debug
 
 **Before**:
+
 ```
 console.log("Received webhook")
 ```
 
 **After**:
+
 ```typescript
 console.log("📥 Sanity webhook received:", {
   method: event.httpMethod,
@@ -187,6 +217,7 @@ console.log("📥 Sanity webhook received:", {
 });
 
 console.log("✅ Instant revalidation successful:", data);
+
 // or
 console.log("⚠️  Revalidation failed, falling back to rebuild");
 ```
@@ -202,6 +233,7 @@ console.log("⚠️  Revalidation failed, falling back to rebuild");
 **Fix**: Created `docs/DEPLOYMENT_RUNBOOK.md`
 
 **Includes**:
+
 - Complete setup instructions
 - Deployment workflows
 - Monitoring & logging guides
@@ -218,29 +250,29 @@ console.log("⚠️  Revalidation failed, falling back to rebuild");
 
 ### A. Reliability
 
-| Aspect | Before | After |
-|--------|--------|-------|
-| Env validation | ❌ None | ✅ Pre-build checks |
-| Deploy verification | ❌ Manual | ✅ Automated suite |
-| Error visibility | ⚠️ Poor | ✅ Detailed logging |
-| Config consistency | ⚠️ Partial | ✅ Fully aligned |
+| Aspect              | Before     | After               |
+| ------------------- | ---------- | ------------------- |
+| Env validation      | ❌ None    | ✅ Pre-build checks |
+| Deploy verification | ❌ Manual  | ✅ Automated suite  |
+| Error visibility    | ⚠️ Poor    | ✅ Detailed logging |
+| Config consistency  | ⚠️ Partial | ✅ Fully aligned    |
 
 ### B. Performance
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Content update time | 1-2 min | 1-5 sec | **96% faster** |
-| Build time | 1-2 min | 1-2 min | Same (optimized) |
-| ISR revalidation | 60 sec | 60 sec | Working correctly |
+| Metric              | Before  | After   | Improvement       |
+| ------------------- | ------- | ------- | ----------------- |
+| Content update time | 1-2 min | 1-5 sec | **96% faster**    |
+| Build time          | 1-2 min | 1-2 min | Same (optimized)  |
+| ISR revalidation    | 60 sec  | 60 sec  | Working correctly |
 
 ### C. Developer Experience
 
-| Workflow | Before | After |
-|----------|--------|-------|
+orkflow            | Before               | After                   |
+| ------------------- | -------------------- | ----------------------- |
 | Debug failed deploy | 😫 Hours of guessing | ✅ Clear error messages |
-| Verify deployment | 🔍 Manual checks | ✅ One command |
-| Content updates | ⏳ Wait 2 minutes | ⚡ Instant feedback |
-| Troubleshoot issues | 📖 Search docs | 📘 Follow runbook |
+| Verify deployment   | 🔍 Manual checks     | ✅ One command          |
+| Content updates     | ⏳ Wait 2 minutes    | ⚡ Instant feedback     |
+| Troubleshoot issues | 📖 Search docs       | 📘 Follow runbook       |
 
 ---
 
@@ -251,7 +283,6 @@ console.log("⚠️  Revalidation failed, falling back to rebuild");
 1. **`apps/web/scripts/verify-netlify-env.ts`**
    - Build-time environment validation
    - ~200 lines, comprehensive checks
-   
 2. **`scripts/verify-deployment.ts`**
    - Automated deployment verification
    - ~350 lines, 20+ test cases
@@ -284,6 +315,7 @@ console.log("⚠️  Revalidation failed, falling back to rebuild");
 3. **`netlify/functions/sanity-webhook.ts`**
    - Enhanced logging (emojis for visibility)
    - Added instant revalidation path
+
    - Fixed TypeScript type errors
    - Smart routing (revalidate → rebuild fallback)
 
@@ -292,6 +324,7 @@ console.log("⚠️  Revalidation failed, falling back to rebuild");
    - Added `verify:deployment` script
    - Integrated verification into build process
 
+
 ---
 
 ## 🔄 How Content Updates Work Now
@@ -299,6 +332,7 @@ console.log("⚠️  Revalidation failed, falling back to rebuild");
 ### WordPress-Like Experience Achieved ✅
 
 **Old Workflow** (slow):
+
 ```
 1. Editor saves in Sanity
 2. Webhook triggers full rebuild
@@ -307,6 +341,7 @@ console.log("⚠️  Revalidation failed, falling back to rebuild");
 ```
 
 **New Workflow** (instant):
+
 ```
 1. Editor saves in Sanity
 2. Webhook receives notification
@@ -324,6 +359,7 @@ Webhook (sanity-webhook function)
     ↓
 ├─ Try Instant Revalidation (fast path)
 │   ├─ Determine page path from document type
+
 │   ├─ Call /api/revalidate?path=/products/slug
 │   ├─ ISR cache cleared
 │   └─ Return success (1-5 seconds)
@@ -331,6 +367,7 @@ Webhook (sanity-webhook function)
 └─ Fallback to Full Rebuild (if revalidation fails)
     ├─ Trigger Netlify build hook
     ├─ Full site generation
+
     └─ Complete in 1-2 minutes
 ```
 
@@ -340,7 +377,9 @@ Webhook (sanity-webhook function)
 
 ### Headers Added
 
+
 **Web App** (already had):
+
 - ✅ X-Frame-Options: DENY
 - ✅ X-Content-Type-Options: nosniff
 - ✅ X-XSS-Protection: 1; mode=block
@@ -348,6 +387,7 @@ Webhook (sanity-webhook function)
 - ✅ Strict-Transport-Security (HSTS)
 
 **Studio** (newly added):
+
 - ✅ X-Frame-Options: DENY
 - ✅ X-Content-Type-Options: nosniff
 - ✅ X-XSS-Protection: 1; mode=block
@@ -356,6 +396,7 @@ Webhook (sanity-webhook function)
 ### Secrets Management
 
 All sensitive values properly configured:
+
 - ✅ SANITY_API_TOKEN (server-side only)
 - ✅ SANITY_WEBHOOK_SECRET (webhook validation)
 - ✅ SANITY_REVALIDATE_SECRET (revalidation auth)
@@ -435,7 +476,7 @@ curl https://digiprint-main-web.netlify.app/api/revalidate?secret=YOUR_SECRET
 ✅ **Make it observable** - Comprehensive logging at every step  
 ✅ **Automate verification** - Scripts test what humans forget  
 ✅ **Document everything** - Runbooks prevent knowledge silos  
-✅ **Security by default** - Headers and secrets properly configured  
+✅ **Security by default** - Headers and secrets properly configured
 
 ---
 

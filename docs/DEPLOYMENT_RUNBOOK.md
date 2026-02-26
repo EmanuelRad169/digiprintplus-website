@@ -9,16 +9,17 @@ Complete guide for deploying and maintaining the DigiPrintPlus Netlify infrastru
 
 ## 🌐 Site Overview
 
-| Site | URL | Purpose | Netlify Site ID |
-|------|-----|---------|-----------------|
-| **Web App** | https://digiprint-main-web.netlify.app | Main customer-facing website | `e3e4c5d4-99fa-41da-8608-99820d0a5bd5` |
-| **Sanity Studio** | https://digiprint-admin-cms.netlify.app | Content management system | Check Netlify dashboard |
+| Site              | URL                                     | Purpose                      | Netlify Site ID                        |
+| ----------------- | --------------------------------------- | ---------------------------- | -------------------------------------- |
+| **Web App**       | https://digiprint-main-web.netlify.app  | Main customer-facing website | `e3e4c5d4-99fa-41da-8608-99820d0a5bd5` |
+| **Sanity Studio** | https://digiprint-admin-cms.netlify.app | Content management system    | Check Netlify dashboard                |
 
 ---
 
-##  1. Prerequisites
+## 1. Prerequisites
 
 ### Required Access
+
 - ✅ Netlify account with team/site access
 - ✅ Sanity project access (Project ID: `as5tildt`)
 - ✅ GitHub repository write access
@@ -27,6 +28,7 @@ Complete guide for deploying and maintaining the DigiPrintPlus Netlify infrastru
 ### Required Environment Variables
 
 **Web App** (`digiprint-main-web`):
+
 ```bash
 # Sanity Configuration
 NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
@@ -51,6 +53,7 @@ NEXT_PUBLIC_GTM_ID=<google-tag-manager-id>
 ```
 
 **Sanity Studio** (`digiprint-admin-cms`):
+
 ```bash
 # Studio Configuration
 SANITY_STUDIO_PRODUCTION_URL=https://digiprint-main-web.netlify.app
@@ -64,6 +67,7 @@ SANITY_STUDIO_PREVIEW_SECRET=<same-as-revalidate-secret>
 ### A. Configure Netlify Sites
 
 **Web App Setup**:
+
 ```bash
 # 1. Link local repo to Netlify
 cd /path/to/FredCMs
@@ -79,6 +83,7 @@ tsx apps/web/scripts/verify-netlify-env.ts
 ```
 
 **Studio Setup**:
+
 ```bash
 # Similar process for studio site
 netlify link --filter digiprintplus-studio
@@ -126,6 +131,7 @@ git push origin main
 ```
 
 **Build Process**:
+
 ```
 1. Install pnpm 9.15.0
 2. Run pnpm install --frozen-lockfile
@@ -138,6 +144,7 @@ git push origin main
 ### B. Manual Deployments
 
 **Preview Deploy** (for testing):
+
 ```bash
 netlify deploy --build --filter digiprintplus-web
 
@@ -146,6 +153,7 @@ netlify deploy --prod --alias production --filter digiprintplus-web
 ```
 
 **Production Deploy** (direct):
+
 ```bash
 #Full production deployment
 netlify deploy --build --prod --filter digiprintplus-web
@@ -169,6 +177,7 @@ netlify deploy --build --prod --filter digiprintplus-web
    - All pages regenerated
 
 **Testing Content Updates**:
+
 ```bash
 # 1. Edit a product in Sanity Studio
 # 2. Save and publish
@@ -199,6 +208,7 @@ pnpm build
 ### Post-Deployment Verification
 
 **Automated**:
+
 ```bash
 # Run full verification suite
 npm run verify:deployment
@@ -208,6 +218,7 @@ bash scripts/deployment/netlify-smoke.sh
 ```
 
 **Manual Checks**:
+
 1. ✅ Visit https://digiprint-main-web.netlify.app
 2. ✅ Check critical pages load (/, /products, /blog)
 3. ✅ Verify webhook: `curl https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook`
@@ -221,32 +232,35 @@ bash scripts/deployment/netlify-smoke.sh
 ### Where to Check Logs
 
 **Netlify Build Logs**:
+
 - URL: `https://app.netlify.com/sites/digiprint-main-web/deploys`
 - Shows: Build output, errors, warnings, deployment status
 
 **Netlify Function Logs**:
+
 - URL: `https://app.netlify.com/sites/digiprint-main-web/functions`
 - Shows: Webhook executions, errors, revalidation attempts
 - Filter by: `sanity-webhook`
 
 **Real-time Logs** (CLI):
+
 ```bash
 # Stream function logs
 netlify functions:log sanity-webhook --filter digiprintplus-web
 
-# Stream build logs  
+# Stream build logs
 netlify watch --filter digiprintplus-web
 ```
 
 ### Key Metrics to Monitor
 
-| Metric | Target | Warning |
-|--------|--------|---------|
-| Build Time | <2 minutes | >3 minutes |
-| Build Success Rate | >95% | <90% |
-| Function Execution Time | <1 second | >3 seconds |
-| Page Load Time (P95) | <1 second | >2 seconds |
-| ISR Revalidation | <5 seconds | >10 seconds |
+| Metric                  | Target     | Warning     |
+| ----------------------- | ---------- | ----------- |
+| Build Time              | <2 minutes | >3 minutes  |
+| Build Success Rate      | >95%       | <90%        |
+| Function Execution Time | <1 second  | >3 seconds  |
+| Page Load Time (P95)    | <1 second  | >2 seconds  |
+| ISR Revalidation        | <5 seconds | >10 seconds |
 
 ---
 
@@ -255,24 +269,28 @@ netlify watch --filter digiprintplus-web
 ### Build Failures
 
 **"This project is configured to use npm"**:
+
 - **Cause**: npm artifacts in cache
 - **Fix**: Clear build cache in Netlify → "Clear cache and deploy site"
 
 **"Missing environment variable"**:
+
 - **Cause**: Env var not set in Netlify
-- **Fix**: 
+- **Fix**:
   ```bash
   netlify env:list --filter digiprintplus-web
   netlify env:set VAR_NAME "value" --filter digiprintplus-web
   ```
 
 **TypeScript Errors**:
+
 - **Cause**: Type mismatches or missing exports
 - **Fix**: Run `pnpm type-check` locally to identify issues
 
 ### Content Not Updating
 
 **Instant updates not working**:
+
 1. Check Function logs for revalidation errors
 2. Verify `SANITY_REVALIDATE_SECRET` is set
 3. Verify `NEXT_PUBLIC_SITE_URL` is correct
@@ -282,6 +300,7 @@ netlify watch --filter digiprintplus-web
    ```
 
 **Full rebuilds not triggering**:
+
 1. Check Sanity webhook configuration
 2. Verify `NETLIFY_BUILD_HOOK_URL` is set
 3. Check Netlify Function logs for errors
@@ -293,11 +312,13 @@ netlify watch --filter digiprintplus-web
 ### Performance Issues
 
 **Slow page loads**:
+
 - Check ISR configuration (should be 60 seconds for most pages)
 - Verify CDN cache headers are set
 - Run Lighthouse audit
 
 **Large bundle size**:
+
 - Run bundle analyzer: `pnpm analyze`
 - Check for unnecessary dependencies
 - Verify tree-shaking is working
@@ -448,6 +469,7 @@ Use this before each major release:
 ### Rollback Plan
 
 If deployment fails:
+
 ```bash
 # Option 1: Rollback in Netlify UI
 # Go to Deploys → Click previous successful deploy → "Publish deploy"

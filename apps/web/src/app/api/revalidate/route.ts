@@ -6,7 +6,7 @@ import { parseBody } from "next-sanity/webhook";
  * Path validation helper
  * Ensures paths are safe for revalidation (no directory traversal)
  */
-function isSafePath(path: string | null): boolean {
+function isSafePath(path: string | null): path is string {
   if (!path) return false;
   if (!path.startsWith("/")) return false;
   if (path.includes("..")) return false;
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
 /**
  * SECURITY: Do not expose GET revalidate publicly in production.
  * This endpoint requires authentication to prevent unauthorized cache invalidation.
- * 
+ *
  * GET is only provided for manual testing/debugging and MUST validate the secret.
  * Production usage should rely on POST with webhook signature validation.
  */
@@ -145,8 +145,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message:
-          "Invalid path parameter (must start with /, no ../ allowed)",
+        message: "Invalid path parameter (must start with /, no ../ allowed)",
       },
       { status: 400 },
     );

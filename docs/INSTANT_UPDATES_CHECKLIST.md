@@ -39,23 +39,24 @@ Follow the guide: [docs/NETLIFY_ENV_SETUP.md](../NETLIFY_ENV_SETUP.md)
    NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
    NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app
    NEXT_PUBLIC_SITE_URL=https://digiprint-main-web.netlify.app
-   
+
    # Sanity Secrets (Generate these)
    SANITY_API_TOKEN=sk...  # Get from https://sanity.io/manage/personal/tokens
    SANITY_WEBHOOK_SECRET=$(openssl rand -base64 32)  # Generate locally
    SANITY_REVALIDATE_SECRET=$(openssl rand -base64 32)  # Generate locally
-   
+
    # Netlify Build Hook (Create in Netlify Dashboard)
    NETLIFY_BUILD_HOOK_URL=https://api.netlify.com/build_hooks/...  # Get from Netlify
    ```
 
 3. **Generate Secrets**:
+
    ```bash
    # Run these locally and copy the output:
-   
+
    echo "SANITY_WEBHOOK_SECRET:"
    openssl rand -base64 32
-   
+
    echo "SANITY_REVALIDATE_SECRET:"
    openssl rand -base64 32
    ```
@@ -108,6 +109,7 @@ Follow the guide: [docs/SANITY_WEBHOOK_SETUP.md](../SANITY_WEBHOOK_SETUP.md)
 4. Click: **"Add webhook"**
 
 5. Configure:
+
    ```
    Name: Netlify Instant Updates
    URL: https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook
@@ -146,6 +148,7 @@ bash scripts/deployment/netlify-smoke.sh
 ```
 
 **Expected Results**:
+
 - ✅ All environment variables configured
 - ✅ All routes return 200 OK
 - ✅ Dynamic content loads from Sanity
@@ -158,7 +161,7 @@ bash scripts/deployment/netlify-smoke.sh
 
 **The Big Test** - Does content update in 1-5 seconds?
 
-1. **Note Current Time**: ⏰ _____________
+1. **Note Current Time**: ⏰ ******\_******
 
 2. **Edit Content in Sanity**:
    - Open: https://digiprint-admin-cms.netlify.app
@@ -172,9 +175,10 @@ bash scripts/deployment/netlify-smoke.sh
    - **Verify**: Changes appear ✅
 
 4. **Check Function Logs** (optional):
+
    ```bash
    netlify functions:log sanity-webhook --site digiprint-main-web --tail
-   
+
    # Expected output after making content change:
    # 📥 Sanity webhook received: {...}
    # ✅ Instant revalidation successful: {"revalidated":true,...}
@@ -209,9 +213,10 @@ bash scripts/deployment/netlify-smoke.sh
    ```
 
 **What to Look For**:
+
 - ✅ "📥 Sanity webhook received" - Good!
 - ✅ "✅ Instant revalidation successful" - Perfect!
-- ⚠️  "⚠️  Revalidation failed, falling back to rebuild" - Works but check SANITY_REVALIDATE_SECRET
+- ⚠️ "⚠️ Revalidation failed, falling back to rebuild" - Works but check SANITY_REVALIDATE_SECRET
 - ❌ "❌ Webhook signature validation failed" - Check SANITY_WEBHOOK_SECRET
 
 ---
@@ -252,12 +257,14 @@ netlify deploy --build --prod --dir apps/web
 After completing all steps, you should have:
 
 ### Performance Metrics
+
 - ⚡ **Content update speed**: 1-5 seconds (96% faster than before)
 - 🔄 **Build time**: 1-2 minutes (unchanged, optimized)
 - ✅ **Webhook success rate**: 95%+ instant revalidation
 - 📉 **Failed deployments**: Near zero with env validation
 
 ### Reliability Indicators
+
 - ✅ Build passes with environment validation
 - ✅ Webhook deliveries show 200 OK
 - ✅ Function logs show "instant revalidation successful"
@@ -265,6 +272,7 @@ After completing all steps, you should have:
 - ✅ Content updates work for all document types
 
 ### Developer Experience
+
 - ✅ Clear error messages when env vars missing
 - ✅ One-command deployment verification
 - ✅ Structured function logs (easy debugging)
@@ -289,6 +297,7 @@ After completing all steps, you should have:
 **Symptom**: "Send test payload" shows error
 
 **Possible Causes**:
+
 1. **Function not deployed yet** → Wait for Netlify deploy to complete
 2. **Wrong secret** → Verify SANITY_WEBHOOK_SECRET matches in both places
 3. **Wrong URL** → Check for typos in webhook URL
@@ -302,6 +311,7 @@ After completing all steps, you should have:
 **Symptom**: Changes take 1-2 minutes instead of 1-5 seconds
 
 **Diagnosis**:
+
 ```bash
 # Check function logs
 netlify functions:log sanity-webhook --site digiprint-main-web --tail
@@ -313,6 +323,7 @@ netlify functions:log sanity-webhook --site digiprint-main-web --tail
 ```
 
 **Fix**:
+
 1. If "falling back to rebuild": Set `SANITY_REVALIDATE_SECRET` env var
 2. If "revalidation successful": Clear browser cache (Cmd+Shift+R)
 
@@ -332,15 +343,15 @@ All guides are in the `docs/` folder:
 
 ## 🎯 Timeline Estimate
 
-| Step | Estimated Time |
-|------|---------------|
-| Configure env vars (web) | 5-7 minutes |
-| Configure env vars (studio) | 1-2 minutes |
-| Trigger deploys (both sites) | 2-3 minutes |
-| Configure Sanity webhook | 3-5 minutes |
-| Run verification scripts | 2-3 minutes |
-| Test instant updates | 2-3 minutes |
-| **Total** | **15-23 minutes** |
+| Step                         | Estimated Time    |
+| ---------------------------- | ----------------- |
+| Configure env vars (web)     | 5-7 minutes       |
+| Configure env vars (studio)  | 1-2 minutes       |
+| Trigger deploys (both sites) | 2-3 minutes       |
+| Configure Sanity webhook     | 3-5 minutes       |
+| Run verification scripts     | 2-3 minutes       |
+| Test instant updates         | 2-3 minutes       |
+| **Total**                    | **15-23 minutes** |
 
 ---
 

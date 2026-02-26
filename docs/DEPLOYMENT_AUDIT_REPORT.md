@@ -1,9 +1,11 @@
 # 🔒 Netlify Deployment Audit Report
+
 ## Next.js + Sanity CMS Production Environment
 
 **Audit Date**: February 26, 2026  
 **Auditor Role**: Senior Netlify Deployment Engineer  
 **Sites Audited**:
+
 - **Frontend**: [digiprint-main-web.netlify.app](https://digiprint-main-web.netlify.app)
 - **Backend CMS**: [digiprint-admin-cms.netlify.app](https://digiprint-admin-cms.netlify.app)
 
@@ -13,16 +15,16 @@
 
 ### Overall Status: ⚠️ NEEDS OPTIMIZATION
 
-| Category | Status | Priority |
-|----------|--------|----------|
-| Deployment Configuration | ✅ Good | - |
-| Build Process | ⚠️ Needs Review | Medium |
-| Performance & Caching | ✅ Good | - |
-| SEO Configuration | ⚠️ Critical Issue | **HIGH** |
-| Security Headers | ✅ Excellent | - |
-| Environment Variables | ⚠️ Needs Review | Medium |
-| Sanity Integration | ✅ Good | - |
-| Package Versions | ⚠️ Needs Update | Medium |
+| Category                 | Status            | Priority |
+| ------------------------ | ----------------- | -------- |
+| Deployment Configuration | ✅ Good           | -        |
+| Build Process            | ⚠️ Needs Review   | Medium   |
+| Performance & Caching    | ✅ Good           | -        |
+| SEO Configuration        | ⚠️ Critical Issue | **HIGH** |
+| Security Headers         | ✅ Excellent      | -        |
+| Environment Variables    | ⚠️ Needs Review   | Medium   |
+| Sanity Integration       | ✅ Good           | -        |
+| Package Versions         | ⚠️ Needs Update   | Medium   |
 
 ---
 
@@ -33,16 +35,19 @@
 **Issue**: Production sitemap and robots.txt use Netlify subdomain instead of production domain
 
 **Current State**:
+
 ```xml
 <loc>https://digiprint-main-web.netlify.app</loc>
 ```
 
 **Evidence**:
+
 - `robots.txt` sitemap URL: `https://digiprint-main-web.netlify.app/sitemap.xml`
 - All sitemap URLs use `digiprint-main-web.netlify.app`
 - SEO library uses hardcoded fallback: `"https://yourdomain.com"`
 
 **Impact**:
+
 - ❌ Google Search Console won't verify correct domain
 - ❌ Canonical URLs pointing to wrong domain
 - ❌ Social media sharing uses wrong URLs
@@ -50,11 +55,13 @@
 
 **Root Cause**:
 [apps/web/src/lib/seo.ts](apps/web/src/lib/seo.ts#L23):
+
 ```typescript
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
 ```
 
 **Fix Required**:
+
 1. Set `NEXT_PUBLIC_SITE_URL` environment variable in Netlify to production domain
 2. Verify custom domain is configured in Netlify
 3. Update hardcoded fallback to use Netlify URL if prod domain not set
@@ -68,11 +75,13 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
 **Location**: [apps/web/tsconfig.json](apps/web/tsconfig.json#L30)
 
 **Warning**:
+
 ```
 Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0.
 ```
 
 **Fix Required**:
+
 ```json
 {
   "compilerOptions": {
@@ -88,11 +97,13 @@ Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0.
 **Issue**: Netlify environment vars reference outdated configuration
 
 **Evidence from** [NETLIFY_ENV_VARS.txt](NETLIFY_ENV_VARS.txt):
+
 - Build command specified as `npm run build` (should be `pnpm run build`)
 - Publish directory listed as `.next` (should be `apps/web/.next`)
 - Node version says "18 or higher" (currently locked to 20.11.1)
 
 **Current Correct Config** (from [netlify.toml](netlify.toml)):
+
 ```toml
 [build]
   command = "cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
@@ -112,6 +123,7 @@ Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0.
 **Implementation**: [netlify.toml](netlify.toml#L48-L80)
 
 ✅ **Security Headers Applied**:
+
 ```toml
 X-Frame-Options = "DENY"
 X-XSS-Protection = "1; mode=block"
@@ -120,6 +132,7 @@ Referrer-Policy = "strict-origin-when-cross-origin"
 ```
 
 ✅ **Additional Headers from Next.js**:
+
 ```
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 ```
@@ -131,12 +144,14 @@ strict-transport-security: max-age=31536000; includeSubDomains; preload
 ### 2. Caching Strategy - Optimized
 
 ✅ **Static Assets** (1 year cache):
+
 ```toml
 /_next/static/* → Cache-Control: public, max-age=31536000, immutable
 /*.jpg, /*.png, /*.webp, /*.svg → 1 year cache
 ```
 
 ✅ **ISR/Dynamic Pages**:
+
 ```
 cache-control: public,max-age=0,must-revalidate
 x-nextjs-prerender: 1
@@ -144,6 +159,7 @@ x-nextjs-stale-time: 300
 ```
 
 **Observed Behavior**:
+
 - Static assets cached permanently ✅
 - Dynamic pages use 5-minute ISR revalidation ✅
 - Proper cache headers for images ✅
@@ -157,6 +173,7 @@ x-nextjs-stale-time: 300
 **File**: [apps/web/next.config.js](apps/web/next.config.js)
 
 ✅ **Strengths**:
+
 - Output mode: `standalone` (correct for Netlify Functions)
 - Aggressive bundle size optimization with `outputFileTracingExcludes`
 - Modularized imports for tree-shaking (@heroicons, lucide-react)
@@ -166,10 +183,11 @@ x-nextjs-stale-time: 300
 - Package imports optimized
 
 ✅ **Build Optimizations**:
+
 ```javascript
 compiler: {
-  removeConsole: process.env.NODE_ENV === "production" 
-    ? { exclude: ["error", "warn"] } 
+  removeConsole: process.env.NODE_ENV === "production"
+    ? { exclude: ["error", "warn"] }
     : false,
 }
 ```
@@ -183,18 +201,21 @@ compiler: {
 ### 4. Sanity Integration - Properly Configured
 
 ✅ **Webhook Endpoint**: Active and responding
+
 ```bash
 $ curl https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook
 {"message":"Sanity webhook endpoint is active","configured":true}
 ```
 
 ✅ **Configuration**:
+
 - Project ID: `as5tildt` ✅
 - Dataset: `production` ✅
 - API Version: `2024-01-01` ✅
 - Preview URLs configured in studio ✅
 
 ✅ **Webhook Security**:
+
 - Signature validation using `@sanity/webhook` ✅
 - Secret-based authentication ✅
 - Build hook integration ✅
@@ -206,12 +227,14 @@ $ curl https://digiprint-main-web.netlify.app/.netlify/functions/sanity-webhook
 ### 5. Package Manager Configuration - Fixed
 
 ✅ **Recent Improvements**:
+
 - Force-pnpm plugin created ✅
 - `.npmrc` files converted to pnpm-compatible config ✅
 - `netlify/functions` added to workspace ✅
 - npm lock files removed ✅
 
 **Current Setup**:
+
 ```toml
 PNPM_VERSION = "9.15.0"
 NETLIFY_USE_PNPM = "true"
@@ -227,18 +250,19 @@ NETLIFY_USE_PNPM = "true"
 
 **Environment Variable Status**:
 
-| Variable | Required | Set? | Notes |
-|----------|----------|------|-------|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | ✅ Yes | ✅ Yes | `as5tildt` |
-| `NEXT_PUBLIC_SANITY_DATASET` | ✅ Yes | ✅ Yes | `production` |
-| `NEXT_PUBLIC_SANITY_API_VERSION` | ✅ Yes | ✅ Yes | `2024-01-01` |
-| `SANITY_API_TOKEN` | ✅ Yes | ⚠️ Unknown | Need to verify in Netlify UI |
-| `NEXT_PUBLIC_SITE_URL` | ✅ Yes | ❌ **MISSING** | **Critical for SEO** |
-| `SANITY_WEBHOOK_SECRET` | ✅ Yes | ✅ Yes | Webhook working |
-| `NETLIFY_BUILD_HOOK_URL` | ✅ Yes | ✅ Yes | Webhook configured |
-| `SANITY_REVALIDATE_SECRET` | ⚠️ Optional | ⚠️ Unknown | For draft/preview mode |
+| Variable                         | Required    | Set?           | Notes                        |
+| -------------------------------- | ----------- | -------------- | ---------------------------- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID`  | ✅ Yes      | ✅ Yes         | `as5tildt`                   |
+| `NEXT_PUBLIC_SANITY_DATASET`     | ✅ Yes      | ✅ Yes         | `production`                 |
+| `NEXT_PUBLIC_SANITY_API_VERSION` | ✅ Yes      | ✅ Yes         | `2024-01-01`                 |
+| `SANITY_API_TOKEN`               | ✅ Yes      | ⚠️ Unknown     | Need to verify in Netlify UI |
+| `NEXT_PUBLIC_SITE_URL`           | ✅ Yes      | ❌ **MISSING** | **Critical for SEO**         |
+| `SANITY_WEBHOOK_SECRET`          | ✅ Yes      | ✅ Yes         | Webhook working              |
+| `NETLIFY_BUILD_HOOK_URL`         | ✅ Yes      | ✅ Yes         | Webhook configured           |
+| `SANITY_REVALIDATE_SECRET`       | ⚠️ Optional | ⚠️ Unknown     | For draft/preview mode       |
 
 **Action Required**:
+
 1. Verify all env vars in Netlify Dashboard
 2. **ADD `NEXT_PUBLIC_SITE_URL`** immediately
 3. Confirm `SANITY_API_TOKEN` has correct permissions
@@ -248,6 +272,7 @@ NETLIFY_USE_PNPM = "true"
 ### 2. Package Versions - Potential Conflicts
 
 **Current Versions**:
+
 ```json
 {
   "next": "15.5.12",
@@ -278,6 +303,7 @@ NETLIFY_USE_PNPM = "true"
    - Running Next.js: `15.5.12`
 
 **Recommendation**:
+
 - Align React versions across monorepo
 - Update `next-sanity` to compatible version
 - Update ESLint to v9.x or lock Next.js ESLint config
@@ -287,29 +313,34 @@ NETLIFY_USE_PNPM = "true"
 ### 3. Netlify Plugin Outdated
 
 **Current**:
+
 ```
 @netlify/plugin-nextjs@4.41.6
 ```
 
 **Latest**:
+
 ```
 @netlify/plugin-nextjs@5.15.8
 ```
 
 **Warning from Build Log**:
+
 ```
 ⚠️  Outdated plugins
    - @netlify/plugin-nextjs@4.41.6: latest version is 5.15.8
-     To upgrade this plugin, please remove it from "netlify.toml" 
+     To upgrade this plugin, please remove it from "netlify.toml"
      and install it from the Netlify plugins directory instead
 ```
 
 **Action Required**:
+
 1. Remove plugin from netlify.toml
 2. Install v5.15.8 from Netlify UI
 3. Test deployment
 
 **Benefits of Upgrade**:
+
 - Better Next.js 15 support
 - Improved ISR handling
 - Bug fixes and performance improvements
@@ -319,6 +350,7 @@ NETLIFY_USE_PNPM = "true"
 ### 4. Studio Deployment - Missing Production Optimizations
 
 **Current Studio Config** [apps/studio/netlify.toml](apps/studio/netlify.toml):
+
 ```toml
 [build]
   command = "pnpm build"
@@ -329,6 +361,7 @@ NETLIFY_USE_PNPM = "true"
 ```
 
 ⚠️ **Missing**:
+
 - No caching headers
 - No security headers
 - No pnpm version specified
@@ -336,6 +369,7 @@ NETLIFY_USE_PNPM = "true"
 - No SPA redirect fallback security
 
 **Recommended Config**:
+
 ```toml
 [build]
   command = "pnpm build"
@@ -379,6 +413,7 @@ NETLIFY_USE_PNPM = "true"
    - Tree-shaking enabled ✅
 
 2. **Additional Optimizations**:
+
    ```javascript
    // Consider adding to next.config.js
    experimental: {
@@ -396,17 +431,20 @@ NETLIFY_USE_PNPM = "true"
 ### 6. Monitoring & Analytics - Not Visible
 
 **Environment Variables Defined** (but not verified):
+
 ```env
 NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 ```
 
 ⚠️ **Cannot Verify**:
+
 - If these are set in Netlify
 - If analytics scripts are loaded
 - If tracking is working
 
 **Action Required**:
+
 - Verify analytics tags in Netlify env vars
 - Check production site for GTM/GA4 script tags
 - Test tracking in production
@@ -420,6 +458,7 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 **Configuration**: `output: "standalone"`
 
 ✅ **Why This is Correct for Netlify**:
+
 - Creates optimized server bundles
 - Works with Netlify Functions
 - Enables ISR (Incremental Static Regeneration)
@@ -427,6 +466,7 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 - Compatible with `@netlify/plugin-nextjs`
 
 ❌ **Why `output: "export"` Would Be Wrong**:
+
 - Disables ISR
 - Disables API routes
 - Disables dynamic rendering
@@ -440,6 +480,7 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 ### B. ISR/Revalidation Working Correctly
 
 **Test Results**:
+
 ```bash
 # Page: /products
 x-nextjs-prerender: 1
@@ -448,12 +489,14 @@ cache-control: public,max-age=0,must-revalidate
 ```
 
 ✅ **Interpretation**:
+
 - Page is pre-rendered (SSG)
 - Revalidates every 300 seconds (5 minutes)
 - Serves stale while revalidating
 - Proper ISR implementation
 
 **Pages Using ISR**:
+
 - `/robots.ts`: `export const revalidate = 300` ✅
 - `/sitemap.ts`: `export const revalidate = 300` ✅
 
@@ -462,6 +505,7 @@ cache-control: public,max-age=0,must-revalidate
 ### C. Image Optimization - Properly Configured
 
 **Next.js Config**:
+
 ```javascript
 images: {
   remotePatterns: [
@@ -479,6 +523,7 @@ images: {
 ```
 
 ✅ **Strengths**:
+
 - AVIF + WebP formats
 - Proper device sizes
 - 1-year cache TTL
@@ -490,6 +535,7 @@ images: {
 ### D. Security Posture - Excellent
 
 **Headers Applied**:
+
 ```
 X-Frame-Options: DENY
 X-XSS-Protection: 1; mode=block
@@ -504,16 +550,17 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
 **Recommendation**:
 Add comprehensive CSP:
+
 ```toml
 [[headers]]
   for = "/*"
   [headers.values]
     Content-Security-Policy = """
-      default-src 'self'; 
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; 
-      style-src 'self' 'unsafe-inline'; 
-      img-src 'self' data: https: https://cdn.sanity.io; 
-      font-src 'self' data:; 
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https: https://cdn.sanity.io;
+      font-src 'self' data:;
       connect-src 'self' https://api.sanity.io;
     """
 ```
@@ -523,6 +570,7 @@ Add comprehensive CSP:
 ### E. Robots.txt & Sitemap - Working But Using Wrong URL
 
 **robots.txt Output**:
+
 ```
 User-Agent: *
 Allow: /
@@ -535,11 +583,13 @@ Sitemap: https://digiprint-main-web.netlify.app/sitemap.xml
 ```
 
 ✅ **Good**:
+
 - Properly disallows internal routes
 - Sitemap reference included
 - Revalidates every 5 minutes
 
 ❌ **Bad**:
+
 - Using Netlify subdomain instead of production domain
 
 **Fix**: Set `NEXT_PUBLIC_SITE_URL` environment variable
@@ -551,6 +601,7 @@ Sitemap: https://digiprint-main-web.netlify.app/sitemap.xml
 **Implementation**: [apps/web/src/app/sitemap.ts](apps/web/src/app/sitemap.ts)
 
 ✅ **Features**:
+
 - Dynamic content from Sanity
 - Proper priorities and change frequencies
 - Static + dynamic pages
@@ -558,6 +609,7 @@ Sitemap: https://digiprint-main-web.netlify.app/sitemap.xml
 - Last modified dates
 
 **Sample Output**:
+
 ```xml
 <url>
   <loc>https://digiprint-main-web.netlify.app</loc>
@@ -574,6 +626,7 @@ Sitemap: https://digiprint-main-web.netlify.app/sitemap.xml
 ### G. Build Process - Stable
 
 **Current Process**:
+
 1. Netlify detects `pnpm-lock.yaml`
 2. Installs pnpm 9.15.0
 3. Runs `pnpm install --frozen-lockfile` (automatic)
@@ -582,11 +635,13 @@ Sitemap: https://digiprint-main-web.netlify.app/sitemap.xml
 6. Deploys functions separately
 
 ✅ **Recent Fixes Applied**:
+
 - Force-pnpm plugin prevents npm conflicts
 - Workspace includes all packages
 - Build command optimized
 
 **Build Command Breakdown**:
+
 ```bash
 cd apps/web                        # Navigate to web app
 NODE_OPTIONS='--max-old-space-size=4096'  # 4GB heap
@@ -602,21 +657,24 @@ pnpm run build                     # Next.js build
 ### 🔴 CRITICAL (Do Immediately)
 
 1. **Set Production Domain URL**
+
    ```bash
    # In Netlify Dashboard → Site Settings → Environment Variables
    NEXT_PUBLIC_SITE_URL=https://yourdomain.com  # or keep as .netlify.app
    ```
+
    - **Verify custom domain exists in Netlify DNS**
    - Redeploy site after setting
    - Verify robots.txt and sitemap.xml show correct URLs
 
 2. **Fix TypeScript Deprecation**
+
    ```json
    // apps/web/tsconfig.json
    {
      "compilerOptions": {
        "ignoreDeprecations": "6.0",
-       "baseUrl": ".",
+       "baseUrl": "."
        // ... rest of config
      }
    }
@@ -681,6 +739,7 @@ pnpm run build                     # Next.js build
 ### ⚪ LOW PRIORITY (When Time Permits)
 
 12. **Add Preconnect Hints**
+
     ```tsx
     // apps/web/src/app/layout.tsx
     <link rel="preconnect" href="https://cdn.sanity.io" />
@@ -704,6 +763,7 @@ pnpm run build                     # Next.js build
 ### Current Performance (Production)
 
 **Load Time** (Homepage):
+
 - ✅ CDN Edge: ~100-200ms (cached)
 - ✅ Origin: ~500-800ms (uncached)
 
@@ -760,6 +820,7 @@ pnpm run build                     # Next.js build
 ## 🔍 APPENDIX: Configuration Files Audited
 
 ### Files Reviewed:
+
 - ✅ `/netlify.toml` (Web)
 - ✅ `/apps/studio/netlify.toml` (Studio)
 - ✅ `/apps/web/next.config.js`
@@ -774,6 +835,7 @@ pnpm run build                     # Next.js build
 - ✅ `.npmrc` files
 
 ### Endpoints Tested:
+
 - ✅ `https://digiprint-main-web.netlify.app/` (200 OK)
 - ✅ `https://digiprint-admin-cms.netlify.app/` (200 OK)
 - ✅ `/.netlify/functions/sanity-webhook` (Active)
@@ -806,6 +868,7 @@ pnpm run build                     # Next.js build
 Your deployment pipeline is **fundamentally sound** with excellent security and performance configurations. The recent pnpm fixes have resolved critical build issues. However, **SEO is critically impacted** by the missing `NEXT_PUBLIC_SITE_URL` environment variable.
 
 **Priority Order**:
+
 1. 🔴 Fix SEO domain issue (30 minutes)
 2. 🟡 Upgrade Netlify plugin (1 hour)
 3. 🟡 Verify environment variables (30 minutes)

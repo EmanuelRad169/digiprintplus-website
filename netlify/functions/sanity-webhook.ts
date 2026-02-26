@@ -57,7 +57,7 @@ export const handler: Handler = async (event) => {
     const isValid = await isValidSignature(
       body,
       signature,
-      SANITY_WEBHOOK_SECRET
+      SANITY_WEBHOOK_SECRET,
     );
 
     if (!isValid) {
@@ -75,7 +75,7 @@ export const handler: Handler = async (event) => {
     const payload = JSON.parse(body);
     const documentType = payload._type;
     const documentId = payload._id;
-    
+
     console.log("✅ Webhook signature valid:", {
       type: documentType,
       id: documentId,
@@ -86,7 +86,7 @@ export const handler: Handler = async (event) => {
     if (REVALIDATE_SECRET && SITE_URL && documentType) {
       try {
         console.log("🔄 Attempting on-demand revalidation...");
-        
+
         // Determine path to revalidate based on document type
         let revalidatePath = "/";
         if (documentType === "product" && payload.slug?.current) {
@@ -98,7 +98,7 @@ export const handler: Handler = async (event) => {
         }
 
         const revalidateUrl = `${SITE_URL}/api/revalidate?secret=${REVALIDATE_SECRET}&path=${revalidatePath}`;
-        
+
         const revalidateResponse = await fetch(revalidateUrl, {
           method: "POST",
         });
@@ -106,7 +106,7 @@ export const handler: Handler = async (event) => {
         if (revalidateResponse.ok) {
           const revalidateData = await revalidateResponse.json();
           console.log("✅ Instant revalidation successful:", revalidateData);
-          
+
           // Return early if revalidation worked - no need for full rebuild
           return {
             statusCode: 200,
@@ -142,7 +142,7 @@ export const handler: Handler = async (event) => {
       if (!netlifyResponse.ok) {
         console.error(
           "❌ Failed to trigger Netlify build:",
-          netlifyResponse.statusText
+          netlifyResponse.statusText,
         );
         return {
           statusCode: 500,
