@@ -7,9 +7,9 @@ import {
   getProductsByCategory,
   getCategoryBySlug,
   getProductCategories,
-} from "@/lib/sanity/fetchers";
-import { Product, ProductCategory } from "@/types/product";
-import { generateCategorySEO } from "@/lib/seo";
+} from "../../../../lib/sanity/fetchers";
+import { Product, ProductCategory } from "../../../../types/product";
+import { generateCategorySEO } from "../../../../lib/seo";
 import { ShoppingCart, ArrowLeft, Tag, Package, Sparkles } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 

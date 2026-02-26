@@ -1,4 +1,4 @@
-import { getSiteUrl } from "@/lib/site-url";
+import { getSiteUrl } from "../lib/site-url";
 
 export const revalidate = 300;
 

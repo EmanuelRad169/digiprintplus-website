@@ -1,11 +1,11 @@
 import { Metadata } from 'next'
-import { getPageBySlug } from '@/lib/sanity/fetchers'
-import { PortableTextRenderer } from '@/components/portable-text'
+import { getPageBySlug } from '../../lib/sanity/fetchers'
+import { PortableTextRenderer } from '../../components/portable-text'
 import { draftMode } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Award, CheckCircle } from 'lucide-react';
-import { ServicesGridServer } from '@/components/sections/services-grid-server'
+import { ServicesGridServer } from '../../components/sections/services-grid-server'
 
 export const revalidate = 60;
 
