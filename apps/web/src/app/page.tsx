@@ -2,13 +2,13 @@ import dynamic from "next/dynamic";
 import { getHeroSlides, getCTASectionById } from "@/lib/sanity/contentFetchers";
 import { getProductCategories } from "@/lib/sanity/fetchers";
 import { draftMode } from "next/headers";
-import { AboutSanity } from "@/components/sections/about-sanity";
-import { FeaturedServicesServerSection } from "@/components/sections/services-grid-server";
+import { AboutSanity } from "../components/sections/about-sanity";
+import { FeaturedServicesServerSection } from "../components/sections/services-grid-server";
 
 // Dynamically import heavy components to reduce initial bundle
 const HeroSanity = dynamic(
   () =>
-    import("@/components/sections/hero-sanity").then((mod) => ({
+    import("../components/sections/hero-sanity").then((mod) => ({
       default: mod.HeroSanity,
     })),
   {
@@ -25,7 +25,7 @@ const HeroSanity = dynamic(
 );
 
 const CategoryCarousel = dynamic(
-  () => import("@/components/sections/category-carousel"),
+  () => import("../components/sections/category-carousel"),
   {
     loading: () => <div className="h-32 bg-white" />,
   },
@@ -33,7 +33,7 @@ const CategoryCarousel = dynamic(
 
 const CallToActionSanity = dynamic(
   () =>
-    import("@/components/sections/call-to-action-sanity").then((mod) => ({
+    import("../components/sections/call-to-action-sanity").then((mod) => ({
       default: mod.CallToActionSanity,
     })),
   {

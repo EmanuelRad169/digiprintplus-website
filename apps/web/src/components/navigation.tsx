@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { SanityImage } from "@/components/ui/sanity-image";
+import { SanityImage } from "./ui/sanity-image";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
 import {
@@ -13,7 +13,7 @@ import {
 import type { SiteSettings } from "@/types/siteSettings";
 
 // Dynamic import for MegaMenu (575 lines, only needed on hover)
-const MegaMenuNew = dynamic(() => import("@/components/MegaMenuNew"), {
+const MegaMenuNew = dynamic(() => import("./MegaMenuNew"), {
   ssr: true, // Keep SSR for SEO
   loading: () => null, // No loading state needed for hover interaction
 });
