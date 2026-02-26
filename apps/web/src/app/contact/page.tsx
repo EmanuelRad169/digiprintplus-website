@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getPageBySlug, getSiteSettings } from "@/lib/sanity/fetchers";
-import { PortableTextRenderer } from "@/components/portable-text";
+import { PortableTextRenderer } from "../../components/portable-text";
 import { draftMode } from "next/headers";
 
 // Dynamic import for contact form (286 lines)
 const ContactForm = dynamic(
   () =>
-    import("@/components/contact-form").then((mod) => ({
+    import("../../components/contact-form").then((mod) => ({
       default: mod.ContactForm,
     })),
   {

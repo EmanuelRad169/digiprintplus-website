@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { Award, Clock, Shield, Users, Star, CheckCircle } from "lucide-react";
-import LiteYouTube from "@/components/media/lite-youtube";
+import LiteYouTube from "../media/lite-youtube";
 import type { AboutSection } from "@/lib/sanity/contentFetchers";
 import { PortableText } from "@portabletext/react";
 

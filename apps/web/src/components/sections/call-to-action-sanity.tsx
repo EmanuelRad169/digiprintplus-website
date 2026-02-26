@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
 import { getCTASectionById, CTASection } from "@/lib/sanity/contentFetchers";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteSettings } from "../../hooks/useSiteSettings";
 
 interface CallToActionSanityProps {
   sectionId: string;

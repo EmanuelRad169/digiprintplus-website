@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/sanity/fetchers";
-import { PortableTextRenderer } from "@/components/portable-text";
+import { PortableTextRenderer } from "../../../components/portable-text";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { ShareButton } from "@/components/share-button";
+import { ShareButton } from "../../../components/share-button";
 
 export const revalidate = 60;
 
