@@ -4,8 +4,8 @@ import {
   getProducts,
   getProductCategories,
   getAllTemplates,
-} from "@/lib/sanity/fetchers";
-import { getSiteUrl } from "@/lib/site-url";
+} from "../lib/sanity/fetchers";
+import { getSiteUrl } from "../lib/site-url";
 
 export const revalidate = 300;
 

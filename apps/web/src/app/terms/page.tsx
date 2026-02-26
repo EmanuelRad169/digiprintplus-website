@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { draftMode } from 'next/headers'
-import { getPageBySlug } from '@/lib/sanity/fetchers'
-import { generateSEO } from '@/lib/seo'
+import { getPageBySlug } from '../../lib/sanity/fetchers'
+import { generateSEO } from '../../lib/seo'
 import { PortableText } from '@portabletext/react'
 import { Metadata } from 'next'
 
