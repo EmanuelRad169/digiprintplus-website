@@ -7,13 +7,10 @@
 [build]
   # Base directory - apps/web
   base = "apps/web"
-  # Build command
-  command = "npm run build"
+  # Use memory-optimized build (prevents OOM crashes on Netlify)
+  command = "npm run build:netlify"
   # Publish directory
   publish = ".next"
-  
-  # Ignore certain paths to reduce deployment size
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
 
 # Functions directory - relative to base (apps/web)
 [functions]

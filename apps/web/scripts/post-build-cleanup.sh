@@ -1,9 +1,11 @@
 #!/bin/bash
 # Post-build cleanup to reduce deployment size
+set -e
 
 echo "🧹 Cleaning up build artifacts to reduce bundle size..."
 
-cd /Applications/MAMP/htdocs/FredCMs/apps/web
+# Always work relative to this script's location (apps/web/scripts/ → apps/web)
+cd "$(dirname "$0")/.."
 
 # Remove cache directory (not needed for deployment)
 if [ -d ".next/cache" ]; then
