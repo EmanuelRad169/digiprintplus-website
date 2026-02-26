@@ -17,7 +17,7 @@ import {
 // Dynamic imports for quote step components (each ~200-300 lines)
 const ContactStep = dynamic(
   () =>
-    import("@/components/quote/contact-step").then((mod) => ({
+    import("../../components/quote/contact-step").then((mod) => ({
       default: mod.ContactStep,
     })),
   {
@@ -26,7 +26,7 @@ const ContactStep = dynamic(
 );
 const JobSpecsStep = dynamic(
   () =>
-    import("@/components/quote/job-specs-step").then((mod) => ({
+    import("../../components/quote/job-specs-step").then((mod) => ({
       default: mod.JobSpecsStep,
     })),
   {
@@ -35,7 +35,7 @@ const JobSpecsStep = dynamic(
 );
 const FileUploadStep = dynamic(
   () =>
-    import("@/components/quote/file-upload-step").then((mod) => ({
+    import("../../components/quote/file-upload-step").then((mod) => ({
       default: mod.FileUploadStep,
     })),
   {
@@ -44,7 +44,7 @@ const FileUploadStep = dynamic(
 );
 const ReviewStep = dynamic(
   () =>
-    import("@/components/quote/review-step").then((mod) => ({
+    import("../../components/quote/review-step").then((mod) => ({
       default: mod.ReviewStep,
     })),
   {
