@@ -72,8 +72,9 @@ fi
 echo -e "${BLUE}🚀 Deploying to Netlify...${NC}"
 echo ""
 
-# netlify deploy --build runs the build defined in netlify.toml locally
-# (pnpm is already installed at this point)
+# Must run from repo root so netlify.toml publish path (apps/web/.next) resolves correctly
+cd "$PROJECT_ROOT"
+
 if [ -z "$PROD_FLAG" ]; then
     netlify deploy --build
 else

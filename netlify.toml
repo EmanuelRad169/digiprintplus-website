@@ -5,20 +5,18 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  # Base set to apps/web so build runs inside the Next.js app
-  base = "apps/web"
-  # pnpm is available both locally (script) and on Netlify (via PNPM_VERSION below)
-  command = "pnpm run build:netlify"
-  publish = ".next"
+  # NO base dir - pnpm-lock.yaml is at repo root, install must run from here
+  # Netlify detects pnpm-lock.yaml at root and runs `pnpm install` automatically
+  command = "cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  publish = "apps/web/.next"
 
-# Functions directory - relative to base (apps/web)
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "20.11.1"
-  # Netlify will install this pnpm version for git-triggered builds
+  # Netlify installs this pnpm version before running install + build
   PNPM_VERSION = "9.15.0"
   
   # IMPORTANT: Sensitive environment variables should be set in Netlify UI
