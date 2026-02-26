@@ -69,15 +69,14 @@ if ! command -v netlify &> /dev/null; then
     exit 1
 fi
 
-echo -e "${BLUE}🚀 Triggering Netlify build...${NC}"
+echo -e "${BLUE}🚀 Deploying to Netlify...${NC}"
 echo ""
 
-# Use Netlify's build command which handles ISR/Standalone mode
+# netlify deploy --build runs the build defined in netlify.toml locally
+# (pnpm is already installed at this point)
 if [ -z "$PROD_FLAG" ]; then
-    # Preview deployment - trigger build
     netlify deploy --build
 else
-    # Production deployment - trigger build
     netlify deploy --build --prod
 fi
 
