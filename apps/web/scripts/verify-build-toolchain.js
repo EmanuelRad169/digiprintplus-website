@@ -82,7 +82,7 @@ function verifyNodeVersion() {
 
   const currentVersion = getNodeVersion();
   const majorVersion = parseInt(currentVersion.split(".")[0], 10);
-  const expectedMajor = 18;
+  const expectedMajor = 20;
 
   if (majorVersion === expectedMajor) {
     logSuccess(
@@ -93,7 +93,7 @@ function verifyNodeVersion() {
       `Node.js ${currentVersion} does NOT match required ${expectedMajor}.x`,
     );
     logError(
-      `Please use Node.js ${expectedMajor}.x (via nvm: "nvm use 18" or "nvm install 18")`,
+      `Please use Node.js ${expectedMajor}.x (via nvm: "nvm use 20" or "nvm install 20")`,
     );
     hasErrors = true;
   }
