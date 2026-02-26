@@ -1,13 +1,13 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Providers from "./providers";
-import Navigation from "@/components/navigation";
-import { Footer } from "@/components/footer";
-import { HeaderTop } from "@/components/header-top";
-import { VisualEditing } from "@/components/visual-editing";
-import { generateSEO, generateOrganizationSchema } from "@/lib/seo";
-import { getNavigationMenu, getSiteSettings } from "@/lib/sanity/fetchers";
-import { getFooter } from "@/lib/sanity/footer";
+import Navigation from "../components/navigation";
+import { Footer } from "../components/footer";
+import { HeaderTop } from "../components/header-top";
+import { VisualEditing } from "../components/visual-editing";
+import { generateSEO, generateOrganizationSchema } from "../lib/seo";
+import { getNavigationMenu, getSiteSettings } from "../lib/sanity/fetchers";
+import { getFooter } from "../lib/sanity/footer";
 
 // Initialize the Inter font with optimized settings
 const inter = Inter({

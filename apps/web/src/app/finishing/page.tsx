@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { sanityClient } from "@/lib/sanity";
-import { generateSEO } from "@/lib/seo";
+import { sanityClient } from "../../lib/sanity";
+import { generateSEO } from "../../lib/seo";
 import { PortableText } from "@portabletext/react";
 import { Metadata } from "next";
 import Image from "next/image";
