@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { getSiteUrl } from "./site-url";
 
 export interface SEOProps {
   title?: string;
@@ -20,7 +21,7 @@ const defaultTitle = "Professional Print Solutions";
 const defaultDescription =
   "Your trusted partner for high-quality printing services. Get instant quotes for business cards, brochures, banners, and more.";
 const defaultImage = "/images/og-image.jpg"; // You'll want to add this image
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
+const baseUrl = getSiteUrl();
 
 export function generateSEO({
   title,

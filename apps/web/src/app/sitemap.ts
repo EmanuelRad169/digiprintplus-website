@@ -5,10 +5,11 @@ import {
   getProductCategories,
   getAllTemplates,
 } from "@/lib/sanity/fetchers";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const revalidate = 300;
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://digiprintplus.com";
+const baseUrl = getSiteUrl();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all dynamic content

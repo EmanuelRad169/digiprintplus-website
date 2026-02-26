@@ -1,6 +1,8 @@
+import { getSiteUrl } from "@/lib/site-url";
+
 export const revalidate = 300;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://digiprintplus.com";
+const siteUrl = getSiteUrl();
 
 export default function robots() {
   return {

@@ -182,7 +182,14 @@ function validateEnvironment(): ValidationResult {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL;
 
-  if (siteUrl && !siteUrl.includes(".netlify.app")) {
+  // CRITICAL: In production Netlify builds, NEXT_PUBLIC_SITE_URL MUST be set
+  // This prevents SEO issues from inconsistent fallback URLs
+  if (process.env.NETLIFY === "true" && !siteUrl) {
+    result.errors.push(
+      `❌ CRITICAL: NEXT_PUBLIC_SITE_URL must be set in production Netlify builds\n   Required for: SEO metadata, Open Graph tags, sitemap.xml, robots.txt\n   Set to: https://digiprint-main-web.netlify.app\n   Location: Netlify Dashboard → Site Settings → Environment Variables`
+    );
+    result.success = false;
+  } else if (siteUrl && !siteUrl.includes(".netlify.app")) {
     result.warnings.push(
       `⚠️  NEXT_PUBLIC_SITE_URL is not a Netlify subdomain: ${siteUrl}\n   Expected format: https://[site-name].netlify.app`
     );

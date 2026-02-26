@@ -2,6 +2,18 @@ import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
+/**
+ * Path validation helper
+ * Ensures paths are safe for revalidation (no directory traversal)
+ */
+function isSafePath(path: string | null): boolean {
+  if (!path) return false;
+  if (!path.startsWith("/")) return false;
+  if (path.includes("..")) return false;
+  if (path.includes("//")) return false;
+  return true;
+}
+
 // Sanity webhook signature verification
 export async function POST(req: NextRequest) {
   try {
@@ -108,14 +120,34 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Allow GET for testing (remove in production)
+/**
+ * SECURITY: Do not expose GET revalidate publicly in production.
+ * This endpoint requires authentication to prevent unauthorized cache invalidation.
+ * 
+ * GET is only provided for manual testing/debugging and MUST validate the secret.
+ * Production usage should rely on POST with webhook signature validation.
+ */
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
+  const secret = searchParams.get("secret");
   const path = searchParams.get("path");
 
-  if (!path) {
+  // Require secret authentication
+  if (!secret || secret !== process.env.SANITY_REVALIDATE_SECRET) {
     return NextResponse.json(
-      { success: false, message: "Missing 'path' parameter" },
+      { success: false, message: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
+  // Validate path is present and safe
+  if (!isSafePath(path)) {
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Invalid path parameter (must start with /, no ../ allowed)",
+      },
       { status: 400 },
     );
   }
