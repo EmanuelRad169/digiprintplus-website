@@ -78,7 +78,7 @@ export function ContactForm() {
       }
 
       setSubmitSuccess(true);
-      
+
       // Redirect to success page after a brief delay to ensure submission is processed
       setTimeout(() => {
         router.push(`/forms/success?form=${encodeURIComponent(FORM_NAME)}`);

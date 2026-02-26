@@ -3,8 +3,19 @@ import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 
 const SANITY_WEBHOOK_SECRET = process.env.SANITY_WEBHOOK_SECRET || "";
 const NETLIFY_BUILD_HOOK = process.env.NETLIFY_BUILD_HOOK_URL || "";
+const REVALIDATE_SECRET = process.env.SANITY_REVALIDATE_SECRET || "";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
 
 export const handler: Handler = async (event) => {
+  // Log all webhook attempts for debugging
+  console.log("📥 Sanity webhook received:", {
+    method: event.httpMethod,
+    hasSignature: !!event.headers[SIGNATURE_HEADER_NAME.toLowerCase()],
+    configuredBuildHook: !!NETLIFY_BUILD_HOOK,
+    configuredRevalidate: !!REVALIDATE_SECRET && !!SITE_URL,
+    timestamp: new Date().toISOString(),
+  });
+
   // Handle GET requests for health checks
   if (event.httpMethod === "GET") {
     return {
@@ -12,6 +23,8 @@ export const handler: Handler = async (event) => {
       body: JSON.stringify({
         message: "Sanity webhook endpoint is active",
         configured: !!NETLIFY_BUILD_HOOK,
+        revalidateEndpoint: !!REVALIDATE_SECRET && !!SITE_URL,
+        version: "2.0",
       }),
     };
   }
@@ -60,13 +73,59 @@ export const handler: Handler = async (event) => {
 
     // Parse the webhook payload
     const payload = JSON.parse(body);
-    console.log("Received Sanity webhook:", {
-      type: payload._type,
-      id: payload._id,
+    const documentType = payload._type;
+    const documentId = payload._id;
+    
+    console.log("✅ Webhook signature valid:", {
+      type: documentType,
+      id: documentId,
       operation: payload._type === "sanity.mutation" ? "mutation" : "update",
     });
 
-    // Trigger Netlify build if build hook is configured
+    // Try instant revalidation first (faster than rebuild)
+    if (REVALIDATE_SECRET && SITE_URL && documentType) {
+      try {
+        console.log("🔄 Attempting on-demand revalidation...");
+        
+        // Determine path to revalidate based on document type
+        let revalidatePath = "/";
+        if (documentType === "product" && payload.slug?.current) {
+          revalidatePath = `/products/${payload.slug.current}`;
+        } else if (documentType === "post" && payload.slug?.current) {
+          revalidatePath = `/blog/${payload.slug.current}`;
+        } else if (documentType === "service" && payload.slug?.current) {
+          revalidatePath = `/services/${payload.slug.current}`;
+        }
+
+        const revalidateUrl = `${SITE_URL}/api/revalidate?secret=${REVALIDATE_SECRET}&path=${revalidatePath}`;
+        
+        const revalidateResponse = await fetch(revalidateUrl, {
+          method: "POST",
+        });
+
+        if (revalidateResponse.ok) {
+          const revalidateData = await revalidateResponse.json();
+          console.log("✅ Instant revalidation successful:", revalidateData);
+          
+          // Return early if revalidation worked - no need for full rebuild
+          return {
+            statusCode: 200,
+            body: JSON.stringify({
+              success: true,
+              message: "Content updated instantly via ISR revalidation",
+              method: "revalidate",
+              path: revalidatePath,
+            }),
+          };
+        } else {
+          console.log("⚠️  Revalidation failed, falling back to rebuild");
+        }
+      } catch (error) {
+        console.error("❌ Revalidation error (will try rebuild):", error);
+      }
+    }
+
+    // Trigger Netlify build if build hook is configured (fallback or for major updates)
     if (NETLIFY_BUILD_HOOK) {
       console.log("Triggering Netlify rebuild...");
 
@@ -76,13 +135,13 @@ export const handler: Handler = async (event) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          trigger_title: `Sanity ${payload._type || "content"} update`,
+          trigger_title: `Sanity ${documentType || "content"} update: ${documentId}`,
         }),
       });
 
       if (!netlifyResponse.ok) {
         console.error(
-          "Failed to trigger Netlify build:",
+          "❌ Failed to trigger Netlify build:",
           netlifyResponse.statusText
         );
         return {
@@ -95,14 +154,15 @@ export const handler: Handler = async (event) => {
         };
       }
 
-      const buildData = await netlifyResponse.json();
-      console.log("Netlify build triggered successfully:", buildData);
+      const buildData = (await netlifyResponse.json()) as { id: string };
+      console.log("✅ Netlify build triggered:", buildData);
 
       return {
         statusCode: 200,
         body: JSON.stringify({
           success: true,
           message: "Webhook received and Netlify build triggered",
+          method: "full_rebuild",
           buildId: buildData.id,
         }),
       };
