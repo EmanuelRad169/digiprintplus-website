@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 
 interface LiteYouTubeProps {
   videoId: string;
@@ -58,11 +59,13 @@ export default function LiteYouTube({
           className="absolute inset-0 w-full h-full"
           aria-label={`Play video: ${title}`}
         >
-          <img
+          <Image
             src={thumbnailSrc}
             alt={title}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority={false}
           />
           <span className="absolute inset-0 bg-black/30" />
           <span className="absolute inset-0 flex items-center justify-center">

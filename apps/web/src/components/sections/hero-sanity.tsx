@@ -8,10 +8,10 @@ import {
   ChevronRight,
   Printer,
 } from "lucide-react";
-import { SanityHeroImage } from "@/components/ui/sanity-image";
+import { SanityHeroImage } from "../ui/sanity-image";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { getHeroSlides, type HeroSlide } from "@/lib/sanity/contentFetchers";
+import { getHeroSlides, type HeroSlide } from "../../lib/sanity/contentFetchers";
 
 // Fallback slides for when Sanity data is not available
 const fallbackSlides: HeroSlide[] = [

@@ -11,6 +11,11 @@
 
 // cSpell:ignore as5tildt
 
+import path from "node:path";
+import dotenv from "dotenv";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+
 interface EnvVar {
   name: string;
   required: boolean;

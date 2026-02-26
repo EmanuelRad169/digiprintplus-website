@@ -1,19 +1,19 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { SanityProductImage } from "@/components/ui/sanity-image";
+import { SanityProductImage } from "../../../components/ui/sanity-image";
 import Image from "next/image";
 import Link from "next/link";
-import { getProductBySlug, getSiteSettings } from "@/lib/sanity/fetchers";
-import { PortableTextRenderer } from "@/components/portable-text";
+import { getProductBySlug, getSiteSettings } from "../../../lib/sanity/fetchers";
+import { PortableTextRenderer } from "../../../components/portable-text";
 import {
   Product,
   ProductImage,
   ProductTestimonial,
   ProductSpecification,
   ProductFeature,
-} from "@/types/product";
-import { generateProductSEO, generateProductSchema } from "@/lib/seo";
+} from "../../../types/product";
+import { generateProductSEO, generateProductSchema } from "../../../lib/seo";
 import {
   Star,
   Check,

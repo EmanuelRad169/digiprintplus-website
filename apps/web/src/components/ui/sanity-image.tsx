@@ -6,8 +6,8 @@ import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import {
   getOptimizedImageProps,
   getResponsiveImageProps,
-} from "@/lib/sanity/image";
-import { generateBlurDataURL } from "@/lib/sanity/image-blur";
+} from "../../lib/sanity/image";
+import { generateBlurDataURL } from "../../lib/sanity/image-blur";
 
 interface SanityImageProps extends Omit<ComponentProps<typeof Image>, "src"> {
   src: SanityImageSource;
