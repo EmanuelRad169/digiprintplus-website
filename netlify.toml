@@ -6,7 +6,7 @@
 
 [build]
   # Netlify handles dependency install automatically based on packageManager in package.json
-  command = "cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  command = "bash scripts/verify-netlify-runtime.sh && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
   publish = "apps/web/.next"
   ignore = "git diff --quiet HEAD^ HEAD ./"
 
