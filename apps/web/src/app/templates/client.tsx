@@ -500,8 +500,13 @@ export default function TemplatesPageClient({
                             new FormData(form) as any,
                           ).toString(),
                         })
-                          .then(() => {
-                            setFormSubmitted(true);
+                          .then((response) => {
+                            // Netlify returns 200-399 for successful submissions
+                            if (response.status < 400) {
+                              setFormSubmitted(true);
+                            } else {
+                              throw new Error("Submission failed");
+                            }
                           })
                           .catch((error) => {
                             alert("Error submitting form. Please try again.");

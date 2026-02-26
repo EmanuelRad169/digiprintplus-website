@@ -86,9 +86,11 @@ export default function RequestCustomDesignModal({
         body: encodeNetlifyForm(payload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to send request");
+      // Netlify returns 200-399 for successful submissions (including redirects)
+      if (response.status >= 400) {
+        const errorText = await response.text();
+        console.error("Form submission error:", errorText);
+        throw new Error("Failed to send request");
       }
 
       setSubmitStatus("success");

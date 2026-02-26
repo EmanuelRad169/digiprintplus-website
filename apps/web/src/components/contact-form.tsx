@@ -70,12 +70,19 @@ export function ContactForm() {
         body: encodeNetlifyForm(payload),
       });
 
-      if (!response.ok) {
+      // Netlify returns 200-399 for successful submissions (including redirects)
+      if (response.status >= 400) {
+        const errorText = await response.text();
+        console.error("Form submission error:", errorText);
         throw new Error("Submission failed. Please try again.");
       }
 
       setSubmitSuccess(true);
-      router.push(`/forms/success?form=${encodeURIComponent(FORM_NAME)}`);
+      
+      // Redirect to success page after a brief delay to ensure submission is processed
+      setTimeout(() => {
+        router.push(`/forms/success?form=${encodeURIComponent(FORM_NAME)}`);
+      }, 500);
     } catch (error) {
       setSubmitError(
         error instanceof Error
