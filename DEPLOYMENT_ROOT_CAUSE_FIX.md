@@ -12,6 +12,7 @@
 Netlify builds were failing with ESLint parser errors, TypeScript export mismatches, and toolchain version drift between local and production environments. **All root causes have been identified and fixed** with enforced version consistency and automated verification guardrails.
 
 ### Quick Status:
+
 - ❌ **Before:** Builds failing 50%+ of the time with cryptic errors
 - ✅ **After:** Deterministic builds with pre-flight verification preventing all known failure modes
 
@@ -22,18 +23,21 @@ Netlify builds were failing with ESLint parser errors, TypeScript export mismatc
 ### ❌ ROOT CAUSE #1: ESLint/Next.js Version Mismatch (CRITICAL)
 
 #### Problem:
+
 ```
-ERROR: Cannot find module 'next/dist/compiled/babel/eslint-parser' 
+ERROR: Cannot find module 'next/dist/compiled/babel/eslint-parser'
 from eslint-config-next/core-web-vitals
 ```
 
 **Why it failed:**
+
 - Next.js **15.5.12** was installed (current)
 - eslint-config-next **14.2.7** was installed (OLD VERSION)
 - **Next.js 15.x restructured internal parser paths**
 - ESLint config 14.x looked for old path structure that no longer exists in Next.js 15.x
 
 **Evidence:**
+
 ```json
 // apps/web/package.json (BEFORE - WRONG):
 "next": "^15.5.12"
@@ -43,6 +47,7 @@ from eslint-config-next/core-web-vitals
 #### ✅ FIX APPLIED:
 
 1. **Updated eslint-config-next to match Next.js major version:**
+
 ```json
 // apps/web/package.json (AFTER - CORRECT):
 "next": "^15.5.12"
@@ -50,6 +55,7 @@ from eslint-config-next/core-web-vitals
 ```
 
 2. **Added pnpm overrides in root package.json to enforce consistency:**
+
 ```json
 "pnpm": {
   "overrides": {
@@ -62,6 +68,7 @@ from eslint-config-next/core-web-vitals
 ```
 
 3. **Already had ESLint disabled on Netlify builds** in next.config.js:
+
 ```javascript
 ...(process.env.NETLIFY ? {
   eslint: { ignoreDuringBuilds: true },
@@ -70,6 +77,7 @@ from eslint-config-next/core-web-vitals
 ```
 
 **Why this approach:**
+
 - **Best practice for Netlify:** Lint locally + CI, skip on production builds for speed
 - **Prevents parser path issues:** Even if parser paths change, builds won't fail
 - **Type-checking still enforced:** TypeScript errors will still fail the build
@@ -79,6 +87,7 @@ from eslint-config-next/core-web-vitals
 ### ❌ ROOT CAUSE #2: Next.js Version Inconsistency (Monorepo Drift)
 
 #### Problem:
+
 ```json
 // Root package.json:
 "next": "^15.5.11"
@@ -92,6 +101,7 @@ from eslint-config-next/core-web-vitals
 #### ✅ FIX APPLIED:
 
 1. **Aligned versions to 15.5.12 everywhere:**
+
 ```json
 // Both root and apps/web now have:
 "next": "^15.5.12"
@@ -106,6 +116,7 @@ from eslint-config-next/core-web-vitals
 ### ❌ ROOT CAUSE #3: Functions Directory Path Error
 
 #### Problem:
+
 ```toml
 # netlify.toml (BEFORE - WRONG):
 [functions]
@@ -131,6 +142,7 @@ from eslint-config-next/core-web-vitals
 ### ❌ ROOT CAUSE #4: Explicit SWC Binaries Causing Version Drift
 
 #### Problem:
+
 ```json
 // apps/web/package.json had explicit platform binaries:
 "@next/swc-darwin-arm64": "15.5.12",
@@ -139,7 +151,8 @@ from eslint-config-next/core-web-vitals
 "@next/swc-win32-x64-msvc": "15.5.12"
 ```
 
-**Impact:** 
+**Impact:**
+
 - Manual version updates required when Next.js bumps
 - Potential mismatch between Next.js auto-installed SWC and manual versions
 - Larger lockfile and node_modules
@@ -159,6 +172,7 @@ from eslint-config-next/core-web-vitals
 ### ❌ ROOT CAUSE #5: Node Version Not Enforced Locally
 
 #### Problem:
+
 - Local development: Node 24.5.0
 - Netlify production: Node 20.11.1
 - **Different major versions can cause runtime behavior differences**
@@ -166,6 +180,7 @@ from eslint-config-next/core-web-vitals
 #### ✅ EXISTING (GOOD):
 
 Already had:
+
 - `.nvmrc`: 20.11.1 ✅
 - `.node-version`: 20.11.1 ✅
 - `netlify.toml`: NODE_VERSION = "20.11.1" ✅
@@ -174,6 +189,7 @@ Already had:
 #### ✅ FIX APPLIED:
 
 **Added engines.pnpm to enforce pnpm version:**
+
 ```json
 "engines": {
   "node": "20.x",
@@ -192,6 +208,7 @@ Already had:
 **File:** `apps/web/scripts/verify-build-toolchain.js`
 
 **Checks:**
+
 - ✅ Node.js major version (20.x required)
 - ✅ pnpm major version (9.x required)
 - ✅ Next.js version (15.5.12 expected)
@@ -201,11 +218,13 @@ Already had:
 - ✅ pnpm overrides configured
 
 **Runs automatically before every build:**
+
 ```json
 "prebuild": "node scripts/verify-build-toolchain.js && tsx scripts/verify-netlify-env.ts"
 ```
 
 **Output on failure:**
+
 ```
 ❌ TOOLCHAIN VERIFICATION FAILED
 
@@ -222,6 +241,7 @@ Quick fix:
 **File:** `apps/web/scripts/verify-exports.ts`
 
 **Checks all critical Sanity fetcher exports:**
+
 - getAllProducts
 - getProductBySlug
 - getBlogPostBySlug
@@ -229,6 +249,7 @@ Quick fix:
 - etc.
 
 **Run manually to verify exports:**
+
 ```bash
 pnpm -C apps/web verify:exports
 ```
@@ -242,6 +263,7 @@ pnpm -C apps/web verify:exports
 **File:** `apps/web/scripts/verify-netlify-env.ts`
 
 Already validates:
+
 - NEXT_PUBLIC_SANITY_PROJECT_ID
 - NEXT_PUBLIC_SANITY_DATASET
 - SANITY_API_TOKEN
@@ -258,6 +280,7 @@ Already validates:
 **Site:** digiprint-main-web
 
 #### Build Settings:
+
 ```
 Base directory: (leave empty - builds from root)
 Build command: (uses netlify.toml)
@@ -266,6 +289,7 @@ Functions directory: (uses netlify.toml)
 ```
 
 #### Environment Variables (Site Settings → Environment Variables):
+
 ```bash
 # Sanity Configuration
 NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
@@ -287,6 +311,7 @@ NEXT_PUBLIC_GTM_ID=<your-gtm-id>
 ```
 
 #### Build Environment (netlify.toml):
+
 ```toml
 [build.environment]
   NODE_VERSION = "20.11.1"
@@ -325,6 +350,7 @@ pnpm -C apps/web verify:toolchain
 ```
 
 **Expected Output:**
+
 ```
 ✅ Node.js 20.11.1 (matches required 20.x)
 ✅ pnpm 9.15.0 (matches required 9.x)
@@ -368,7 +394,8 @@ pnpm -C apps/web build
 NETLIFY=true pnpm -C apps/web build
 ```
 
-**Expected:** 
+**Expected:**
+
 - Prebuild scripts run (toolchain + env verification)
 - Build succeeds
 - ESLint skipped (ignoredDuringBuilds: true)
@@ -402,17 +429,17 @@ git push origin main
 
 ## 📊 BEFORE vs AFTER COMPARISON
 
-| Issue | Before | After |
-|-------|--------|-------|
-| **ESLint Parser** | ❌ Failing (version mismatch) | ✅ Skipped on Netlify, works locally |
-| **Next.js Versions** | ❌ Inconsistent (15.5.11 vs 15.5.12) | ✅ Locked to 15.5.12 via overrides |
-| **Node Version** | ⚠️  Local≠Production (24 vs 20) | ✅ Verified pre-build |
-| **Functions Path** | ❌ Wrong (duplicated path) | ✅ Correct (apps/web/netlify/functions) |
-| **SWC Binaries** | ⚠️  Manually versioned | ✅ Auto-managed by Next.js |
-| **Toolchain Verification** | ❌ None | ✅ Pre-build checks |
-| **Export Verification** | ❌ None | ✅ Manual script available |
-| **Version Drift** | ❌ Possible | ✅ Prevented by pnpm overrides |
-| **Build Success Rate** | ~50% | 100% (deterministic) |
+| Issue                      | Before                               | After                                   |
+| -------------------------- | ------------------------------------ | --------------------------------------- |
+| **ESLint Parser**          | ❌ Failing (version mismatch)        | ✅ Skipped on Netlify, works locally    |
+| **Next.js Versions**       | ❌ Inconsistent (15.5.11 vs 15.5.12) | ✅ Locked to 15.5.12 via overrides      |
+| **Node Version**           | ⚠️ Local≠Production (24 vs 20)       | ✅ Verified pre-build                   |
+| **Functions Path**         | ❌ Wrong (duplicated path)           | ✅ Correct (apps/web/netlify/functions) |
+| **SWC Binaries**           | ⚠️ Manually versioned                | ✅ Auto-managed by Next.js              |
+| **Toolchain Verification** | ❌ None                              | ✅ Pre-build checks                     |
+| **Export Verification**    | ❌ None                              | ✅ Manual script available              |
+| **Version Drift**          | ❌ Possible                          | ✅ Prevented by pnpm overrides          |
+| **Build Success Rate**     | ~50%                                 | 100% (deterministic)                    |
 
 ---
 
@@ -451,6 +478,7 @@ git push origin main
 ## 🚨 CRITICAL RULES FOR FUTURE CHANGES
 
 ### ✅ DO:
+
 - Always update Next.js and eslint-config-next together to matching versions
 - Run `pnpm verify:toolchain` before committing dependency changes
 - Use `pnpm install --frozen-lockfile` in production
@@ -458,7 +486,8 @@ git push origin main
 - Keep .nvmrc, .node-version, and netlify.toml NODE_VERSION in sync
 
 ### ❌ DON'T:
-- Don't manually install @next/swc-* platform binaries
+
+- Don't manually install @next/swc-\* platform binaries
 - Don't update Next.js without updating eslint-config-next
 - Don't mix Next.js versions across workspace packages
 - Don't skip prebuild verification scripts
@@ -479,6 +508,7 @@ git push origin main
 ## ✅ DEPLOYMENT CHECKLIST
 
 Before deploying:
+
 - [ ] Node version is 20.x (`node -v`)
 - [ ] pnpm version is 9.x (`pnpm -v`)
 - [ ] Clean install completed (`pnpm install --frozen-lockfile`)

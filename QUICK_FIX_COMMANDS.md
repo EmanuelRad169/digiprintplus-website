@@ -29,6 +29,7 @@ NETLIFY=true pnpm build
 ## If Verification Fails
 
 ### Node version mismatch:
+
 ```bash
 nvm install 20
 nvm use 20
@@ -36,11 +37,13 @@ node -v  # Should show v20.x.x
 ```
 
 ### Dependency version mismatch:
+
 ```bash
 pnpm install
 ```
 
 ### ESLint parser error:
+
 ```bash
 # Already fixed by aligning eslint-config-next with Next.js version
 # If still happens, check that pnpm overrides are in root package.json
@@ -76,6 +79,7 @@ pnpm verify:webhook  # Checks webhook security
 ## Troubleshooting Build on Netlify
 
 If Netlify build fails, check:
+
 1. Netlify UI → Site settings → Environment variables (all required vars set?)
 2. Netlify build log → Look for which step failed
 3. Run locally with `NETLIFY=true pnpm build` to reproduce
