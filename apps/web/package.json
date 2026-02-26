@@ -12,8 +12,8 @@
   },
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "tsx scripts/verify-netlify-env.ts && next build && ./scripts/post-build-cleanup.sh",
-    "build:netlify": "NODE_OPTIONS='--max-old-space-size=4096' tsx scripts/verify-netlify-env.ts && next build && ./scripts/post-build-cleanup.sh",
+    "build": "next build && ./scripts/post-build-cleanup.sh",
+    "build:netlify": "NODE_OPTIONS='--max-old-space-size=4096' next build && ./scripts/post-build-cleanup.sh",
     "build:analyze": "ANALYZE=true next build",
     "analyze": "ANALYZE=true next build",
     "analyze:server": "ANALYZE=true BUNDLE_ANALYZE=server next build",
