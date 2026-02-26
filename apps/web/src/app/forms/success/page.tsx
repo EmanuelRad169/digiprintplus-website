@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 
 export default function FormsSuccessPage() {
@@ -40,18 +41,18 @@ export default function FormsSuccessPage() {
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <a
+            <Link
               href="/"
               className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-magenta-600 text-white font-medium hover:bg-magenta-700 transition-colors"
             >
               Back to Home
-            </a>
-            <a
+            </Link>
+            <Link
               href="/contact"
               className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
             >
               Contact Us
-            </a>
+            </Link>
           </div>
 
           <p className="mt-8 text-xs text-gray-500">

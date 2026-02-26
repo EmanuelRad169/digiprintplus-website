@@ -7,6 +7,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 // cSpell:ignore portabletext
 import { PortableText } from "@portabletext/react";
 import { Product, ProductSpecification, ProductFAQItem } from "@/types/product";
@@ -179,12 +180,12 @@ function TabContent({ activeTab, product }: TabContentProps) {
                 Contact us for technical details.
               </p>
               <div className="mt-6">
-                <a
+                <Link
                   href="/contact"
                   className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors shadow-lg hover:shadow-xl"
                 >
                   Contact Us
-                </a>
+                </Link>
               </div>
             </div>
           )}
@@ -227,12 +228,12 @@ function TabContent({ activeTab, product }: TabContentProps) {
                 information.
               </p>
               <div className="mt-6">
-                <a
+                <Link
                   href="/contact"
                   className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors shadow-lg hover:shadow-xl"
                 >
                   Contact Us
-                </a>
+                </Link>
               </div>
             </div>
           )}
@@ -393,12 +394,12 @@ function TabContent({ activeTab, product }: TabContentProps) {
 
               {product.templates.length > 6 && (
                 <div className="text-center mt-8">
-                  <a
+                  <Link
                     href="/templates"
                     className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-medium rounded-lg hover:bg-magenta-600 transition-colors"
                   >
                     View All Templates
-                  </a>
+                  </Link>
                 </div>
               )}
             </>
@@ -427,12 +428,12 @@ function TabContent({ activeTab, product }: TabContentProps) {
                 check back later or request a custom design.
               </p>
               <div className="mt-6">
-                <a
+                <Link
                   href="/contact"
                   className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors shadow-lg hover:shadow-xl"
                 >
                   Request Custom Design
-                </a>
+                </Link>
               </div>
             </div>
           )}

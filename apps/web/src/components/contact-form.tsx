@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -247,19 +248,19 @@ export function ContactForm() {
         />
         <label htmlFor="agreeToTerms" className="text-sm text-gray-600">
           I agree to the{" "}
-          <a
+          <Link
             href="/terms"
             className="text-magenta-600 hover:text-magenta-700 underline"
           >
             Terms of Service
-          </a>{" "}
+          </Link>{" "}
           and{" "}
-          <a
+          <Link
             href="/privacy"
             className="text-magenta-600 hover:text-magenta-700 underline"
           >
             Privacy Policy
-          </a>
+          </Link>
           *
         </label>
       </div>

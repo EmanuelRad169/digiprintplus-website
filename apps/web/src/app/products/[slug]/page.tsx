@@ -130,19 +130,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm">
-            <a
+            <Link
               href="/"
               className="text-gray-500 hover:text-gray-900 transition-colors"
             >
               Home
-            </a>
+            </Link>
             <span className="text-gray-400">/</span>
-            <a
+            <Link
               href="/products"
               className="text-gray-500 hover:text-gray-900 transition-colors"
             >
               Products
-            </a>
+            </Link>
             {product.category && (
               <>
                 <span className="text-gray-400">/</span>
@@ -688,20 +688,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <a
+                  <Link
                     href="/quote"
                     className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     <ShoppingCart className="w-5 h-5 mr-2" />
                     Get Free Quote
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/contact"
                     className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     <Phone className="w-5 h-5 mr-2" />
                     Contact Us
-                  </a>
+                  </Link>
                 </div>
               </div>
 
