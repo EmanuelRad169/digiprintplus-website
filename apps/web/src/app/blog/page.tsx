@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { getAllBlogPosts, getFeaturedBlogPosts, getBlogCategories } from '@/lib/sanity/fetchers'
+import { getAllBlogPosts, getFeaturedBlogPosts, getBlogCategories } from '../../lib/sanity/fetchers'
 import { draftMode } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
