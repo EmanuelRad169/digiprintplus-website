@@ -5,8 +5,8 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  # Netlify handles dependency install automatically based on packageManager in package.json
-  command = "bash scripts/verify-netlify-runtime.sh && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  # Enable corepack to activate pnpm, then install dependencies and build
+  command = "corepack enable && corepack prepare pnpm@9.15.4 --activate && bash scripts/verify-netlify-runtime.sh && pnpm install --frozen-lockfile && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
   publish = "apps/web/.next"
   ignore = "git diff --quiet HEAD^ HEAD ./"
 
