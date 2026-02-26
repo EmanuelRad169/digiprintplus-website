@@ -9,7 +9,7 @@
     "./src/styles/**/*"
   ],
   "engines": {
-    "node": "18.20.4"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "dev": "next dev -p 3001",

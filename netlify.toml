@@ -15,7 +15,7 @@
   node_bundler = "esbuild"
 
 [build.environment]
-  NODE_VERSION = "18.20.4"
+  NODE_VERSION = "20.11.1"
   PNPM_VERSION = "9.15.4"
   NETLIFY_USE_PNPM = "true"
   

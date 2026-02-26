@@ -12,7 +12,23 @@ echo "=========================================="
 echo ""
 
 echo "📦 Node.js Version:"
-node -v || echo "❌ Node not found"
+NODE_VERSION=$(node -v 2>/dev/null || echo "")
+if [ -z "$NODE_VERSION" ]; then
+  echo "❌ Node not found"
+  exit 1
+fi
+echo "$NODE_VERSION"
+
+# Extract major version (e.g., v20.11.1 -> 20)
+NODE_MAJOR=$(echo "$NODE_VERSION" | sed 's/^v//' | cut -d. -f1)
+if [ "$NODE_MAJOR" != "20" ]; then
+  echo ""
+  echo "❌ ERROR: Node major version must be 20, found: $NODE_MAJOR"
+  echo "Expected: v20.x.x"
+  echo "Actual: $NODE_VERSION"
+  exit 1
+fi
+echo "✅ Node 20.x detected (correct)"
 echo ""
 
 echo "📦 npm Version:"
