@@ -22,7 +22,10 @@ async function verifyFetchersExports() {
 
   try {
     // Dynamically import the fetchers module
-    const fetchers = await import("../src/lib/sanity/fetchers");
+    const fetchers = (await import("../src/lib/sanity/fetchers")) as Record<
+      string,
+      unknown
+    >;
 
     const requiredExports = [
       "getAllProducts",
@@ -42,7 +45,8 @@ async function verifyFetchersExports() {
     console.log(`\nChecking ${requiredExports.length} required exports...\n`);
 
     for (const exportName of requiredExports) {
-      if (typeof fetchers[exportName] === "function") {
+      const exportedValue = fetchers[exportName];
+      if (typeof exportedValue === "function") {
         logSuccess(`${exportName} ✓`);
       } else {
         logError(`${exportName} ✗ (NOT FOUND OR NOT A FUNCTION)`);
