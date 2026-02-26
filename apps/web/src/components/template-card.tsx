@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SanityProductImage } from "@/components/ui/sanity-image";
+import { SanityProductImage } from "./ui/sanity-image";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";

@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { SanityImage } from "@/components/ui/sanity-image";
+import { SanityImage } from "./ui/sanity-image";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { getNavigationMenu, getSiteSettings } from "../lib/sanity/fetchers";
 import {
   NavigationMenu,
   NavigationItem as SanityNavigationItem,
-} from "@/types/navigation";
-import type { SiteSettings } from "@/types/siteSettings";
-import MegaMenuNew from "@/components/MegaMenuNew";
+} from "../types/navigation";
+import type { SiteSettings } from "../types/siteSettings";
+import MegaMenuNew from "./MegaMenuNew";
 
 interface NavigationProps {
   useNewMegaMenu?: boolean; // Toggle between old and new mega menu
