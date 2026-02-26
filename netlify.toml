@@ -9,8 +9,8 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  # Enable corepack and use pnpm
-  command = "corepack enable && corepack prepare pnpm@9.15.0 --activate && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  # Enable corepack, install deps, then build
+  command = "corepack enable && corepack prepare pnpm@9.15.0 --activate && pnpm install --frozen-lockfile && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
   publish = "apps/web/.next"
   ignore = "git diff --quiet HEAD^ HEAD ./"
 
