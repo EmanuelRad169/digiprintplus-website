@@ -81,19 +81,22 @@ function verifyNodeVersion() {
   logHeader("1️⃣  NODE VERSION");
 
   const currentVersion = getNodeVersion();
-  const majorVersion = parseInt(currentVersion.split(".")[0], 10);
-  const expectedMajor = 20;
+  const [majorRaw, minorRaw] = currentVersion.split(".");
+  const majorVersion = parseInt(majorRaw, 10);
+  const minorVersion = parseInt(minorRaw, 10);
 
-  if (majorVersion === expectedMajor) {
-    logSuccess(
-      `Node.js ${currentVersion} (matches required ${expectedMajor}.x)`,
-    );
+  const isSupportedNode =
+    (majorVersion === 20 && minorVersion >= 19) ||
+    (majorVersion === 22 && minorVersion >= 12) ||
+    majorVersion >= 24;
+
+  if (isSupportedNode) {
+    logSuccess(`Node.js ${currentVersion} (matches required range)`);
   } else {
+    logError(`Node.js ${currentVersion} is not in the supported range`);
+    logError("Expected >=20.19.1 <22 or >=22.12 (or Node 24+)");
     logError(
-      `Node.js ${currentVersion} does NOT match required ${expectedMajor}.x`,
-    );
-    logError(
-      `Please use Node.js ${expectedMajor}.x (via nvm: "nvm use 20" or "nvm install 20")`,
+      'Use nvm: "nvm install 20.19.1" and "nvm use 20.19.1"',
     );
     hasErrors = true;
   }

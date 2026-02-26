@@ -19,16 +19,23 @@ if [ -z "$NODE_VERSION" ]; then
 fi
 echo "$NODE_VERSION"
 
-# Extract major version (e.g., v20.11.1 -> 20)
+# Extract major/minor version (e.g., v20.19.1 -> 20/19)
 NODE_MAJOR=$(echo "$NODE_VERSION" | sed 's/^v//' | cut -d. -f1)
-if [ "$NODE_MAJOR" != "20" ]; then
+NODE_MINOR=$(echo "$NODE_VERSION" | sed 's/^v//' | cut -d. -f2)
+
+if [ "$NODE_MAJOR" = "20" ] && [ "$NODE_MINOR" -ge 19 ]; then
+  echo "✅ Node 20.19+ detected (correct)"
+elif [ "$NODE_MAJOR" = "22" ] && [ "$NODE_MINOR" -ge 12 ]; then
+  echo "✅ Node 22.12+ detected (correct)"
+elif [ "$NODE_MAJOR" -ge 24 ]; then
+  echo "✅ Node 24+ detected (correct)"
+else
   echo ""
-  echo "❌ ERROR: Node major version must be 20, found: $NODE_MAJOR"
-  echo "Expected: v20.x.x"
+  echo "❌ ERROR: Node version must be >=20.19.1 <22 or >=22.12"
+  echo "Expected: v20.19+ or v22.12+ or v24+"
   echo "Actual: $NODE_VERSION"
   exit 1
 fi
-echo "✅ Node 20.x detected (correct)"
 echo ""
 
 echo "📦 npm Version:"
