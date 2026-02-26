@@ -15,7 +15,7 @@
   ignore = "git diff --quiet HEAD^ HEAD ./"
 
 [functions]
-  directory = "netlify/functions"
+  directory = "apps/web/netlify/functions"
   node_bundler = "esbuild"
 
 [build.environment]
