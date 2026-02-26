@@ -234,14 +234,21 @@ export default function QuotePage() {
         });
       }
 
-      // Submit to our Netlify function
-      const response = await fetch("/.netlify/functions/submit-quote", {
+      // Submit to our API endpoint
+      const response = await fetch("/api/submit-quote", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
+
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error(
+          `Server error (${response.status}): unexpected response format. Please try again.`,
+        );
+      }
 
       const data = await response.json();
 

@@ -29,8 +29,11 @@ export function FileUploadStep({
     };
 
     // Add listeners to prevent page navigation on accidental drops
+    // { passive: false } is required so preventDefault() is not ignored
     ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-      document.body.addEventListener(eventName, preventDefaults);
+      document.body.addEventListener(eventName, preventDefaults, {
+        passive: false,
+      });
     });
 
     // Cleanup
@@ -62,6 +65,8 @@ export function FileUploadStep({
     if (e.dataTransfer) {
       e.dataTransfer.dropEffect = "copy";
     }
+    // Keep dragging state active while hovering over drop zone
+    setIsDragging(true);
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
