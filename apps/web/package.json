@@ -2,14 +2,14 @@
   "name": "digiprintplus-web",
   "version": "2.0.0",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@9.15.4",
   "sideEffects": [
     "*.css",
     "*.scss",
     "./src/styles/**/*"
   ],
   "engines": {
-    "node": "20.x"
+    "node": "18.20.4"
   },
   "scripts": {
     "dev": "next dev -p 3001",

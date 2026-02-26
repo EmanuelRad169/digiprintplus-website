@@ -82,7 +82,7 @@ function verifyNodeVersion() {
 
   const currentVersion = getNodeVersion();
   const majorVersion = parseInt(currentVersion.split(".")[0], 10);
-  const expectedMajor = 20;
+  const expectedMajor = 18;
 
   if (majorVersion === expectedMajor) {
     logSuccess(
@@ -93,7 +93,7 @@ function verifyNodeVersion() {
       `Node.js ${currentVersion} does NOT match required ${expectedMajor}.x`,
     );
     logError(
-      `Please use Node.js ${expectedMajor}.x (via nvm: "nvm use 20" or "nvm install 20")`,
+      `Please use Node.js ${expectedMajor}.x (via nvm: "nvm use 18" or "nvm install 18")`,
     );
     hasErrors = true;
   }
@@ -277,7 +277,7 @@ function main() {
     );
     console.log(`\nPlease fix the errors above before building.`);
     console.log(`\nQuick fix:`);
-    console.log(`  1. nvm use 20 (or nvm install 20)`);
+    console.log(`  1. nvm use 18 (or nvm install 18)`);
     console.log(`  2. pnpm install --frozen-lockfile`);
     console.log(`  3. Re-run this script`);
     console.log("=".repeat(60));
