@@ -6,7 +6,7 @@ import {
   getPageBySlug,
   getAboutPage,
 } from "@/lib/sanity/fetchers";
-import { PortableTextRenderer } from "@/components/portable-text";
+import { PortableTextRenderer } from "../../components/portable-text";
 
 export const revalidate = 60;
 

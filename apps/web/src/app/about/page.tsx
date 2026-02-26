@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getAboutPage } from "@/lib/sanity/fetchers";
 import { getAboutPageData } from "@/lib/sanity/contentFetchers";
-import { PortableTextRenderer } from "@/components/portable-text";
+import { PortableTextRenderer } from "../../components/portable-text";
 import { draftMode } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,8 +14,8 @@ import {
   Shield,
   Star,
 } from "lucide-react";
-import { AboutSanity } from "@/components/sections/about-sanity";
-import { CallToActionSanity } from "@/components/sections/call-to-action-sanity";
+import { AboutSanity } from "../../components/sections/about-sanity";
+import { CallToActionSanity } from "../../components/sections/call-to-action-sanity";
 
 export const revalidate = 60;
 

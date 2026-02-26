@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, ArrowRight, Phone, Mail, Clock } from "lucide-react";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteSettings } from "../../hooks/useSiteSettings";
 
 export default function ThankYouPage() {
   const searchParams = useSearchParams();
