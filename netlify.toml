@@ -9,8 +9,8 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  # Install pnpm globally, then install deps and build
-  command = "npm install -g pnpm@9.15.0 && pnpm install --frozen-lockfile && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  # Netlify already has pnpm - just install deps and build
+  command = "pnpm install --frozen-lockfile && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
   publish = "apps/web/.next"
   ignore = "git diff --quiet HEAD^ HEAD ./"
 
