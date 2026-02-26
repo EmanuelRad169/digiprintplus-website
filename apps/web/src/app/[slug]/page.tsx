@@ -50,7 +50,7 @@ export default async function Page({ params }: PageProps) {
 
   // Try to fetch as an "about" page first, then fallback to generic "page"
   let pageData = await getAboutPage(slug, isEnabled);
-  let isAboutPage = !!pageData;
+  const isAboutPage = !!pageData;
 
   if (!pageData) {
     pageData = await getPageBySlug(slug, isEnabled);

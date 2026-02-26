@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteSettings } from "../../hooks/useSiteSettings";
 
 export function CallToAction() {
   const ref = useRef<HTMLElement>(null);

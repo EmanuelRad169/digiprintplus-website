@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     // Handle different document types
     const documentType = body._type;
-    let revalidated: string[] = [];
+    const revalidated: string[] = [];
 
     // Revalidate based on document type
     switch (documentType) {
