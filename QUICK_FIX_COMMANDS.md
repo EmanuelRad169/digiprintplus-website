@@ -28,7 +28,7 @@ NETLIFY=true pnpm build
 
 ## If Verification Fails
 
-### Node version mismatch:
+### Node version mismatch
 
 ```bash
 nvm install 20
@@ -36,13 +36,13 @@ nvm use 20
 node -v  # Should show v20.x.x
 ```
 
-### Dependency version mismatch:
+### Dependency version mismatch
 
 ```bash
 pnpm install
 ```
 
-### ESLint parser error:
+### ESLint parser error
 
 ```bash
 # Already fixed by aligning eslint-config-next with Next.js version
