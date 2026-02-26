@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, ArrowRight, Phone, Mail, Clock } from "lucide-react";
@@ -10,32 +10,36 @@ export default function ThankYouPage() {
   const searchParams = useSearchParams();
   const quoteId = searchParams?.get("quote");
   const { siteSettings } = useSiteSettings();
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
       <div className="container max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center"
+        <div
+          className={`bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center transition-all duration-600 ${
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-90"
+          }`}
         >
           {/* Success Icon */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8"
+          <div
+            className={`w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8 transition-all duration-600 delay-300 ${
+              isVisible ? "opacity-100 scale-100" : "opacity-0 scale-0"
+            }`}
           >
             <CheckCircle className="w-12 h-12 text-green-600" />
-          </motion.div>
+          </div>
 
           {/* Main Message */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="space-y-6 mb-12"
+          <div
+            className={`space-y-6 mb-12 transition-all duration-600 delay-400 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
           >
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
               Thank You!
@@ -54,14 +58,15 @@ export default function ThankYouPage() {
                 </p>
               </div>
             )}
-          </motion.div>
+          </div>
 
           {/* What's Next */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="bg-primary-50 rounded-xl p-8 mb-12"
+          <div
+            className={`bg-primary-50 rounded-xl p-8 mb-12 transition-all duration-600 delay-600 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
           >
             <h2 className="text-2xl font-bold text-primary-900 mb-6">
               What Happens Next?
@@ -112,14 +117,15 @@ export default function ThankYouPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Contact Information */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-            className="border-t border-gray-200 pt-8"
+          <div
+            className={`border-t border-gray-200 pt-8 transition-all duration-600 delay-800 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
           >
             <h3 className="text-lg font-semibold text-gray-900 mb-6">
               Need Immediate Assistance?
@@ -154,14 +160,15 @@ export default function ThankYouPage() {
                 <span className="text-sm">Mon-Fri: 8AM-6PM</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Action Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mt-12"
+          <div
+            className={`flex flex-col sm:flex-row gap-4 justify-center mt-12 transition-all duration-600 delay-1000 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
           >
             <Link
               href="/products"
@@ -177,18 +184,17 @@ export default function ThankYouPage() {
             >
               Return to Home
             </Link>
-          </motion.div>
+          </div>
 
           {/* Reference Number */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.6 }}
-            className="mt-8 text-sm text-gray-500"
+          <div
+            className={`mt-8 text-sm text-gray-500 transition-opacity duration-600 delay-1200 ${
+              isVisible ? "opacity-100" : "opacity-0"
+            }`}
           >
             Reference #: QR-{Date.now().toString().slice(-6)}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   );

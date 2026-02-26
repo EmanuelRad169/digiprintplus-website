@@ -9,11 +9,14 @@ import { generateSEO, generateOrganizationSchema } from "@/lib/seo";
 import { getNavigationMenu, getSiteSettings } from "@/lib/sanity/fetchers";
 import { getFooter } from "@/lib/sanity/footer";
 
-// Initialize the Inter font with SWC
+// Initialize the Inter font with optimized settings
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+  preload: true,
+  fallback: ["system-ui", "arial"],
+  adjustFontFallback: true,
 });
 
 export const metadata = generateSEO({
@@ -66,9 +69,13 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         {/* Preconnect to Sanity CDN for faster image loading */}
-        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link
+          rel="preconnect"
+          href="https://cdn.sanity.io"
+          crossOrigin="anonymous"
+        />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
-        {/* Preconnect to Google services for faster analytics/fonts */}
+        {/* Preconnect to Google services - defer for better performance */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <script
@@ -77,20 +84,24 @@ export default async function RootLayout({
             __html: JSON.stringify(organizationSchema),
           }}
         />
-        {/* Google Analytics */}
+        {/* Google Analytics - deferred for better performance */}
         {process.env.NEXT_PUBLIC_GA4_ID && (
           <>
             <script
-              async
+              defer
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA4_ID}`}
             />
             <script
+              defer
               dangerouslySetInnerHTML={{
                 __html: `
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '${process.env.NEXT_PUBLIC_GA4_ID}');
+                  gtag('config', '${process.env.NEXT_PUBLIC_GA4_ID}', {
+                    page_path: window.location.pathname,
+                    send_page_view: false
+                  });
                 `,
               }}
             />

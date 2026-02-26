@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
         break;
 
       case "navigation":
+      case "navigationMenu":
       case "megaMenu":
         // Revalidate navigation (affects all pages)
         revalidatePath("/", "layout");

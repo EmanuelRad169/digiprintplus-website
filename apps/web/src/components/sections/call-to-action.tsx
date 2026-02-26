@@ -1,16 +1,35 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function CallToAction() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef<HTMLElement>(null);
+  const [isInView, setIsInView] = useState(false);
   const { siteSettings } = useSiteSettings();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold: 0.1, rootMargin: "-100px" },
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
 
   return (
     <section
@@ -28,37 +47,33 @@ export function CallToAction() {
       </div>
 
       <div className="container relative">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-4xl mx-auto"
+        <div
+          className={`text-center max-w-4xl mx-auto transition-all duration-800 ${
+            isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+          }`}
         >
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6"
+          <h2
+            className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-6 transition-all duration-600 delay-200 ${
+              isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
           >
             Ready to Get Started?
-          </motion.h2>
+          </h2>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-xl text-magenta-100 mb-8 leading-relaxed"
+          <p
+            className={`text-xl text-magenta-100 mb-8 leading-relaxed transition-all duration-600 delay-300 ${
+              isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
           >
             Join thousands of satisfied customers who trust DigiPrintPlus for
             their printing needs. Get your instant quote today and experience
             the difference quality makes.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          <div
+            className={`flex flex-col sm:flex-row gap-4 justify-center items-center transition-all duration-600 delay-400 ${
+              isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
           >
             <Link
               href="/quote"
@@ -77,21 +92,20 @@ export function CallToAction() {
                 Call {siteSettings.contact.phone}
               </Link>
             )}
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="mt-8 text-magenta-100"
+          <div
+            className={`mt-8 text-magenta-100 transition-all duration-600 delay-600 ${
+              isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
           >
             <p className="text-base">
               <strong>Rush Orders Available</strong> •{" "}
               <strong>Expert Support</strong> •{" "}
               <strong>Satisfaction Guaranteed</strong>
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

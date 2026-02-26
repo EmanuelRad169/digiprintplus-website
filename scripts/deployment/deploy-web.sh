@@ -76,9 +76,9 @@ echo ""
 cd "$PROJECT_ROOT"
 
 if [ -z "$PROD_FLAG" ]; then
-    netlify deploy --build
+    netlify deploy --build --filter digiprintplus-web
 else
-    netlify deploy --build --prod
+    netlify deploy --build --prod --filter digiprintplus-web
 fi
 
 if [ $? -eq 0 ]; then

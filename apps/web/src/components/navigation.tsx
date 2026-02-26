@@ -242,7 +242,7 @@ export default function Navigation({
   // This ensures the navigation is always visible and functional
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -310,18 +310,23 @@ export default function Navigation({
                           className={`ml-1 h-4 w-4 transition-transform duration-200 ${megaMenuOpen ? "rotate-180" : ""}`}
                         />
                       </button>
-                      {/* Mega Menu - Positioned correctly under Products button */}
+                      {/* Mega Menu - Centered under viewport */}
                       {megaMenuOpen && item.megaMenu && (
-                        <div className="absolute z-50 mt-1 transform -translate-x-1/2 left-1/2">
-                          <MegaMenuNew
-                            isOpen={megaMenuOpen}
-                            sections={item.megaMenu}
-                            mode="sections"
-                            onLinkClick={handleMegaMenuClose}
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
-                            className="w-screen max-w-6xl"
-                          />
+                        <div
+                          className="fixed left-0 right-0 z-50 mt-1 flex justify-center"
+                          style={{ top: "4rem" }}
+                        >
+                          <div className="w-full max-w-6xl px-4">
+                            <MegaMenuNew
+                              isOpen={megaMenuOpen}
+                              sections={item.megaMenu}
+                              mode="sections"
+                              onLinkClick={handleMegaMenuClose}
+                              onMouseEnter={handleMouseEnter}
+                              onMouseLeave={handleMouseLeave}
+                              className="w-full"
+                            />
+                          </div>
                         </div>
                       )}
                     </>

@@ -1,7 +1,19 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowRight, Zap, Award, Palette, Users, Clock, CheckCircle } from 'lucide-react'
-import { getServices, getFeaturedServices, type Service } from '@/lib/sanity/contentFetchers'
+import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowRight,
+  Zap,
+  Award,
+  Palette,
+  Users,
+  Clock,
+  CheckCircle,
+} from "lucide-react";
+import {
+  getServices,
+  getFeaturedServices,
+  type Service,
+} from "@/lib/sanity/contentFetchers";
 
 // Icon mapping
 const iconMap = {
@@ -11,53 +23,63 @@ const iconMap = {
   users: Users,
   clock: Clock,
   checkCircle: CheckCircle,
-}
+};
 
 // Helper function to get icon component
 const getIcon = (iconName: string) => {
-  return iconMap[iconName as keyof typeof iconMap] || Award
-}
+  return iconMap[iconName as keyof typeof iconMap] || Award;
+};
 
 interface ServicesGridServerProps {
-  featuredOnly?: boolean
-  limit?: number
-  showCTA?: boolean
+  featuredOnly?: boolean;
+  limit?: number;
+  showCTA?: boolean;
 }
 
-export async function ServicesGridServer({ featuredOnly = false, limit, showCTA = true }: ServicesGridServerProps) {
+export async function ServicesGridServer({
+  featuredOnly = false,
+  limit,
+  showCTA = true,
+}: ServicesGridServerProps) {
   try {
-    let sanityServices = featuredOnly ? await getFeaturedServices() : await getServices()
-    
+    let sanityServices = featuredOnly
+      ? await getFeaturedServices()
+      : await getServices();
+
     // If we don't have enough featured services and a limit is set, fall back to all services
     if (featuredOnly && limit && sanityServices.length < limit) {
-      console.log(`Only ${sanityServices.length} featured services found, falling back to all services`)
-      sanityServices = await getServices()
-    }
-    
-    console.log(`Fetched ${sanityServices.length} services (featuredOnly: ${featuredOnly})`) // Add this debug line
-    
-    let services = sanityServices
-    
-    if (limit && services.length > limit) {
-      services = services.slice(0, limit)
+      console.log(
+        `Only ${sanityServices.length} featured services found, falling back to all services`,
+      );
+      sanityServices = await getServices();
     }
 
-    console.log(`Displaying ${services.length} services after limit applied`) // Add this debug line
+    console.log(
+      `Fetched ${sanityServices.length} services (featuredOnly: ${featuredOnly})`,
+    ); // Add this debug line
+
+    let services = sanityServices;
+
+    if (limit && services.length > limit) {
+      services = services.slice(0, limit);
+    }
+
+    console.log(`Displaying ${services.length} services after limit applied`); // Add this debug line
 
     if (services.length === 0) {
       return (
         <div className="text-center py-12">
           <p className="text-gray-600">No services available at the moment.</p>
         </div>
-      )
+      );
     }
 
     return (
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {services.map((service) => {
-            const IconComponent = getIcon(service.icon)
-            
+            const IconComponent = getIcon(service.icon);
+
             return (
               <Link
                 key={service._id}
@@ -71,6 +93,8 @@ export async function ServicesGridServer({ featuredOnly = false, limit, showCTA 
                       src={service.image.asset.url}
                       alt={service.image.alt || service.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="lazy"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : null}
@@ -81,7 +105,7 @@ export async function ServicesGridServer({ featuredOnly = false, limit, showCTA 
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-magenta-600 transition-colors">
                     {service.title}
                   </h3>
-                  
+
                   <p className="text-gray-600 mb-4 line-clamp-3">
                     {service.description}
                   </p>
@@ -89,12 +113,17 @@ export async function ServicesGridServer({ featuredOnly = false, limit, showCTA 
                   {/* Features */}
                   {service.features && service.features.length > 0 && (
                     <ul className="space-y-2 mb-4">
-                      {service.features.slice(0, 4).map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                          <CheckCircle className="w-4 h-4 text-magenta-500 mr-2 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
+                      {service.features
+                        .slice(0, 4)
+                        .map((feature, featureIndex) => (
+                          <li
+                            key={featureIndex}
+                            className="flex items-center text-sm text-gray-600"
+                          >
+                            <CheckCircle className="w-4 h-4 text-magenta-500 mr-2 flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
                       {service.features.length > 4 && (
                         <li className="text-sm text-gray-500 italic">
                           +{service.features.length - 4} more features
@@ -106,24 +135,26 @@ export async function ServicesGridServer({ featuredOnly = false, limit, showCTA 
                   {/* Learn More Link */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <span className="text-magenta-600 group-hover:text-magenta-700 font-semibold flex items-center gap-2">
-                      Learn More <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      Learn More{" "}
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>
                 </div>
               </Link>
-            )
+            );
           })}
         </div>
-
       </div>
-    )
+    );
   } catch (error) {
-    console.error('Failed to load services:', error)
+    console.error("Failed to load services:", error);
     return (
       <div className="text-center py-12">
-        <p className="text-red-600">Error loading services. Please try again later.</p>
+        <p className="text-red-600">
+          Error loading services. Please try again later.
+        </p>
       </div>
-    )
+    );
   }
 }
 
@@ -137,12 +168,13 @@ export async function FeaturedServicesServerSection() {
             Our Featured <span className="text-magenta-500">Services</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto">
-            Discover our most popular printing solutions designed to help your business stand out
+            Discover our most popular printing solutions designed to help your
+            business stand out
           </p>
         </div>
-        
+
         <ServicesGridServer featuredOnly={true} limit={6} />
       </div>
     </section>
-  )
+  );
 }

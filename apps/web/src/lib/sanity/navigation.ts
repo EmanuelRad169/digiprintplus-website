@@ -1,12 +1,12 @@
-import { sanityClient } from '@/lib/sanity'
+import { sanityClient } from "@/lib/sanity";
 
 interface ProductCategory {
-  _id: string
-  title: string
-  slug: string
-  description?: string
-  order?: number
-  icon?: string
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  order?: number;
+  icon?: string;
 }
 
 // Enhanced GROQ query for complete navigation structure
@@ -48,19 +48,20 @@ export const getNavigation = async () => {
       {
         // Enable ISR with 60 second revalidation
         next: { revalidate: 60 },
-      }
-    )
+      },
+    );
 
     // Always use dynamically built navigation for consistent mega menu support
     // The manual navigation in Sanity CMS is not compatible with the frontend mega menu structure
-    console.log('Building navigation dynamically from product categories and services...')
-    return await buildNavigationFromCategories()
-    
+    console.log(
+      "Building navigation dynamically from product categories and services...",
+    );
+    return await buildNavigationFromCategories();
   } catch (error) {
-    console.error('Failed to fetch navigation:', error)
-    return null
+    console.error("Failed to fetch navigation:", error);
+    return null;
   }
-}
+};
 
 // Build navigation dynamically from product categories
 export const buildNavigationFromCategories = async () => {
@@ -73,11 +74,15 @@ export const buildNavigationFromCategories = async () => {
         description,
         order,
         icon
-      }`
-    )
+      }`,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
 
     if (!categories || categories.length === 0) {
-      return null
+      return null;
     }
 
     // Fetch services for submenu
@@ -88,165 +93,176 @@ export const buildNavigationFromCategories = async () => {
         "description": excerpt,
         "isVisible": true,
         "openInNewTab": false
-      }`
-    )
+      }`,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
 
     // Group categories for mega menu sections - distribute all categories evenly
-    const totalCategories = categories.length
-    const categoriesPerColumn = Math.ceil(totalCategories / 3)
-    
-    const popularCategories = categories.slice(0, categoriesPerColumn)
-    const businessEssentials = categories.slice(categoriesPerColumn, categoriesPerColumn * 2)
-    const specialtyItems = categories.slice(categoriesPerColumn * 2)
+    const totalCategories = categories.length;
+    const categoriesPerColumn = Math.ceil(totalCategories / 3);
+
+    const popularCategories = categories.slice(0, categoriesPerColumn);
+    const businessEssentials = categories.slice(
+      categoriesPerColumn,
+      categoriesPerColumn * 2,
+    );
+    const specialtyItems = categories.slice(categoriesPerColumn * 2);
 
     // Build the navigation structure
     const navigationData = {
-      _id: 'dynamic-nav',
-      title: 'Dynamic Navigation',
-      description: 'Auto-generated from product categories',
+      _id: "dynamic-nav",
+      title: "Dynamic Navigation",
+      description: "Auto-generated from product categories",
       items: [
         {
-          name: 'Home',
-          href: '/',
+          name: "Home",
+          href: "/",
           order: 1,
           isVisible: true,
-          openInNewTab: false
+          openInNewTab: false,
         },
         {
-          name: 'Products',
-          href: '/products',
+          name: "Products",
+          href: "/products",
           order: 2,
           isVisible: true,
           openInNewTab: false,
           megaMenu: [
             {
-              sectionTitle: 'Popular Categories',
-              sectionDescription: 'Our most requested printing services',
+              sectionTitle: "Popular Categories",
+              sectionDescription: "Our most requested printing services",
               links: [
                 {
-                  name: 'All Products',
-                  href: '/products',
-                  description: 'Browse our full catalog',
+                  name: "All Products",
+                  href: "/products",
+                  description: "Browse our full catalog",
                   isHighlighted: true,
-                  isVisible: true
+                  isVisible: true,
                 },
                 ...popularCategories.map((cat: ProductCategory) => ({
                   name: cat.title,
                   href: `/products/category/${cat.slug}`,
-                  description: cat.description || `Professional ${cat.title.toLowerCase()}`,
+                  description:
+                    cat.description ||
+                    `Professional ${cat.title.toLowerCase()}`,
                   isHighlighted: false,
-                  isVisible: true
-                }))
-              ]
-            }
-          ]
+                  isVisible: true,
+                })),
+              ],
+            },
+          ],
         },
         {
-          name: 'Services',
-          href: '/services',
+          name: "Services",
+          href: "/services",
           order: 3,
           isVisible: true,
           openInNewTab: false,
           megaMenu: [
             {
-              sectionTitle: 'Our Services',
-              sectionDescription: 'Professional printing services',
+              sectionTitle: "Our Services",
+              sectionDescription: "Professional printing services",
               links: [
                 ...(services || []).map((service: any) => ({
                   name: service.name,
                   href: `/services/${service.href}`,
                   description: service.description,
                   isVisible: true,
-                  isHighlighted: false
-                }))
-              ]
-            }
-          ]
+                  isHighlighted: false,
+                })),
+              ],
+            },
+          ],
         },
         {
-          name: 'About',
-          href: '/about',
+          name: "About",
+          href: "/about",
           order: 4,
           isVisible: true,
           openInNewTab: false,
           megaMenu: [
             {
-              sectionTitle: 'Company',
-              sectionDescription: 'Learn more about us',
+              sectionTitle: "Company",
+              sectionDescription: "Learn more about us",
               links: [
                 {
-                  name: 'About Us',
-                  href: '/about',
-                  description: 'Our story and mission',
+                  name: "About Us",
+                  href: "/about",
+                  description: "Our story and mission",
                   isVisible: true,
-                  isHighlighted: false
+                  isHighlighted: false,
                 },
                 {
-                  name: 'Contact',
-                  href: '/contact',
-                  description: 'Get in touch with us',
+                  name: "Contact",
+                  href: "/contact",
+                  description: "Get in touch with us",
                   isVisible: true,
-                  isHighlighted: false
+                  isHighlighted: false,
                 },
                 {
-                  name: 'Blog',
-                  href: '/blog',
-                  description: 'Industry insights and news',
+                  name: "Blog",
+                  href: "/blog",
+                  description: "Industry insights and news",
                   isVisible: true,
-                  isHighlighted: false
-                }
-              ]
-            }
-          ]
+                  isHighlighted: false,
+                },
+              ],
+            },
+          ],
         },
         {
-          name: 'Contact',
-          href: '/contact',
+          name: "Contact",
+          href: "/contact",
           order: 5,
           isVisible: true,
-          openInNewTab: false
-        }
-      ]
-    }
+          openInNewTab: false,
+        },
+      ],
+    };
 
     // Add business essentials section if we have those categories
     if (businessEssentials.length > 0 && navigationData.items[1].megaMenu) {
       navigationData.items[1].megaMenu.push({
-        sectionTitle: 'Business Essentials',
-        sectionDescription: 'Professional business materials',
+        sectionTitle: "Business Essentials",
+        sectionDescription: "Professional business materials",
         links: businessEssentials.map((cat: ProductCategory) => ({
           name: cat.title,
           href: `/products/category/${cat.slug}`,
-          description: cat.description || `Professional ${cat.title.toLowerCase()}`,
+          description:
+            cat.description || `Professional ${cat.title.toLowerCase()}`,
           isHighlighted: false,
-          isVisible: true
-        }))
-      })
+          isVisible: true,
+        })),
+      });
     }
 
     // Add specialty items section if we have those categories
     if (specialtyItems.length > 0 && navigationData.items[1].megaMenu) {
       navigationData.items[1].megaMenu.push({
-        sectionTitle: 'Specialty Items',
-        sectionDescription: 'Unique printing solutions',
+        sectionTitle: "Specialty Items",
+        sectionDescription: "Unique printing solutions",
         links: specialtyItems.map((cat: ProductCategory) => ({
           name: cat.title,
           href: `/products/category/${cat.slug}`,
           description: cat.description || `Custom ${cat.title.toLowerCase()}`,
           isHighlighted: false,
-          isVisible: true
-        }))
-      })
+          isVisible: true,
+        })),
+      });
     }
 
-    console.log(`Built dynamic navigation with ${categories.length} categories`)
-    return navigationData
-
+    console.log(
+      `Built dynamic navigation with ${categories.length} categories`,
+    );
+    return navigationData;
   } catch (error) {
-    console.error('Failed to build navigation from categories:', error)
-    return null
+    console.error("Failed to build navigation from categories:", error);
+    return null;
   }
-}
+};
 
 // Get all product categories for navigation
 export const getProductCategories = async () => {
@@ -260,25 +276,33 @@ export const getProductCategories = async () => {
         order,
         icon,
         "productCount": count(*[_type == "product" && references(^._id)])
-      }`
-    )
+      }`,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
   } catch (error) {
-    console.error('Failed to fetch product categories:', error)
-    return []
+    console.error("Failed to fetch product categories:", error);
+    return [];
   }
-}
+};
 
 // Real-time navigation updates hook
-export const subscribeToNavigationUpdates = (callback: () => void): { unsubscribe: () => void } => {
+export const subscribeToNavigationUpdates = (
+  callback: () => void,
+): { unsubscribe: () => void } => {
   return sanityClient
-    .listen('*[_type == "navigationMenu" && _id == "mainNav"] || *[_type == "productCategory"]')
+    .listen(
+      '*[_type == "navigationMenu" && _id == "mainNav"] || *[_type == "productCategory"]',
+    )
     .subscribe({
       next: () => {
-        console.log('Navigation or categories updated, refreshing...')
-        callback()
+        console.log("Navigation or categories updated, refreshing...");
+        callback();
       },
       error: (error) => {
-        console.error('Navigation subscription error:', error)
-      }
-    })
-}
+        console.error("Navigation subscription error:", error);
+      },
+    });
+};

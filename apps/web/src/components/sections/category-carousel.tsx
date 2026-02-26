@@ -150,8 +150,9 @@ export default function CategoryCarousel({
                             src={category.image}
                             alt={category.title}
                             fill
-                            sizes="128px"
-                            className="object-cover"
+                            sizes="(max-width: 768px) 112px, 128px"
+                            loading="lazy"
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-magenta-500 to-purple-500 text-white text-3xl font-bold">

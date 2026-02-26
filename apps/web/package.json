@@ -19,6 +19,8 @@
     "analyze:server": "ANALYZE=true BUNDLE_ANALYZE=server next build",
     "analyze:browser": "ANALYZE=true BUNDLE_ANALYZE=both next build",
     "start": "next start",
+    "deploy": "netlify deploy --build",
+    "deploy:prod": "netlify deploy --build --prod",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "check-deps": "pnpm list --depth=0",

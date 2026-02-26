@@ -79,8 +79,8 @@ export const getSiteSettings = async (): Promise<SiteSettings | null> => {
       }`,
       {},
       {
-        // Enable ISR with 5 minute revalidation
-        next: { revalidate: 300 },
+        // Enable ISR with 1 minute revalidation
+        next: { revalidate: 60 },
       },
     );
   } catch (error) {

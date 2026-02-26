@@ -14,11 +14,12 @@ import { ShoppingCart, ArrowLeft, Tag, Package, Sparkles } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 export const revalidate = 60;
+export const dynamicParams = true;
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     category: string;
-  };
+  }>;
 }
 
 // Product Card Component
@@ -65,7 +66,7 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { category } = params;
+  const { category } = await params;
   const { isEnabled } = await draftMode();
 
   // Get category info and products
@@ -254,7 +255,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
-  const { category } = params;
+  const { category } = await params;
   const [currentCategory, products] = await Promise.all([
     getCategoryBySlug(category),
     getProductsByCategory(category),

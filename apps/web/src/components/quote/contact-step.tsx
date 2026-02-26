@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 interface ContactStepProps {
   formData: any;
@@ -8,11 +8,17 @@ interface ContactStepProps {
 }
 
 export function ContactStep({ formData, updateFormData }: ContactStepProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+    <div
+      className={`space-y-6 transition-all duration-600 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+      }`}
     >
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -125,6 +131,6 @@ export function ContactStep({ formData, updateFormData }: ContactStepProps) {
           only be used to provide your quote and follow up on your order.
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }

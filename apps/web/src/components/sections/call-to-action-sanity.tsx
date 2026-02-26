@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
@@ -118,37 +117,39 @@ export function CallToActionSanity({
       </div>
 
       <div className="container relative">
-        <motion.div
-          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center max-w-4xl mx-auto"
+        <div
+          className={`text-center max-w-4xl mx-auto transition-all duration-800 ${
+            shouldAnimate
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-12"
+          }`}
         >
-          <motion.h2
-            animate={
-              shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
-            }
-            transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6"
+          <h2
+            className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-6 transition-all duration-600 delay-200 ${
+              shouldAnimate
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
           >
             {ctaData.title}
-          </motion.h2>
+          </h2>
 
-          <motion.p
-            animate={
-              shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
-            }
-            transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
-            className="text-xl text-white/80 mb-8 leading-relaxed"
+          <p
+            className={`text-xl text-white/80 mb-8 leading-relaxed transition-all duration-600 delay-300 ${
+              shouldAnimate
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
           >
             {ctaData.description}
-          </motion.p>
+          </p>
 
-          <motion.div
-            animate={
-              shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
-            }
-            transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          <div
+            className={`flex flex-col sm:flex-row gap-4 justify-center items-center transition-all duration-600 delay-400 ${
+              shouldAnimate
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
           >
             <Link
               href={ctaData.primaryButton.link}
@@ -177,15 +178,15 @@ export function CallToActionSanity({
                   : ctaData.secondaryButton.text}
               </Link>
             )}
-          </motion.div>
+          </div>
 
           {ctaData.highlights && ctaData.highlights.length > 0 && (
-            <motion.div
-              animate={
-                shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
-              }
-              transition={{ delay: 0.6, duration: 0.6, ease: "easeOut" }}
-              className="mt-8 text-white/80"
+            <div
+              className={`mt-8 text-white/80 transition-all duration-600 delay-600 ${
+                shouldAnimate
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-8"
+              }`}
             >
               <p className="text-base">
                 {ctaData.highlights.map((highlight, index) => (
@@ -195,9 +196,9 @@ export function CallToActionSanity({
                   </span>
                 ))}
               </p>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

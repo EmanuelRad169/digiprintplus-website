@@ -3,8 +3,8 @@
  * Centralized data fetching for homepage-specific content
  */
 
-import { getSanityClient } from '../sanity';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { getSanityClient } from "../sanity";
+import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 export interface FeaturedProduct {
   _id: string;
@@ -46,7 +46,7 @@ export interface FAQCategory {
  */
 export async function getHomepageSettings(): Promise<HomepageSettings | null> {
   const client = getSanityClient();
-  
+
   const query = `
     *[_type == "homepageSettings" && !(_id in path('drafts.**'))][0]{
       _id,
@@ -64,10 +64,16 @@ export async function getHomepageSettings(): Promise<HomepageSettings | null> {
   `;
 
   try {
-    const result = await client.fetch(query);
+    const result = await client.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return result;
   } catch (error) {
-    console.error('Error fetching homepage settings:', error);
+    console.error("Error fetching homepage settings:", error);
     return null;
   }
 }
@@ -77,7 +83,7 @@ export async function getHomepageSettings(): Promise<HomepageSettings | null> {
  */
 export async function getFAQCategories(): Promise<FAQCategory[]> {
   const client = getSanityClient();
-  
+
   const query = `
     *[_type == "faqCategory" && isActive == true && !(_id in path('drafts.**'))] | order(order asc) {
       _id,
@@ -95,10 +101,16 @@ export async function getFAQCategories(): Promise<FAQCategory[]> {
   `;
 
   try {
-    const categories = await client.fetch<FAQCategory[]>(query);
+    const categories = await client.fetch<FAQCategory[]>(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return categories || [];
   } catch (error) {
-    console.error('Error fetching FAQ categories:', error);
+    console.error("Error fetching FAQ categories:", error);
     return [];
   }
 }
@@ -108,7 +120,7 @@ export async function getFAQCategories(): Promise<FAQCategory[]> {
  */
 export async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
   const client = getSanityClient();
-  
+
   const query = `
     *[_type == "homepageSettings" && !(_id in path('drafts.**'))][0].featuredProducts[isActive == true]{
       "id": product->slug.current,
@@ -122,8 +134,14 @@ export async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
   `;
 
   try {
-    const products = await client.fetch<FeaturedProduct[]>(query);
-    
+    const products = await client.fetch<FeaturedProduct[]>(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
+
     // If no featured products configured, fall back to first 15 product categories
     if (!products || products.length === 0) {
       const fallbackQuery = `
@@ -136,14 +154,20 @@ export async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
           "href": "/products/" + slug.current
         }
       `;
-      
-      const fallbackProducts = await client.fetch<FeaturedProduct[]>(fallbackQuery);
+
+      const fallbackProducts = await client.fetch<FeaturedProduct[]>(
+        fallbackQuery,
+        {},
+        {
+          next: { revalidate: 60 },
+        },
+      );
       return fallbackProducts || [];
     }
-    
+
     return products;
   } catch (error) {
-    console.error('Error fetching featured products:', error);
+    console.error("Error fetching featured products:", error);
     return [];
   }
 }

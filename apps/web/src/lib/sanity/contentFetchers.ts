@@ -66,7 +66,13 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // Services
@@ -117,7 +123,13 @@ export async function getServices(): Promise<Service[]> {
       seo
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 export async function getFeaturedServices(): Promise<Service[]> {
@@ -143,7 +155,13 @@ export async function getFeaturedServices(): Promise<Service[]> {
       seo
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
@@ -169,7 +187,13 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
       seo
     }
   `;
-  return await client.fetch(query, { slug });
+  return await client.fetch(
+    query,
+    { slug },
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // About Sections
@@ -220,7 +244,13 @@ export async function getAboutSections(): Promise<AboutSection[]> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 export async function getAboutSectionByType(
@@ -245,7 +275,13 @@ export async function getAboutSectionByType(
       isActive
     }
   `;
-  return await client.fetch(query, { sectionType });
+  return await client.fetch(
+    query,
+    { sectionType },
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // Contact Information
@@ -279,7 +315,13 @@ export async function getContactInfo(): Promise<ContactInfo[]> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 export async function getMainContactInfo(): Promise<ContactInfo[]> {
@@ -298,7 +340,13 @@ export async function getMainContactInfo(): Promise<ContactInfo[]> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // FAQ Items
@@ -334,7 +382,13 @@ export async function getFAQItems(): Promise<FAQItem[]> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 export async function getPopularFAQs(): Promise<FAQItem[]> {
@@ -354,7 +408,13 @@ export async function getPopularFAQs(): Promise<FAQItem[]> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 export async function getFAQsByCategory(category: string): Promise<FAQItem[]> {
@@ -374,7 +434,13 @@ export async function getFAQsByCategory(category: string): Promise<FAQItem[]> {
       isActive
     }
   `;
-  return await client.fetch(query, { category });
+  return await client.fetch(
+    query,
+    { category },
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // CTA Sections
@@ -411,7 +477,13 @@ export async function getCTASections(): Promise<CTASection[]> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 export async function getCTASectionById(
@@ -430,7 +502,13 @@ export async function getCTASectionById(
       isActive
     }
   `;
-  return await client.fetch(query, { sectionId });
+  return await client.fetch(
+    query,
+    { sectionId },
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // Quote Settings Interface and Fetcher
@@ -488,7 +566,13 @@ export async function getQuoteSettings(): Promise<QuoteSettings | null> {
       buttonText
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // Page Settings Interface and Fetcher
@@ -515,7 +599,13 @@ export async function getPageSettings(
       sections
     }
   `;
-  return await client.fetch(query, { pageId });
+  return await client.fetch(
+    query,
+    { pageId },
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }
 
 // Enhanced About Page Interface and Fetcher
@@ -576,5 +666,11 @@ export async function getAboutPageData(): Promise<AboutPageData | null> {
       isActive
     }
   `;
-  return await client.fetch(query);
+  return await client.fetch(
+    query,
+    {},
+    {
+      next: { revalidate: 60 },
+    },
+  );
 }

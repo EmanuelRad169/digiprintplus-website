@@ -1,14 +1,10 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { SanityImage } from "@/components/ui/sanity-image";
+import { SanityProductImage } from "@/components/ui/sanity-image";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  getProductBySlug,
-  getSiteSettings,
-  getProducts,
-} from "@/lib/sanity/fetchers";
+import { getProductBySlug, getSiteSettings } from "@/lib/sanity/fetchers";
 import { PortableTextRenderer } from "@/components/portable-text";
 import {
   Product,
@@ -16,7 +12,6 @@ import {
   ProductTestimonial,
   ProductSpecification,
   ProductFeature,
-  ProductFAQItem,
 } from "@/types/product";
 import { generateProductSEO, generateProductSchema } from "@/lib/seo";
 import {
@@ -43,28 +38,9 @@ import {
   Video,
   Quote,
   BadgeCheck,
-  HelpCircle,
-  ChevronDown,
 } from "lucide-react";
-import LiteYouTube from "@/components/media/lite-youtube";
 
 export const revalidate = 60;
-
-// Generate static params for all products
-export async function generateStaticParams() {
-  try {
-    const products = await getProducts();
-
-    return products
-      .filter((product: Product) => product.slug?.current)
-      .map((product: Product) => ({
-        slug: product.slug!.current,
-      }));
-  } catch (error) {
-    console.error("Error generating static params for products:", error);
-    return [];
-  }
-}
 
 interface ProductPageProps {
   params: {
@@ -73,7 +49,7 @@ interface ProductPageProps {
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const { isEnabled } = await draftMode();
 
   const [product, siteSettings] = await Promise.all([
@@ -131,28 +107,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   };
 
   const priceDisplay = getPriceDisplay();
-  const getYouTubeId = (url: string) => {
-    try {
-      const parsedUrl = new URL(url);
-
-      if (parsedUrl.hostname.includes("youtu.be")) {
-        return parsedUrl.pathname.replace("/", "");
-      }
-
-      const vParam = parsedUrl.searchParams.get("v");
-      if (vParam) return vParam;
-
-      if (parsedUrl.pathname.includes("/embed/")) {
-        return parsedUrl.pathname.split("/embed/")[1]?.split("/")[0] || null;
-      }
-    } catch {
-      return null;
-    }
-
-    return null;
-  };
-
-  const youTubeId = product.videoUrl ? getYouTubeId(product.videoUrl) : null;
   const hasRating = product.rating && product.rating > 0;
   const hasTestimonials =
     product.testimonials && product.testimonials.length > 0;
@@ -201,27 +155,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
-      {/* Modern Two-Column Product Layout */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* LEFT: Product Image Gallery - Sticky on Desktop */}
-            <div className="lg:sticky lg:top-8 lg:self-start space-y-4">
+      {/* Hero Section - Enhanced Layout */}
+      <div className="bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-16">
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Product Images with Gallery */}
+            <div className="space-y-4">
               {/* Main Image */}
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-xl relative group">
+              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-xl">
                 {product.image && product.image.asset && (
-                  <SanityImage
+                  <SanityProductImage
                     src={product.image}
                     alt={product.image.alt || product.title}
-                    width={900}
-                    height={900}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   />
                 )}
-                {/* Zoom Icon Overlay */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                  <Eye className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
               </div>
 
               {/* Thumbnail Gallery */}
@@ -233,15 +181,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     .map((image: ProductImage, index: number) => (
                       <div
                         key={index}
-                        className="aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-md hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-magenta-500"
+                        className="aspect-square rounded-lg overflow-hidden bg-gray-100 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                       >
-                        <SanityImage
+                        <SanityProductImage
                           src={image}
                           alt={
-                            image.alt || `${product.title} view ${index + 1}`
+                            image.alt ||
+                            `${product.title} thumbnail ${index + 1}`
                           }
-                          width={300}
-                          height={300}
                           className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                         />
                       </div>
@@ -250,413 +197,103 @@ export default async function ProductPage({ params }: ProductPageProps) {
               )}
             </div>
 
-            {/* RIGHT: Product Information - Scrollable Content */}
+            {/* Product Information */}
             <div className="space-y-6">
-              {/* Status Badges Row */}
+              {/* Status & Category Badges */}
               <div className="flex flex-wrap gap-2">
                 {product.category && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-700 border border-sky-200">
+                  <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-sky-100 text-sky-600 border border-sky-200">
+                    <Award className="w-4 h-4 mr-2" />
                     {product.category.title}
-                  </span>
+                  </div>
                 )}
+
                 {product.status && (
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                  <div
+                    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
                       product.status === "active"
-                        ? "bg-green-100 text-green-700 border border-green-200"
+                        ? "bg-green-100 text-green-600 border border-green-200"
                         : product.status === "coming-soon"
-                          ? "bg-purple-100 text-purple-700 border border-purple-200"
+                          ? "bg-purple-100 text-purple-600 border border-purple-200"
                           : product.status === "discontinued"
-                            ? "bg-red-100 text-red-700 border border-red-200"
-                            : "bg-gray-100 text-gray-700 border border-gray-200"
+                            ? "bg-red-100 text-red-600 border border-red-200"
+                            : "bg-gray-100 text-gray-800 border border-gray-200"
                     }`}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-current"></span>
+                    <span className="w-2 h-2 rounded-full mr-2 bg-current"></span>
                     {product.status === "coming-soon"
                       ? "Coming Soon"
                       : product.status === "active"
-                        ? "In Stock"
+                        ? "Active"
                         : product.status === "discontinued"
                           ? "Discontinued"
                           : "Draft"}
-                  </span>
+                  </div>
                 )}
-                {product.newProduct && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-magenta-100 to-purple-100 text-magenta-600 border border-magenta-200">
-                    <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                    New
-                  </span>
-                )}
-                {product.featured && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-100 to-orange-100 text-orange-700 border border-orange-200">
-                    <Star className="w-3.5 h-3.5 mr-1.5" />
-                    Featured
-                  </span>
-                )}
-                {product.popular && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-red-100 to-pink-100 text-red-700 border border-red-200">
-                    🔥 Popular
-                  </span>
-                )}
-              </div>
 
-              {/* Product Title */}
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                  {product.title}
-                </h1>
-                {/* Rating & Reviews */}
-                {hasRating && (
-                  <div className="flex items-center gap-3 mt-3">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(product.rating!)
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm font-semibold text-gray-900">
-                      {product.rating?.toFixed(1)}
-                    </span>
-                    {product.reviewCount && product.reviewCount > 0 && (
-                      <span className="text-sm text-gray-500">
-                        ({product.reviewCount} reviews)
-                      </span>
-                    )}
+                {product.newProduct && (
+                  <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-magenta-100 to-purple-100 text-magenta-500 border border-magenta-200">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    New
                   </div>
                 )}
               </div>
 
-              {/* Short Description */}
-              <div className="text-gray-600 text-lg leading-relaxed">
-                {product.description &&
-                typeof product.description === "string" ? (
-                  <p>{product.description}</p>
-                ) : product.description ? (
-                  <PortableTextRenderer content={product.description} />
-                ) : null}
+              {/* Title and Rating */}
+              <div>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">
+                  {product.title}
+                </h1>
               </div>
 
-              {/* Lead Time & Availability */}
-              {(product.leadTime || product.inStock !== undefined) && (
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  {product.leadTime && (
-                    <div className="flex items-center text-gray-700">
-                      <Clock className="w-4 h-4 mr-1.5 text-blue-600" />
-                      <span className="font-medium">Delivery Time:</span>
-                      <span className="ml-1">{product.leadTime}</span>
-                    </div>
-                  )}
-                  {product.inStock !== undefined && (
-                    <div
-                      className={`flex items-center ${
-                        product.inStock ? "text-green-700" : "text-red-700"
-                      }`}
-                    >
-                      <span
-                        className={`w-2 h-2 rounded-full mr-1.5 ${
-                          product.inStock ? "bg-green-500" : "bg-red-500"
-                        }`}
-                      ></span>
-                      <span className="font-medium">
-                        {product.inStock
-                          ? "Available for Quote"
-                          : "Currently Unavailable"}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Key Features Highlights */}
-              {product.features && product.features.length > 0 && (
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-100">
-                  <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center">
-                    <Check className="w-4 h-4 text-green-600 mr-1.5" />
-                    Key Features
-                  </h3>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {product.features
-                      .slice(0, 6)
-                      .map(
-                        (feature: string | ProductFeature, index: number) => (
-                          <li
-                            key={index}
-                            className="flex items-start text-sm text-gray-700"
-                          >
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
-                            <span>
-                              {typeof feature === "string"
-                                ? feature
-                                : feature &&
-                                    typeof feature === "object" &&
-                                    "feature" in feature
-                                  ? feature.feature
-                                  : ""}
-                            </span>
-                          </li>
-                        ),
-                      )}
-                  </ul>
-                </div>
-              )}
+              {/* Description */}
+              <p className="text-base text-gray-600 leading-relaxed">
+                {product.description}
+              </p>
 
               {/* Tags */}
               {hasTags && (
                 <div className="flex flex-wrap gap-2">
-                  {product.tags
-                    .slice(0, 8)
-                    .map((tag: string, index: number) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors cursor-pointer"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                  {product.tags.map((tag: string, index: number) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-sky-50 text-gray-800"
+                    >
+                      <Tag className="w-3 h-3 mr-1" />
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               )}
 
-              {/* Primary CTA Buttons */}
-              <div className="flex flex-col gap-3 pt-2">
-                <Link
-                  href="/quote"
-                  className="w-full inline-flex items-center justify-center px-6 py-4 sm:py-4 bg-magenta-600 text-white font-bold text-base sm:text-lg rounded-xl hover:bg-magenta-700 transition-all shadow-lg hover:shadow-xl active:scale-95"
-                >
-                  <Quote className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                  Get Free Quote
-                </Link>
-                <Link
-                  href="/contact"
-                  className="w-full inline-flex items-center justify-center px-6 py-3.5 sm:py-4 border-2 border-gray-300 text-gray-700 font-semibold sm:font-bold text-base sm:text-lg rounded-xl hover:border-magenta-500 hover:text-magenta-600 hover:bg-magenta-50 transition-all active:scale-95"
-                >
-                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                  Contact Sales
-                </Link>
-              </div>
-
-              {/* Download Template (if available) */}
-              {product.template?.hasTemplate &&
-                product.template.downloadFile?.asset?.url && (
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-sm font-bold text-gray-900 mb-1">
-                          Free Template Available
-                        </h3>
-                        <p className="text-xs text-gray-600">
-                          Download our professional design template
-                        </p>
-                      </div>
-                      <a
-                        href={product.template.downloadFile.asset.url}
-                        className="inline-flex items-center px-5 py-2.5 bg-purple-600 text-white font-semibold text-sm rounded-lg hover:bg-purple-700 transition-all shadow-md hover:shadow-lg"
-                        download
-                      >
-                        <Download className="w-4 h-4 mr-1.5" />
-                        Download
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-              {/* Detailed Product Information */}
-              {(product.productDetails || product.longDescription) && (
-                <div className="border-t border-gray-200 pt-6 space-y-4">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                    <FileText className="w-5 h-5 text-magenta-500 mr-2" />
-                    Product Details
-                  </h2>
-                  <div className="prose prose-sm max-w-none text-gray-700">
-                    {product.productDetails ? (
-                      <PortableTextRenderer content={product.productDetails} />
-                    ) : product.longDescription ? (
-                      <PortableTextRenderer content={product.longDescription} />
-                    ) : null}
-                  </div>
-                </div>
-              )}
-
-              {/* Specifications Grid */}
-              {(product.detailedSpecs ||
-                (product.specifications &&
-                  product.specifications.length > 0)) && (
-                <div className="border-t border-gray-200 pt-6 space-y-4">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                    <BadgeCheck className="w-5 h-5 text-magenta-500 mr-2" />
-                    Specifications
-                  </h2>
-                  {product.detailedSpecs ? (
-                    <div className="prose prose-sm max-w-none text-gray-700">
-                      <PortableTextRenderer content={product.detailedSpecs} />
-                    </div>
-                  ) : product.specifications &&
-                    product.specifications.length > 0 ? (
-                    <div className="bg-gray-50 rounded-xl p-5 space-y-3">
-                      {product.specifications.map(
-                        (spec: ProductSpecification, index: number) => (
-                          <div
-                            key={index}
-                            className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0"
-                          >
-                            <span className="text-sm font-medium text-gray-700">
-                              {spec.name}
-                            </span>
-                            <span className="text-sm font-semibold text-gray-900">
-                              {spec.value}{" "}
-                              {spec.unit && (
-                                <span className="text-xs text-gray-500 font-normal">
-                                  {spec.unit}
-                                </span>
-                              )}
-                            </span>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  ) : null}
-                </div>
-              )}
-
-              {/* Quote Options */}
-              {product.quoteOptions && product.quoteOptions.length > 0 && (
-                <div className="border-t border-gray-200 pt-6 space-y-4">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                    <BadgeCheck className="w-5 h-5 text-magenta-500 mr-2" />
-                    Available Options
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {product.quoteOptions.map((option: any, index: number) => (
-                      <div
-                        key={index}
-                        className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-100"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 text-sm">
-                              {option.name}
-                            </h3>
-                            {option.description && (
-                              <p className="text-xs text-gray-600 mt-1">
-                                {option.description}
-                              </p>
-                            )}
-                          </div>
-                          {option.required && (
-                            <span className="text-xs font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
-                              Required
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Related Templates */}
-              {product.templates && product.templates.length > 0 && (
-                <div className="border-t border-gray-200 pt-6 space-y-4">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                    <FileText className="w-5 h-5 text-magenta-500 mr-2" />
-                    Related Templates
-                  </h2>
-                  <ul className="space-y-2">
-                    {product.templates.map((template: any) => (
-                      <li key={template._id}>
-                        <Link
-                          href={`/templates/${template.slug?.current}`}
-                          className="text-magenta-600 hover:text-magenta-700 hover:underline font-medium text-sm transition-colors inline-flex items-center"
+              {/* Key Features */}
+              {product.features && product.features.length > 0 && (
+                <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Check className="w-5 h-5 text-green-500 mr-2" />
+                    Key Features
+                  </h3>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {product.features.map(
+                      (feature: string | ProductFeature, index: number) => (
+                        <li
+                          key={index}
+                          className="flex items-start text-gray-700"
                         >
-                          {template.title} →
-                        </Link>
-                      </li>
-                    ))}
+                          <div className="w-2 h-2 bg-magenta-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-sm">
+                            {typeof feature === "string"
+                              ? feature
+                              : feature &&
+                                  typeof feature === "object" &&
+                                  "feature" in feature
+                                ? feature.feature
+                                : ""}
+                          </span>
+                        </li>
+                      ),
+                    )}
                   </ul>
-                </div>
-              )}
-
-              {/* FAQ Section */}
-              {product.faq && product.faq.length > 0 && (
-                <div className="border-t border-gray-200 pt-6 space-y-4">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                    <HelpCircle className="w-5 h-5 text-magenta-500 mr-2" />
-                    Frequently Asked Questions
-                  </h2>
-                  <div className="space-y-3">
-                    {product.faq.map((item: ProductFAQItem, index: number) => (
-                      <details
-                        key={index}
-                        className="group border border-gray-200 rounded-lg bg-white hover:border-magenta-200 transition-colors"
-                      >
-                        <summary className="cursor-pointer p-4 font-semibold text-gray-900 text-sm flex items-center justify-between list-none">
-                          {item.question}
-                          <ChevronDown className="w-4 h-4 text-gray-500 group-open:rotate-180 transition-transform" />
-                        </summary>
-                        <div className="px-4 pb-4 text-sm text-gray-700">
-                          {item.answer && typeof item.answer === "string" ? (
-                            item.answer
-                          ) : item.answer ? (
-                            <PortableTextRenderer content={item.answer} />
-                          ) : null}
-                        </div>
-                      </details>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Trust Indicators Row */}
-              {(product.qualityGuarantee ||
-                product.fastDelivery ||
-                product.awardWinning ||
-                hasCertifications) && (
-                <div className="border-t border-gray-200 pt-6">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {product.qualityGuarantee && (
-                      <div className="text-center p-3 bg-green-50 rounded-lg">
-                        <Shield className="w-8 h-8 text-green-600 mx-auto mb-1.5" />
-                        <p className="text-xs font-semibold text-gray-700">
-                          Quality Guaranteed
-                        </p>
-                      </div>
-                    )}
-                    {product.fastDelivery && (
-                      <div className="text-center p-3 bg-blue-50 rounded-lg">
-                        <Truck className="w-8 h-8 text-blue-600 mx-auto mb-1.5" />
-                        <p className="text-xs font-semibold text-gray-700">
-                          Fast Delivery
-                        </p>
-                      </div>
-                    )}
-                    {product.awardWinning && (
-                      <div className="text-center p-3 bg-purple-50 rounded-lg">
-                        <Award className="w-8 h-8 text-purple-600 mx-auto mb-1.5" />
-                        <p className="text-xs font-semibold text-gray-700">
-                          Award Winning
-                        </p>
-                      </div>
-                    )}
-                    {hasCertifications &&
-                      product.certifications
-                        .slice(0, 1)
-                        .map((cert: string, index: number) => (
-                          <div
-                            key={index}
-                            className="text-center p-3 bg-pink-50 rounded-lg"
-                          >
-                            <BadgeCheck className="w-8 h-8 text-pink-600 mx-auto mb-1.5" />
-                            <p className="text-xs font-semibold text-gray-700">
-                              {cert}
-                            </p>
-                          </div>
-                        ))}
-                  </div>
                 </div>
               )}
             </div>
@@ -664,99 +301,328 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
-      {/* Product Video Section */}
-      {hasVideo && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center">
-                <Video className="w-6 h-6 text-magenta-500 mr-2" />
-                Product Video
-              </h2>
-              <p className="text-gray-600">
-                Watch our detailed product demonstration
-              </p>
-            </div>
-            <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
-              {youTubeId ? (
-                <LiteYouTube
-                  className="w-full h-full"
-                  videoId={youTubeId}
-                  title={`${product.title} Product Video`}
-                  params="autoplay=1&controls=1&rel=0&modestbranding=1"
-                />
-              ) : product.videoUrl?.includes("vimeo.com") ? (
-                <iframe
-                  title={`${product.title} Product Video`}
-                  src={product.videoUrl.replace(
-                    "vimeo.com/",
-                    "player.vimeo.com/video/",
-                  )}
-                  className="w-full h-full"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <video controls className="w-full h-full">
-                  <source src={product.videoUrl} type="video/mp4" />
-                </video>
-              )}
-            </div>
+      {/* CTA */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
+          {/* Left Column - Trust Indicators */}
+          <div className="grid grid-cols-3 gap-4">
+            {product.qualityGuarantee && (
+              <div className="text-center">
+                <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-xs text-gray-600 font-medium">
+                  Quality Guaranteed
+                </p>
+              </div>
+            )}
+            {product.fastDelivery && (
+              <div className="text-center">
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Truck className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-xs text-gray-600 font-medium">
+                  Fast Delivery
+                </p>
+              </div>
+            )}
+            {product.awardWinning && (
+              <div className="text-center">
+                <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                  <Award className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-xs text-gray-600 font-medium">
+                  Award Winning
+                </p>
+              </div>
+            )}
+            {hasCertifications &&
+              product.certifications
+                .slice(
+                  0,
+                  3 -
+                    [
+                      product.qualityGuarantee,
+                      product.fastDelivery,
+                      product.awardWinning,
+                    ].filter(Boolean).length,
+                )
+                .map((cert: string, index: number) => (
+                  <div key={index} className="text-center">
+                    <div className="w-12 h-12 bg-pink-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                      <BadgeCheck className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-xs text-gray-600 font-medium">{cert}</p>
+                  </div>
+                ))}
+          </div>
+
+          {/* Right Column - Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href={
+                product.formLink || `/quote?product=${product.slug?.current}`
+              }
+              className="flex-1 bg-magenta-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center"
+            >
+              <Quote className="w-5 h-5 mr-2" />
+              Request a Quote
+            </Link>
+            <Link
+              href="/contact"
+              className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:bg-gray-50 flex items-center justify-center"
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Contact Sales
+            </Link>
           </div>
         </div>
-      )}
-
-      {/* Customer Testimonials */}
-      {hasTestimonials && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              What Our Customers Say
+      </div>
+      {/* Product Content Sections - Vertical Flow */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
+        {/* Product Details Section */}
+        <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
+          <div className="flex items-center mb-6">
+            <FileText className="w-6 h-6 text-magenta-500 mr-3" />
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+              Product Details
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Real feedback from businesses who trust our {product.title}
-            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {product.testimonials?.map((testimonial: any, index: number) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
-              >
-                <div className="flex items-center mb-4">
-                  {testimonial.rating && (
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < testimonial.rating
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  )}
+          <div className="border-t border-gray-200 pt-6">
+            {product.productDetails ? (
+              <div className="prose prose-lg max-w-none">
+                <PortableTextRenderer content={product.productDetails} />
+              </div>
+            ) : product.longDescription ? (
+              <div className="prose prose-lg max-w-none">
+                <PortableTextRenderer content={product.longDescription} />
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center mb-4">
+                  <FileText className="w-8 h-8 text-blue-500" />
                 </div>
-                <p className="text-gray-700 italic mb-4">
-                  &ldquo;{testimonial.quote}&rdquo;
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No Details Available
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Product details are not yet available. Contact us for more
+                  information.
                 </p>
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="font-semibold text-gray-900">
-                    {testimonial.author}
-                  </p>
-                  {testimonial.company && (
-                    <p className="text-sm text-gray-500">
-                      {testimonial.company}
-                    </p>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Specifications Section */}
+        <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
+          <div className="flex items-center mb-6">
+            <BadgeCheck className="w-6 h-6 text-magenta-500 mr-3" />
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+              Specifications
+            </h2>
+          </div>
+          <div className="border-t border-gray-200 pt-6">
+            {product.detailedSpecs ? (
+              <div className="prose prose-lg max-w-none">
+                <PortableTextRenderer content={product.detailedSpecs} />
+              </div>
+            ) : product.specifications && product.specifications.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {product.specifications.map(
+                  (spec: ProductSpecification, index: number) => (
+                    <div
+                      key={index}
+                      className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-gray-900">
+                          {spec.name}
+                        </span>
+                        <span className="text-magenta-600 font-medium">
+                          {spec.value}{" "}
+                          {spec.unit && (
+                            <span className="text-sm text-gray-500">
+                              {spec.unit}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mb-4">
+                  <BadgeCheck className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No Specifications Available
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Detailed specifications for this product are not yet
+                  available.
+                </p>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors"
+                >
+                  Contact Us
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Template Download Section */}
+        {product.template?.hasTemplate && (
+          <section className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg border border-purple-100 p-8 lg:p-12">
+            <div className="flex items-center mb-6">
+              <Download className="w-6 h-6 text-magenta-500 mr-3" />
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                Download Template
+              </h2>
+            </div>
+            <div className="border-t border-purple-200 pt-6">
+              {product.template.description && (
+                <p className="text-gray-700 text-lg leading-relaxed mb-6">
+                  {product.template.description}
+                </p>
+              )}
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {product.template.previewImage?.asset?.url && (
+                  <div className="rounded-xl overflow-hidden border border-gray-200 shadow-md">
+                    <Image
+                      src={product.template.previewImage.asset.url}
+                      alt={
+                        product.template.previewImage.alt || "Template preview"
+                      }
+                      width={500}
+                      height={400}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-col justify-center space-y-4">
+                  {product.template.downloadFile?.asset?.url && (
+                    <a
+                      href={product.template.downloadFile.asset.url}
+                      className="inline-flex items-center justify-center px-8 py-4 bg-magenta-600 text-white font-semibold rounded-xl hover:bg-magenta-700 transition-all shadow-lg hover:shadow-xl"
+                      download
+                    >
+                      <Download className="w-5 h-5 mr-2" />
+                      Download Template File
+                    </a>
                   )}
+
+                  <p className="text-sm text-gray-600 text-center">
+                    Professional template ready for customization
+                  </p>
                 </div>
               </div>
-            ))}
+            </div>
+          </section>
+        )}
+
+        {/* Related Templates Section */}
+        {product.templates && product.templates.length > 0 && (
+          <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
+            <div className="flex items-center mb-6">
+              <FileText className="w-6 h-6 text-magenta-500 mr-3" />
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                Related Templates
+              </h2>
+            </div>
+            <p className="text-gray-600 mb-8">
+              Download these professionally designed templates for your{" "}
+              {product.title.toLowerCase()} projects.
+            </p>
+            <div className="border-t border-gray-200 pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {product.templates.slice(0, 6).map((template: any) => (
+                  <div
+                    key={template._id}
+                    className="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all"
+                  >
+                    {template.previewImage?.asset?.url && (
+                      <div className="aspect-video rounded-lg overflow-hidden mb-4">
+                        <Image
+                          src={template.previewImage.asset.url}
+                          alt={template.title}
+                          width={300}
+                          height={200}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      </div>
+                    )}
+                    <h3 className="font-semibold text-gray-900 mb-2">
+                      {template.title}
+                    </h3>
+                    <Link
+                      href={`/templates/${template.slug?.current}`}
+                      className="inline-flex items-center text-magenta-600 hover:text-magenta-700 font-medium text-sm"
+                    >
+                      View Template
+                      <ArrowLeft className="w-4 h-4 ml-1 rotate-180" />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+              {product.templates.length > 6 && (
+                <div className="text-center mt-8">
+                  <Link
+                    href="/templates"
+                    className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-medium rounded-xl hover:bg-magenta-600 transition-colors"
+                  >
+                    View All Templates
+                  </Link>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* Sticky CTA Bar - Request Quote */}
+      <div className="sticky bottom-0 z-40 bg-gradient-to-r from-magenta-600 to-purple-600 shadow-2xl border-t border-magenta-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg font-bold text-white">{product.title}</h3>
+              <p className="text-sm text-white/90">
+                Ready to get started? Request your custom quote now.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Link
+                href={
+                  product.formLink || `/quote?product=${product.slug?.current}`
+                }
+                className="inline-flex items-center px-6 py-3 bg-white text-magenta-600 font-semibold rounded-lg hover:bg-gray-100 transition-all shadow-lg"
+              >
+                <Quote className="w-5 h-5 mr-2" />
+                Request Quote
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center px-6 py-3 bg-magenta-700 text-white font-semibold rounded-lg hover:bg-magenta-800 transition-all border border-white/20"
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Call Us
+              </Link>
+            </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Enhanced Gallery */}
       {product.gallery &&
@@ -807,31 +673,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Enhanced CTA Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="relative bg-magenta-500 rounded-2xl lg:rounded-3xl overflow-hidden">
-          <div className="relative px-4 sm:px-8 lg:px-16 py-8 sm:py-12 lg:py-16">
-            <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 items-start lg:items-center">
+        <div className="relative bg-magenta-500 rounded-3xl overflow-hidden">
+          <div className="relative px-8 lg:px-16 py-12 lg:py-16">
+            <div className="grid lg:grid-cols-3 gap-8 items-center">
               {/* Content */}
-              <div className="lg:col-span-2 text-center lg:text-left">
-                <h2 className="text-3xl sm:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4">
+              <div className="col-span-2 text-center lg:text-left">
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4">
                   Ready to Order {product.title}?
                 </h2>
-                <p className="text-cyan-100 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8">
+                <p className="text-cyan-100 text-base leading-relaxed mb-8">
                   Get a custom quote tailored to your specific needs. Our expert
                   team will help you choose the perfect options and provide
                   competitive pricing with fast turnaround times.
                 </p>
 
-                <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                   <a
                     href="/quote"
-                    className="w-full inline-flex items-center justify-center bg-black text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-base transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95"
+                    className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     <ShoppingCart className="w-5 h-5 mr-2" />
                     Get Free Quote
                   </a>
                   <a
                     href="/contact"
-                    className="w-full inline-flex items-center justify-center bg-white text-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold text-base transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95"
+                    className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     <Phone className="w-5 h-5 mr-2" />
                     Contact Us
@@ -840,29 +706,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
 
               {/* Contact Info */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl lg:rounded-2xl p-5 sm:p-6 border border-white/20">
-                <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Need Help?
                 </h3>
                 <div className="space-y-3">
-                  <a
-                    href={`tel:${contactInfo.phone}`}
-                    className="flex items-center text-white hover:text-cyan-200 transition-colors"
-                  >
-                    <Phone className="w-5 h-5 mr-3 text-cyan-200 flex-shrink-0" />
-                    <span className="text-sm sm:text-base break-all">
-                      {contactInfo.phone}
-                    </span>
-                  </a>
-                  <a
-                    href={`mailto:${contactInfo.email}`}
-                    className="flex items-center text-white hover:text-cyan-200 transition-colors"
-                  >
-                    <Mail className="w-5 h-5 mr-3 text-cyan-200 flex-shrink-0" />
-                    <span className="text-sm sm:text-base break-all">
-                      {contactInfo.email}
-                    </span>
-                  </a>
+                  <div className="flex items-center text-white">
+                    <Phone className="w-5 h-5 mr-3 text-cyan-200" />
+                    <span>Call us: {contactInfo.phone}</span>
+                  </div>
+                  <div className="flex items-center text-white">
+                    <Mail className="w-5 h-5 mr-3 text-cyan-200" />
+                    <span>Email: {contactInfo.email}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -877,7 +733,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   const product = await getProductBySlug(slug);
 
   if (!product) {
@@ -891,4 +747,11 @@ export async function generateMetadata({
     product,
     category: product.category?.title,
   });
+}
+
+// Generate static params for products
+export async function generateStaticParams() {
+  // You can fetch all product slugs from Sanity here if needed
+  // For now, return empty array to use ISR
+  return [];
 }

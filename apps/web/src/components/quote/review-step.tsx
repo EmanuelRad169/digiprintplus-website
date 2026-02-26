@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { CheckCircle, Edit, File } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getQuoteSettings, QuoteSettings } from "@/lib/sanity/contentFetchers";
@@ -15,6 +14,7 @@ export function ReviewStep({ formData, updateFormData }: ReviewStepProps) {
     null,
   );
   const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const fetchQuoteSettings = async () => {
@@ -30,6 +30,12 @@ export function ReviewStep({ formData, updateFormData }: ReviewStepProps) {
 
     fetchQuoteSettings();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setIsVisible(true);
+    }
+  }, [loading]);
 
   // Fallback data if Sanity data is not available
   const fallbackSettings = {
@@ -66,10 +72,10 @@ export function ReviewStep({ formData, updateFormData }: ReviewStepProps) {
     );
   }
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+    <div
+      className={`space-y-6 transition-all duration-600 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+      }`}
     >
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -253,6 +259,6 @@ export function ReviewStep({ formData, updateFormData }: ReviewStepProps) {
           </span>
         </label>
       </div>
-    </motion.div>
+    </div>
   );
 }

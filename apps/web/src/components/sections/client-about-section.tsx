@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, cubicBezier, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import { Award, Clock, Shield, Users, Star, CheckCircle } from "lucide-react";
 import LiteYouTube from "@/components/media/lite-youtube";
 import type { AboutSection } from "@/lib/sanity/contentFetchers";
@@ -24,9 +23,29 @@ interface ClientAboutSectionProps {
 export default function ClientAboutSection({
   sections,
 }: ClientAboutSectionProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const easeOut = cubicBezier(0.33, 1, 0.68, 1);
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1, rootMargin: "-50px" },
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
 
   // Find statistics section
   const statsSection = sections.find((s) => s.sectionType === "statistics");
@@ -39,11 +58,10 @@ export default function ClientAboutSection({
     <section className="relative pb-16 overflow-hidden">
       <div className="container mx-auto px-4 relative z-10" ref={ref}>
         {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, ease: easeOut }}
-          className="text-center mb-16"
+        <div
+          className={`text-center mb-16 transition-all duration-600 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
         >
           <div className="inline-flex items-center px-6 py-2 bg-yellow-300 text-black rounded-full text-sm font-semibold mb-6">
             <Star className="w-4 h-4 mr-2" />
@@ -62,24 +80,22 @@ export default function ClientAboutSection({
             ))}
           </h2>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: easeOut }}
-            className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed prose prose-xl"
+          <div
+            className={`text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed prose prose-xl transition-all duration-600 delay-200 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-5"
+            }`}
           >
             <PortableText value={statsSection.content} />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Video Showcase with enhanced design - 2 Column Layout */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={
-            isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }
-          }
-          transition={{ duration: 0.8, delay: 0.3, ease: easeOut }}
-          className="max-w-7xl mx-auto"
+        <div
+          className={`max-w-7xl mx-auto transition-all duration-800 delay-300 ${
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          }`}
         >
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Left Column - Video */}
@@ -122,13 +138,12 @@ export default function ClientAboutSection({
 
               {/* Stats cards */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={
-                    isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
-                  }
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="flex items-center p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200/50"
+                <div
+                  className={`flex items-center p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200/50 transition-all duration-500 delay-500 ${
+                    isVisible
+                      ? "opacity-100 translate-x-0"
+                      : "opacity-0 translate-x-5"
+                  }`}
                 >
                   <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-xl flex items-center justify-center mr-4">
                     <Star className="w-6 h-6 text-white" />
@@ -137,15 +152,14 @@ export default function ClientAboutSection({
                     <div className="text-xl font-bold text-gray-900">4.9/5</div>
                     <div className="text-sm text-gray-600">Customer Rating</div>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={
-                    isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
-                  }
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50"
+                <div
+                  className={`flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50 transition-all duration-500 delay-600 ${
+                    isVisible
+                      ? "opacity-100 translate-x-0"
+                      : "opacity-0 translate-x-5"
+                  }`}
                 >
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-xl flex items-center justify-center mr-4">
                     <Users className="w-6 h-6 text-white" />
@@ -154,15 +168,14 @@ export default function ClientAboutSection({
                     <div className="text-xl font-bold text-gray-900">10K+</div>
                     <div className="text-sm text-gray-600">Happy Clients</div>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={
-                    isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
-                  }
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                  className="flex items-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200/50"
+                <div
+                  className={`flex items-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200/50 transition-all duration-500 delay-700 ${
+                    isVisible
+                      ? "opacity-100 translate-x-0"
+                      : "opacity-0 translate-x-5"
+                  }`}
                 >
                   <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-400 rounded-xl flex items-center justify-center mr-4">
                     <Award className="w-6 h-6 text-white" />
@@ -173,11 +186,11 @@ export default function ClientAboutSection({
                     </div>
                     <div className="text-sm text-gray-600">Leader</div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

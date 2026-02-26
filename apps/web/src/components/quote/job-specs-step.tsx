@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getQuoteSettings, QuoteSettings } from "@/lib/sanity/contentFetchers";
 
@@ -14,6 +13,7 @@ export function JobSpecsStep({ formData, updateFormData }: JobSpecsStepProps) {
     null,
   );
   const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const fetchQuoteSettings = async () => {
@@ -29,6 +29,12 @@ export function JobSpecsStep({ formData, updateFormData }: JobSpecsStepProps) {
 
     fetchQuoteSettings();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setIsVisible(true);
+    }
+  }, [loading]);
 
   if (loading) {
     return (
@@ -113,10 +119,10 @@ export function JobSpecsStep({ formData, updateFormData }: JobSpecsStepProps) {
 
   const settings = quoteSettings || fallbackSettings;
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+    <div
+      className={`space-y-6 transition-all duration-600 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+      }`}
     >
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -290,6 +296,6 @@ export function JobSpecsStep({ formData, updateFormData }: JobSpecsStepProps) {
           quote based on your inputs.
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -55,6 +54,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Load hero slides from Sanity
   useEffect(() => {
@@ -91,16 +91,25 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
   }, [isAutoPlaying, loading, slides.length]);
 
   const nextSlide = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => setIsTransitioning(false), 800);
     setCurrentSlide((prev) => (prev + 1) % slides.length);
     setIsAutoPlaying(false);
   };
 
   const prevSlide = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => setIsTransitioning(false), 800);
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
     setIsAutoPlaying(false);
   };
 
   const goToSlide = (index: number) => {
+    if (isTransitioning || index === currentSlide) return;
+    setIsTransitioning(true);
+    setTimeout(() => setIsTransitioning(false), 800);
     setCurrentSlide(index);
     setIsAutoPlaying(false);
   };
@@ -119,173 +128,125 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
   return (
     <section className="relative min-h-[500px] h-auto sm:h-[70vh] lg:h-[80vh] overflow-hidden bg-slate-900">
       {/* Background Images */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSlide}
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-          className="absolute inset-0"
+      {slides.map((slide, index) => (
+        <div
+          key={slide._id}
+          className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+            index === currentSlide
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-110 pointer-events-none"
+          }`}
         >
           <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-slate-900/95 via-slate-900/80 sm:via-slate-900/60 to-slate-900/70 sm:to-slate-900/40 z-10" />
-          {slides[currentSlide].image?.asset?.url ? (
+          {slide.image?.asset?.url ? (
             <SanityHeroImage
-              src={slides[currentSlide].image}
-              alt={slides[currentSlide].image.alt || slides[currentSlide].title}
+              src={slide.image}
+              alt={slide.image.alt || slide.title}
               className="absolute inset-0 w-full h-full object-cover"
+              priority={index === 0}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900" />
           )}
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      ))}
 
       {/* Main Content */}
       <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center h-full py-10 sm:py-12 lg:py-20">
             {/* Content Column */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 100, opacity: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-white space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8"
-              >
-                {/* Subtitle */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  className="flex items-center space-x-2 sm:space-x-3"
-                >
-                  <div className="w-8 sm:w-12 h-0.5 bg-white" />
-                  <span className="text-white font-bold text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase">
-                    {slides[currentSlide].subtitle}
-                  </span>
-                </motion.div>
+            <div
+              key={currentSlide}
+              className="text-white space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 transition-opacity duration-800"
+            >
+              {/* Subtitle */}
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-8 sm:w-12 h-0.5 bg-white" />
+                <span className="text-white font-bold text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase">
+                  {slides[currentSlide].subtitle}
+                </span>
+              </div>
 
-                {/* Main Title */}
-                <motion.h1
-                  initial={{ y: 30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.7 }}
-                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] sm:leading-tight tracking-tight"
-                >
-                  {slides[currentSlide].title.split(" ").map((word, index) => (
-                    <span
-                      key={index}
-                      className={index === 1 ? "text-magenta-500" : ""}
-                    >
-                      {word}
-                      {index < slides[currentSlide].title.split(" ").length - 1
-                        ? " "
-                        : ""}
-                    </span>
-                  ))}
-                </motion.h1>
-
-                {/* Description */}
-                <motion.p
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
-                  className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl lg:max-w-2xl"
-                >
-                  {slides[currentSlide].description}
-                </motion.p>
-
-                {/* Features */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
-                  className="flex flex-wrap gap-1.5 sm:gap-2 lg:gap-3"
-                >
-                  {slides[currentSlide].features.map((feature, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center space-x-1 sm:space-x-1.5 bg-white/10 backdrop-blur-sm px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20"
-                    >
-                      <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-magenta-500 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm font-medium whitespace-nowrap">
-                        {feature}
-                      </span>
-                    </div>
-                  ))}
-                </motion.div>
-
-                {/* CTA Buttons */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.6 }}
-                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1 sm:pt-2"
-                >
-                  <Link
-                    href={slides[currentSlide].ctaLink}
-                    className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-sm sm:text-base lg:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              {/* Main Title */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] sm:leading-tight tracking-tight">
+                {slides[currentSlide].title.split(" ").map((word, index) => (
+                  <span
+                    key={index}
+                    className={index === 1 ? "text-magenta-500" : ""}
                   >
-                    {slides[currentSlide].ctaText}
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
+                    {word}
+                    {index < slides[currentSlide].title.split(" ").length - 1
+                      ? " "
+                      : ""}
+                  </span>
+                ))}
+              </h1>
+
+              {/* Description */}
+              <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl lg:max-w-2xl">
+                {slides[currentSlide].description}
+              </p>
+
+              {/* Features */}
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 lg:gap-3">
+                {slides[currentSlide].features.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center space-x-1 sm:space-x-1.5 bg-white/10 backdrop-blur-sm px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20"
+                  >
+                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-magenta-500 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">
+                      {feature}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1 sm:pt-2">
+                <Link
+                  href={slides[currentSlide].ctaLink}
+                  className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-sm sm:text-base lg:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  {slides[currentSlide].ctaText}
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
 
             {/* Stats/Info Column */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ x: 100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -100, opacity: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                className="relative flex justify-center lg:justify-end mt-4 sm:mt-6 lg:mt-0"
-              >
-                {/* Large Stat Display */}
-                <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-none">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                    className="bg-white/95 backdrop-blur-sm text-slate-900 p-4 sm:p-6 lg:p-8 rounded-none shadow-2xl border-l-4 sm:border-l-8 border-magenta-500"
-                  >
-                    <div className="text-center">
-                      <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-magenta-500 mb-1 sm:mb-2">
-                        {slides[currentSlide].stats.number}
-                      </div>
-                      <div className="text-base sm:text-lg lg:text-xl font-bold text-slate-700 uppercase tracking-wide">
-                        {slides[currentSlide].stats.text}
-                      </div>
+            <div
+              key={`stats-${currentSlide}`}
+              className="relative flex justify-center lg:justify-end mt-4 sm:mt-6 lg:mt-0 transition-opacity duration-800"
+            >
+              {/* Large Stat Display */}
+              <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-none">
+                <div className="bg-white/95 backdrop-blur-sm text-slate-900 p-4 sm:p-6 lg:p-8 rounded-none shadow-2xl border-l-4 sm:border-l-8 border-magenta-500">
+                  <div className="text-center">
+                    <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-magenta-500 mb-1 sm:mb-2">
+                      {slides[currentSlide].stats.number}
                     </div>
-                  </motion.div>
-
-                  {/* Additional Info Cards - Hidden on mobile */}
-                  <motion.div
-                    initial={{ y: 50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 1, duration: 0.6 }}
-                    className="hidden md:block absolute -bottom-16 lg:-bottom-20 -left-12 lg:-left-16 bg-slate-800 text-white p-4 lg:p-6 rounded-none shadow-xl border-t-4 border-magenta-500"
-                  >
-                    <div className="flex items-center space-x-2 lg:space-x-3">
-                      <Printer className="w-6 h-6 lg:w-8 lg:h-8 text-magenta-500" />
-                      <div>
-                        <div className="text-xl lg:text-2xl font-bold">
-                          50K+
-                        </div>
-                        <div className="text-xs lg:text-sm text-slate-300">
-                          Projects Done
-                        </div>
-                      </div>
+                    <div className="text-base sm:text-lg lg:text-xl font-bold text-slate-700 uppercase tracking-wide">
+                      {slides[currentSlide].stats.text}
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+
+                {/* Additional Info Cards - Hidden on mobile */}
+                <div className="hidden md:block absolute -bottom-16 lg:-bottom-20 -left-12 lg:-left-16 bg-slate-800 text-white p-4 lg:p-6 rounded-none shadow-xl border-t-4 border-magenta-500">
+                  <div className="flex items-center space-x-2 lg:space-x-3">
+                    <Printer className="w-6 h-6 lg:w-8 lg:h-8 text-magenta-500" />
+                    <div>
+                      <div className="text-xl lg:text-2xl font-bold">50K+</div>
+                      <div className="text-xs lg:text-sm text-slate-300">
+                        Projects Done
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -328,15 +289,26 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
       )}
 
       {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20 z-30">
-        <motion.div
-          key={currentSlide}
-          initial={{ width: 0 }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 7, ease: "linear" }}
-          className="h-full bg-magenta-500"
-        />
-      </div>
+      {isAutoPlaying && (
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20 z-30">
+          <div
+            key={currentSlide}
+            className="h-full bg-magenta-500 animate-progress"
+            style={{ animation: "progressBar 7s linear" }}
+          />
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes progressBar {
+          from {
+            width: 0%;
+          }
+          to {
+            width: 100%;
+          }
+        }
+      `}</style>
 
       {/* Decorative Elements - Hidden on mobile */}
       <div className="hidden lg:block absolute top-20 right-20 w-2 h-2 bg-magenta-500 transform rotate-45 z-20" />

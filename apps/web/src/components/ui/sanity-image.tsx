@@ -7,6 +7,7 @@ import {
   getOptimizedImageProps,
   getResponsiveImageProps,
 } from "@/lib/sanity/image";
+import { generateBlurDataURL } from "@/lib/sanity/image-blur";
 
 interface SanityImageProps extends Omit<ComponentProps<typeof Image>, "src"> {
   src: SanityImageSource;
@@ -43,6 +44,8 @@ export function SanityImage({
           : undefined,
     });
 
+    const blurDataURL = generateBlurDataURL(src);
+
     return (
       <Image
         {...imageProps}
@@ -51,6 +54,8 @@ export function SanityImage({
         height={height}
         priority={priority}
         className={className}
+        placeholder={blurDataURL ? "blur" : "empty"}
+        blurDataURL={blurDataURL}
         {...props}
       />
     );
@@ -63,6 +68,8 @@ export function SanityImage({
     format,
   });
 
+  const blurDataURL = generateBlurDataURL(src);
+
   return (
     <Image
       {...imageProps}
@@ -71,6 +78,8 @@ export function SanityImage({
       height={height}
       priority={priority}
       className={className}
+      placeholder={blurDataURL ? "blur" : "empty"}
+      blurDataURL={blurDataURL}
       {...props}
     />
   );
@@ -91,7 +100,7 @@ export function SanityHeroImage({
       height={1080}
       responsive
       priority
-      quality={80}
+      quality={75}
       className={className}
       {...props}
     />

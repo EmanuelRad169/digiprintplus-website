@@ -69,7 +69,13 @@ export async function getAllTemplateCategories(): Promise<TemplateCategory[]> {
       order
     }`;
 
-    const categories = await client.fetch(query);
+    const categories = await client.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return categories || [];
   } catch (error) {
     console.error("Error fetching template categories:", error);
@@ -128,7 +134,13 @@ export async function getAllTemplates(): Promise<Template[]> {
       publishedAt
     }`;
 
-    const templates = await client.fetch(query);
+    const templates = await client.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return templates || [];
   } catch (error) {
     console.error("Error fetching templates:", error);
@@ -188,7 +200,13 @@ export async function getTemplatesByCategory(
       publishedAt
     }`;
 
-    const templates = await client.fetch(query, { categorySlug });
+    const templates = await client.fetch(
+      query,
+      { categorySlug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return templates || [];
   } catch (error) {
     console.error("Error fetching templates by category:", error);
@@ -248,7 +266,13 @@ export async function getTemplateBySlug(
       publishedAt
     }`;
 
-    const template = await client.fetch(query, { slug });
+    const template = await client.fetch(
+      query,
+      { slug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return template;
   } catch (error) {
     console.error("Error fetching template by slug:", error);
@@ -291,7 +315,13 @@ export async function getContactPage(isPreview = false) {
           }
         }`;
 
-    const contactPage = await sanityClient.fetch(query);
+    const contactPage = await sanityClient.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return contactPage;
   } catch (error) {
     console.error("Error fetching contact page:", error);
@@ -339,7 +369,13 @@ export async function getPageBySlug(slug: string, isPreview = false) {
           publishedAt
         }`;
 
-    const page = await sanityClient.fetch(query, { slug });
+    const page = await sanityClient.fetch(
+      query,
+      { slug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return page;
   } catch (error) {
     console.error("Error fetching page:", error);
@@ -501,7 +537,13 @@ export async function getAboutPage(slug: string, isPreview = false) {
           publishedAt
         }`;
 
-    const aboutPage = await sanityClient.fetch(query, { slug });
+    const aboutPage = await sanityClient.fetch(
+      query,
+      { slug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return aboutPage;
   } catch (error) {
     console.error("Error fetching about page:", error);
@@ -579,7 +621,13 @@ export async function getFinishingPage(slug: string, isPreview = false) {
           isActive
         }`;
 
-    const finishingPage = await sanityClient.fetch(query, { slug });
+    const finishingPage = await sanityClient.fetch(
+      query,
+      { slug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return finishingPage;
   } catch (error) {
     console.error("Error fetching finishing page:", error);
@@ -867,7 +915,13 @@ export async function getProductBySlug(slug: string, isPreview = false) {
           }
         }`;
 
-    const product = await sanityClient.fetch(query, { slug });
+    const product = await sanityClient.fetch(
+      query,
+      { slug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return product;
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -962,7 +1016,13 @@ export async function getProducts(category?: string, isPreview = false) {
           }
         }`;
 
-    const products = await sanityClient.fetch(query, { category });
+    const products = await sanityClient.fetch(
+      query,
+      { category },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return products;
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -990,7 +1050,13 @@ export async function getProductCategories(isPreview = false) {
           "count": count(*[_type == "product" && references(^._id) && status == "active"])
         }`;
 
-    const categories = await sanityClient.fetch(query);
+    const categories = await sanityClient.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return categories;
   } catch (error) {
     console.error("Error fetching product categories:", error);
@@ -1062,7 +1128,13 @@ export async function getFeaturedProducts(isPreview = false) {
           }
         }`;
 
-    const products = await sanityClient.fetch(query);
+    const products = await sanityClient.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return products;
   } catch (error) {
     console.error("Error fetching featured products:", error);
@@ -1161,7 +1233,13 @@ export async function getProductsByCategory(
           reviewCount
         }`;
 
-    const products = await sanityClient.fetch(query, { categorySlug });
+    const products = await sanityClient.fetch(
+      query,
+      { categorySlug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return products;
   } catch (error) {
     console.error("Error fetching products by category:", error);
@@ -1216,7 +1294,13 @@ export async function getCategoryBySlug(
           }
         }`;
 
-    const category = await sanityClient.fetch(query, { categorySlug });
+    const category = await sanityClient.fetch(
+      query,
+      { categorySlug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return category;
   } catch (error) {
     console.error("Error fetching category by slug:", error);
@@ -1289,7 +1373,13 @@ export async function getNavigationMenu(isPreview = false) {
         }`;
 
     const client = getSanityClient();
-    const navigationMenu = await client.fetch(query);
+    const navigationMenu = await client.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return navigationMenu;
   } catch (error) {
     console.error("Error fetching navigation menu:", error);
@@ -1425,7 +1515,13 @@ export async function getAllBlogPosts(isPreview = false): Promise<BlogPost[]> {
           featured
         }`;
 
-    const posts = await sanityClient.fetch(query);
+    const posts = await sanityClient.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return posts || [];
   } catch (error) {
     console.error("Error fetching blog posts:", error);
@@ -1542,7 +1638,13 @@ export async function getBlogPostBySlug(
           }
         }`;
 
-    const post = await sanityClient.fetch(query, { slug });
+    const post = await sanityClient.fetch(
+      query,
+      { slug },
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return post;
   } catch (error) {
     console.error("Error fetching blog post:", error);
@@ -1623,7 +1725,13 @@ export async function getFeaturedBlogPosts(
           featured
         }`;
 
-    const posts = await sanityClient.fetch(query);
+    const posts = await sanityClient.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return posts || [];
   } catch (error) {
     console.error("Error fetching featured blog posts:", error);
@@ -1637,7 +1745,13 @@ export async function getAllBlogSlugs(): Promise<{ slug: string }[]> {
       "slug": slug.current
     }`;
 
-    const slugs = await sanityClient.fetch(query);
+    const slugs = await sanityClient.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return slugs || [];
   } catch (error) {
     console.error("Error fetching blog slugs:", error);
@@ -1663,7 +1777,13 @@ export async function getBlogCategories(
           description
         }`;
 
-    const categories = await sanityClient.fetch(query);
+    const categories = await sanityClient.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return categories || [];
   } catch (error) {
     console.error("Error fetching blog categories:", error);
@@ -1713,7 +1833,13 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
     }`;
 
     const client = getSanityClient();
-    const settings = await client.fetch(query);
+    const settings = await client.fetch(
+      query,
+      {},
+      {
+        next: { revalidate: 60 },
+      },
+    );
     return settings;
   } catch (error) {
     console.error("Error fetching site settings:", error);
