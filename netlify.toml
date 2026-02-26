@@ -6,9 +6,10 @@
 
 [build]
   # NO base dir - pnpm-lock.yaml is at repo root, install must run from here
-  # Netlify detects pnpm-lock.yaml at root and runs `pnpm install` automatically
-  command = "cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  # Explicitly use pnpm for installation
+  command = "pnpm install --frozen-lockfile && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
   publish = "apps/web/.next"
+  ignore = "git diff --quiet HEAD^ HEAD ./"
 
 [functions]
   directory = "netlify/functions"
@@ -18,6 +19,9 @@
   NODE_VERSION = "20.11.1"
   # Netlify installs this pnpm version before running install + build
   PNPM_VERSION = "9.15.0"
+  # Force Netlify to use pnpm
+  NPM_FLAGS = "--version"
+  NETLIFY_USE_PNPM = "true"
   
   # IMPORTANT: Sensitive environment variables should be set in Netlify UI
   # Go to: Site settings → Environment variables → Add variables
