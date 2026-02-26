@@ -9,9 +9,8 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  # Let Netlify handle automatic pnpm installation (detects pnpm-lock.yaml)
-  # Build command only runs the build, not installation
-  command = "cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  # Enable corepack and use pnpm
+  command = "corepack enable && corepack prepare pnpm@9.15.0 --activate && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
   publish = "apps/web/.next"
   ignore = "git diff --quiet HEAD^ HEAD ./"
 
