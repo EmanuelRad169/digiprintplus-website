@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Download, Eye, Star, Crown } from 'lucide-react'
-import { incrementTemplateDownload, type Template } from '@/lib/sanity/fetchers'
+import { incrementTemplateDownload, type Template } from '../lib/sanity/fetchers'
 
 interface TemplateCardProps {
   template: Template

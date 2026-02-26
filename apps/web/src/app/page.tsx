@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { getHeroSlides, getCTASectionById } from "@/lib/sanity/contentFetchers";
-import { getProductCategories } from "@/lib/sanity/fetchers";
+import { getProductCategories } from "../lib/sanity/fetchers";
 import { draftMode } from "next/headers";
 import { AboutSanity } from "../components/sections/about-sanity";
 import { FeaturedServicesServerSection } from "../components/sections/services-grid-server";

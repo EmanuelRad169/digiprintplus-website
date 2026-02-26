@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, KeyboardEvent } from "react";
 import Link from "next/link";
-import { getProductCategories } from "@/lib/sanity/fetchers";
+import { getProductCategories } from "../lib/sanity/fetchers";
 import {
   Package,
   CreditCard,

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRight, Package, Tag } from "lucide-react";
-import { getProductCategories } from "@/lib/sanity/fetchers";
+import { getProductCategories } from "../../lib/sanity/fetchers";
 import * as LucideIcons from "lucide-react";
 import Image from "next/image";
 

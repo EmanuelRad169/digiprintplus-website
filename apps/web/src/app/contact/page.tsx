@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { getPageBySlug, getSiteSettings } from "@/lib/sanity/fetchers";
+import { getPageBySlug, getSiteSettings } from "../../lib/sanity/fetchers";
 import { PortableTextRenderer } from "../../components/portable-text";
 import { draftMode } from "next/headers";
 

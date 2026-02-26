@@ -5,7 +5,7 @@ import Image from "next/image";
 import {
   getPageBySlug,
   getAboutPage,
-} from "@/lib/sanity/fetchers";
+} from "../../lib/sanity/fetchers";
 import { PortableTextRenderer } from "../../components/portable-text";
 
 export const revalidate = 60;

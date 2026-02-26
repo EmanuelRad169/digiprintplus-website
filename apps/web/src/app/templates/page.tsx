@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import {
   getAllTemplateCategories,
   getAllTemplates,
-} from "@/lib/sanity/fetchers";
+} from "../../lib/sanity/fetchers";
 
 // Dynamic import for large client component (699 lines)
 const TemplatesPageClient = dynamic(() => import("./client"), {

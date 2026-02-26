@@ -1,5 +1,5 @@
 // Product types for Sanity CMS
-import { Template } from '@/lib/sanity/fetchers'
+import { Template } from '../lib/sanity/fetchers'
 
 export interface ProductImage {
   asset: {

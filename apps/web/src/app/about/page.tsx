@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { getAboutPage } from "@/lib/sanity/fetchers";
+import { getAboutPage } from "../../lib/sanity/fetchers";
 import { getAboutPageData } from "@/lib/sanity/contentFetchers";
 import { PortableTextRenderer } from "../../components/portable-text";
 import { draftMode } from "next/headers";

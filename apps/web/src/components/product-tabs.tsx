@@ -19,7 +19,7 @@ import {
   Search,
 } from "lucide-react";
 import TemplateCard from "./template-card";
-import { Template } from "@/lib/sanity/fetchers";
+import { Template } from "../lib/sanity/fetchers";
 
 interface ProductTabsProps {
   product: Product;

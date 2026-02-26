@@ -1,49 +1,88 @@
-import { notFound } from 'next/navigation'
-import { draftMode } from 'next/headers'
-import { getPageBySlug } from '../../lib/sanity/fetchers'
-import { generateSEO } from '../../lib/seo'
-import { PortableText } from '@portabletext/react'
-import { Metadata } from 'next'
+import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
+import { getPageBySlug } from "../../lib/sanity/fetchers";
+import { generateSEO } from "../../lib/seo";
+import { PortableText } from "@portabletext/react";
+import { Metadata } from "next";
 
-export const revalidate = 60
+export const revalidate = 60;
 
 // Custom components for PortableText
 const portableTextComponents = {
   block: {
     // Define custom styles for different heading levels
-    h1: ({ children }: any) => <h1 className="text-4xl font-bold text-gray-900 mt-8 mb-6">{children}</h1>,
-    h2: ({ children }: any) => <h2 className="text-3xl font-bold text-gray-900 mt-8 mb-4">{children}</h2>,
-    h3: ({ children }: any) => <h3 className="text-2xl font-semibold text-gray-900 mt-6 mb-3">{children}</h3>,
-    h4: ({ children }: any) => <h4 className="text-xl font-semibold text-gray-900 mt-4 mb-2">{children}</h4>,
-    normal: ({ children }: any) => <p className="text-gray-700 leading-relaxed mb-4">{children}</p>,
-    blockquote: ({ children }: any) => <blockquote className="border-l-4 border-magenta-500 pl-4 italic text-gray-600 my-4">{children}</blockquote>,
+    h1: ({ children }: any) => (
+      <h1 className="text-4xl font-bold text-gray-900 mt-8 mb-6">{children}</h1>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="text-3xl font-bold text-gray-900 mt-8 mb-4">{children}</h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="text-2xl font-semibold text-gray-900 mt-6 mb-3">
+        {children}
+      </h3>
+    ),
+    h4: ({ children }: any) => (
+      <h4 className="text-xl font-semibold text-gray-900 mt-4 mb-2">
+        {children}
+      </h4>
+    ),
+    normal: ({ children }: any) => (
+      <p className="text-gray-700 leading-relaxed mb-4">{children}</p>
+    ),
+    blockquote: ({ children }: any) => (
+      <blockquote className="border-l-4 border-magenta-500 pl-4 italic text-gray-600 my-4">
+        {children}
+      </blockquote>
+    ),
   },
   list: {
-    bullet: ({ children }: any) => <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">{children}</ul>,
-    number: ({ children }: any) => <ol className="list-decimal list-inside text-gray-700 mb-4 space-y-2">{children}</ol>,
+    bullet: ({ children }: any) => (
+      <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
+        {children}
+      </ul>
+    ),
+    number: ({ children }: any) => (
+      <ol className="list-decimal list-inside text-gray-700 mb-4 space-y-2">
+        {children}
+      </ol>
+    ),
   },
   listItem: {
-    bullet: ({ children }: any) => <li className="text-gray-700">{children}</li>,
-    number: ({ children }: any) => <li className="text-gray-700">{children}</li>,
+    bullet: ({ children }: any) => (
+      <li className="text-gray-700">{children}</li>
+    ),
+    number: ({ children }: any) => (
+      <li className="text-gray-700">{children}</li>
+    ),
   },
   marks: {
-    strong: ({ children }: any) => <strong className="font-semibold text-gray-900">{children}</strong>,
+    strong: ({ children }: any) => (
+      <strong className="font-semibold text-gray-900">{children}</strong>
+    ),
     em: ({ children }: any) => <em className="italic">{children}</em>,
-    code: ({ children }: any) => <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">{children}</code>,
+    code: ({ children }: any) => (
+      <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">
+        {children}
+      </code>
+    ),
     link: ({ children, value }: any) => (
-      <a href={value.href} className="text-magenta-600 hover:text-magenta-700 hover:underline">
+      <a
+        href={value.href}
+        className="text-magenta-600 hover:text-magenta-700 hover:underline"
+      >
         {children}
       </a>
     ),
   },
-}
+};
 
 export default async function TermsPage() {
-  const { isEnabled } = await draftMode()
-  const page = await getPageBySlug('terms', isEnabled)
+  const { isEnabled } = await draftMode();
+  const page = await getPageBySlug("terms", isEnabled);
 
   if (!page) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -68,27 +107,35 @@ export default async function TermsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="p-4 lg:p-8">
           <div className="max-w-none">
-            {page.content && <PortableText value={page.content} components={portableTextComponents} />}
+            {page.content && (
+              <PortableText
+                value={page.content}
+                components={portableTextComponents}
+              />
+            )}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await getPageBySlug('terms')
-  
+  const page = await getPageBySlug("terms");
+
   if (!page) {
     return {
-      title: 'Terms of Service',
-      description: 'Terms of service for DigiPrintPlus'
-    }
+      title: "Terms of Service",
+      description: "Terms of service for DigiPrintPlus",
+    };
   }
 
   return generateSEO({
     title: page.seo?.metaTitle || page.title,
-    description: page.seo?.metaDescription || page.subtitle || 'Terms of service for DigiPrintPlus',
-    canonical: '/terms'
-  })
+    description:
+      page.seo?.metaDescription ||
+      page.subtitle ||
+      "Terms of service for DigiPrintPlus",
+    canonical: "/terms",
+  });
 }

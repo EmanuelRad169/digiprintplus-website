@@ -1,5 +1,8 @@
 import { Metadata } from "next";
-import { getBlogPostBySlug, getAllBlogPosts } from "../../../lib/sanity/fetchers";
+import {
+  getBlogPostBySlug,
+  getAllBlogPosts,
+} from "../../../lib/sanity/fetchers";
 import { PortableTextRenderer } from "../../../components/portable-text";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";

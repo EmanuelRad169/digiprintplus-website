@@ -20,7 +20,7 @@ import {
   incrementTemplateDownload,
   type Template,
   type TemplateCategory,
-} from "@/lib/sanity/fetchers";
+} from "../../lib/sanity/fetchers";
 import {
   Dialog,
   DialogContent,
