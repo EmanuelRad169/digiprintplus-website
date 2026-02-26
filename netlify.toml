@@ -5,24 +5,21 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  # Base directory - apps/web
-  base = "apps/web"
-  # Use memory-optimized build (prevents OOM crashes on Netlify)
-  command = "npm run build:netlify"
-  # Publish directory
-  publish = ".next"
+  # No base dir — pnpm install must run from repo root (monorepo)
+  # Netlify will use pnpm automatically when PNPM_VERSION is set
+  command = "cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  # Publish directory (relative to repo root)
+  publish = "apps/web/.next"
 
-# Functions directory - relative to base (apps/web)
+# Functions directory (relative to repo root)
 [functions]
   directory = "netlify/functions"
-  # Exclude unnecessary files from function bundle
-  included_files = [".next/standalone/**", ".next/server/**", ".next/static/**", "public/**"]
-  # Increase function size limit (max 250MB after optimization)
   node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "20.11.1"
-  NPM_FLAGS = "--legacy-peer-deps"
+  # Tell Netlify to install and use pnpm (fixes monorepo dependency installation)
+  PNPM_VERSION = "9.15.0"
   
   # IMPORTANT: Sensitive environment variables should be set in Netlify UI
   # Go to: Site settings → Environment variables → Add variables
