@@ -95,9 +95,7 @@ function verifyNodeVersion() {
   } else {
     logError(`Node.js ${currentVersion} is not in the supported range`);
     logError("Expected >=20.19.1 <22 or >=22.12 (or Node 24+)");
-    logError(
-      'Use nvm: "nvm install 20.19.1" and "nvm use 20.19.1"',
-    );
+    logError('Use nvm: "nvm install 20.19.1" and "nvm use 20.19.1"');
     hasErrors = true;
   }
 }
