@@ -1,13 +1,17 @@
 # netlify.toml - Web App Configuration (Project "main")
 
-# Use Next.js Runtime for proper ISR/Standalone support
+# Force pnpm usage and clean npm artifacts
+[[plugins]]
+  package = "./netlify/plugins/force-pnpm"
+
+# Use Next.js Runtime for proper ISR/Standalone support  
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [build]
-  # NO base dir - pnpm-lock.yaml is at repo root, install must run from here
-  # Explicitly use pnpm for installation
-  command = "pnpm install --frozen-lockfile && cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
+  # Let Netlify handle automatic pnpm installation (detects pnpm-lock.yaml)
+  # Build command only runs the build, not installation
+  command = "cd apps/web && NODE_OPTIONS='--max-old-space-size=4096' pnpm run build"
   publish = "apps/web/.next"
   ignore = "git diff --quiet HEAD^ HEAD ./"
 
