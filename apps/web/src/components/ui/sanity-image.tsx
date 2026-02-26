@@ -9,6 +9,8 @@ import {
 } from "../../lib/sanity/image";
 import { generateBlurDataURL } from "../../lib/sanity/image-blur";
 
+import sanityLoader from "../../lib/sanity/image-loader";
+
 interface SanityImageProps extends Omit<ComponentProps<typeof Image>, "src"> {
   src: SanityImageSource;
   responsive?: boolean;
@@ -28,51 +30,48 @@ export function SanityImage({
   format = "auto",
   priority = false,
   className,
+  sizes,
   ...props
 }: SanityImageProps) {
   if (!src) {
     return null;
   }
 
-  if (responsive) {
-    const imageProps = getResponsiveImageProps(src, {
-      maxWidth,
-      quality,
-      aspectRatio:
-        typeof width === "number" && typeof height === "number"
-          ? width / height
-          : undefined,
-    });
-
-    const blurDataURL = generateBlurDataURL(src);
-
-    return (
-      <Image
-        {...imageProps}
-        alt={alt}
-        width={width}
-        height={height}
-        priority={priority}
-        className={className}
-        placeholder={blurDataURL ? "blur" : "empty"}
-        blurDataURL={blurDataURL}
-        {...props}
-      />
-    );
-  }
-
-  const imageProps = getOptimizedImageProps(src, {
-    width: width as number,
-    height: height as number,
-    quality,
-    format,
-  });
+  // Get base properties
+  const imageProps = responsive 
+    ? getResponsiveImageProps(src, {
+        maxWidth,
+        quality,
+        aspectRatio:
+          typeof width === "number" && typeof height === "number"
+            ? width / height
+            : undefined,
+      })
+    : getOptimizedImageProps(src, {
+        width: width as number,
+        height: height as number,
+        quality,
+        format,
+      });
 
   const blurDataURL = generateBlurDataURL(src);
+  
+  // Use custom loader for Sanity images to offload optimization
+  // and avoid Next.js server entry cost
+  const loaderProp = { loader: sanityLoader };
+
+  // If responsive, ensure we use fill if width/height aren't explicit
+  // But usually responsive implies handling sizes. 
+  // getResponsiveImageProps returns { src, srcSet, sizes }
+  // Next.js Image doesn't use srcSet, so we strip it and rely on loader + sizes
+  
+  const { src: imageSrc, sizes: defaultSizes } = imageProps;
 
   return (
     <Image
-      {...imageProps}
+      {...props}
+      {...loaderProp}
+      src={imageSrc}
       alt={alt}
       width={width}
       height={height}
@@ -80,7 +79,7 @@ export function SanityImage({
       className={className}
       placeholder={blurDataURL ? "blur" : "empty"}
       blurDataURL={blurDataURL}
-      {...props}
+      sizes={sizes || (responsive ? defaultSizes : undefined)}
     />
   );
 }
