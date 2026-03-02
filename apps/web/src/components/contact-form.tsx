@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -8,6 +7,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldError } from "react-hook-form";
 import { CheckCircle } from "lucide-react";
+import { useNetlifyForm } from "@/hooks/useNetlifyForm";
+import { NETLIFY_FORMS } from "@/lib/netlify/forms";
 
 const contactFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -23,74 +24,38 @@ const contactFormSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
 
-const FORM_NAME = "contact";
-
-function encodeNetlifyForm(data: Record<string, string>) {
-  return Object.keys(data)
-    .map(
-      (key) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(data[key] ?? "")}`,
-    )
-    .join("&");
-}
+const FORM_NAME = NETLIFY_FORMS.CONTACT;
 
 export function ContactForm() {
   const router = useRouter();
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
   } = useForm<ContactFormData>({ resolver: zodResolver(contactFormSchema) });
 
-  const onSubmit = async (data: ContactFormData) => {
-    setSubmitError(null);
-    setSubmitSuccess(false);
-
-    try {
-      const payload: Record<string, string> = {
-        "form-name": FORM_NAME,
-        "bot-field": "",
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        company: data.company || "",
-        message: data.message,
-        agreeToTerms: data.agreeToTerms ? "yes" : "no",
-      };
-
-      const response = await fetch("/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: encodeNetlifyForm(payload),
-      });
-
-      // Netlify returns 200-399 for successful submissions (including redirects)
-      if (response.status >= 400) {
-        const errorText = await response.text();
-        console.error("Form submission error:", errorText);
-        throw new Error("Submission failed. Please try again.");
-      }
-
-      setSubmitSuccess(true);
-
-      // Redirect to success page after a brief delay to ensure submission is processed
+  const {
+    submit: submitToNetlify,
+    success: submitSuccess,
+    error: submitError,
+    reset,
+  } = useNetlifyForm({
+    formName: FORM_NAME,
+    onSuccess: () => {
+      // Redirect to success page after a brief delay
       setTimeout(() => {
         router.push(`/forms/success?form=${encodeURIComponent(FORM_NAME)}`);
       }, 500);
-    } catch (error) {
-      setSubmitError(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.",
-      );
-    }
+    },
+  });
+
+  const onSubmit = async (data: ContactFormData) => {
+    await submitToNetlify({
+      subject: `New Contact Message from ${data.firstName} ${data.lastName} - ${data.email}`,
+      ...data,
+      agreeToTerms: data.agreeToTerms ? "yes" : "no",
+    });
   };
 
   const renderError = (error: FieldError | undefined) => {

@@ -1,57 +1,137 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Form Definitions</title>
   </head>
   <body>
-    <!-- Contact Form -->
+    <!-- 
+      NETLIFY FORMS DEFINITION
+      This file ensures Netlify's build bots detect all forms used in the Next.js app.
+      The form names and input names MUST match the React components exactly.
+    -->
+
+    <!-- Contact Form (src/components/contact-form.tsx) -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <input type="tel" name="phone" />
-      <input type="text" name="company" />
-      <textarea name="message"></textarea>
-      <input type="text" name="bot-field" />
+      <label>First Name <input type="text" name="firstName" /></label>
+      <label>Last Name <input type="text" name="lastName" /></label>
+      <label>Email <input type="email" name="email" /></label>
+      <label>Phone <input type="tel" name="phone" /></label>
+      <label>Company <input type="text" name="company" /></label>
+      <label>Message <textarea name="message"></textarea></label>
+      <label>Agree to Terms <input type="text" name="agreeToTerms" /></label>
+      <input type="hidden" name="form-name" />
+      <input type="hidden" name="subject" />
+      <label>Bot Field <input type="text" name="bot-field" /></label>
     </form>
 
-    <!-- Quote Request Form -->
-    <form name="quote" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <input type="tel" name="phone" />
-      <input type="text" name="company" />
-      <select name="productType">
-        <option value="business-cards">Business Cards</option>
-        <option value="brochures">Brochures</option>
-        <option value="flyers">Flyers</option>
-        <option value="posters">Posters</option>
-        <option value="banners">Banners</option>
-        <option value="other">Other</option>
-      </select>
-      <input type="number" name="quantity" />
-      <textarea name="details"></textarea>
-      <input type="text" name="bot-field" />
+    <!-- Quote Request Form (src/app/quote/page.tsx) -->
+    <!-- Supports File Uploads -->
+    <form
+      name="quote"
+      netlify="true"
+      netlify-honeypot="bot-field"
+      hidden
+      enctype="multipart/form-data"
+    >
+      <label>Name <input type="text" name="name" /></label>
+      <label>Email <input type="email" name="email" /></label>
+      <label>Phone <input type="tel" name="phone" /></label>
+      <label>Company <input type="text" name="company" /></label>
+
+      <label>Project Type <input type="text" name="projectType" /></label>
+      <label>Quantity <input type="text" name="quantity" /></label>
+      <label>Size <input type="text" name="size" /></label>
+      <label>Paper Stock <input type="text" name="paperStock" /></label>
+      <label>Finish <input type="text" name="finish" /></label>
+
+      <label>Description <textarea name="description"></textarea></label>
+
+      <!-- File upload field -->
+      <label>Files <input type="file" name="files" multiple /></label>
+
+      <label>Budget <input type="text" name="budget" /></label>
+      <label>Timeline <input type="text" name="timeline" /></label>
+
+      <!-- Checkbox fields -->
+      <label>Services <input type="checkbox" name="services" /></label>
+      <label>Design Help <input type="checkbox" name="designHelp" /></label>
+
+      <input type="hidden" name="form-name" />
+      <input type="hidden" name="subject" />
+      <label>Bot Field <input type="text" name="bot-field" /></label>
     </form>
 
-    <!-- Custom Design Request Form -->
-    <form name="custom-design" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <input type="tel" name="phone" />
-      <input type="text" name="company" />
-      <input type="text" name="projectType" />
-      <textarea name="designRequirements"></textarea>
-      <input type="text" name="deadline" />
-      <input type="text" name="bot-field" />
+    <!-- Custom Design Request Form (src/components/RequestCustomDesignModal.tsx) -->
+    <form
+      name="custom-design"
+      netlify="true"
+      netlify-honeypot="bot-field"
+      hidden
+    >
+      <label>Name <input type="text" name="name" /></label>
+      <label>Email <input type="email" name="email" /></label>
+      <label>Company <input type="text" name="company" /></label>
+      <label>Phone <input type="tel" name="phone" /></label>
+
+      <label>Project Type <input type="text" name="projectType" /></label>
+      <label>Description <textarea name="description"></textarea></label>
+      <label>Budget <input type="text" name="budget" /></label>
+      <label>Timeline <input type="text" name="timeline" /></label>
+
+      <input type="hidden" name="form-name" />
+      <input type="hidden" name="subject" />
+      <label>Bot Field <input type="text" name="bot-field" /></label>
     </form>
 
-    <!-- Template Download Form -->
+    <!-- Template Download Form (Legacy or other components) -->
     <form name="template-download" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <input type="text" name="template" />
-      <input type="text" name="bot-field" />
+      <label>Name <input type="text" name="name" /></label>
+      <label>Email <input type="email" name="email" /></label>
+      <label>Template <input type="text" name="template" /></label>
+      <input type="hidden" name="form-name" />
+      <input type="hidden" name="subject" />
+      <label>Bot Field <input type="text" name="bot-field" /></label>
+    </form>
+
+    <!-- Custom Template Request (src/app/templates/client.tsx) -->
+    <form
+      name="custom-template"
+      netlify="true"
+      netlify-honeypot="bot-field"
+      hidden
+    >
+      <label>Name <input type="text" name="name" /></label>
+      <label>Email <input type="email" name="email" /></label>
+      <label>Phone <input type="tel" name="phone" /></label>
+
+      <label
+        >Template Type
+        <select name="template-type">
+          <option value="business-card">Business Card</option>
+          <option value="brochure">Brochure</option>
+          <option value="flyer">Flyer</option>
+          <option value="poster">Poster</option>
+          <option value="banner">Banner</option>
+          <option value="catalog">Catalog</option>
+          <option value="menu">Menu</option>
+          <option value="invitation">Invitation</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+
+      <label>Description <textarea name="description"></textarea></label>
+
+      <label
+        >Timeline
+        <select name="timeline">
+          <option value="urgent">ASAP</option>
+        </select>
+      </label>
+
+      <input type="hidden" name="form-name" />
+      <input type="hidden" name="subject" />
+      <label>Bot Field <input type="text" name="bot-field" /></label>
     </form>
   </body>
 </html>

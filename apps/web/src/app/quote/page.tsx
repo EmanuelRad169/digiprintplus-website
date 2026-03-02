@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import {
@@ -13,46 +13,40 @@ import {
   FileText,
   Send,
 } from "lucide-react";
+import { useNetlifyForm } from "@/hooks/useNetlifyForm";
+import { NETLIFY_FORMS } from "@/lib/netlify/forms";
 
-// Dynamic imports for quote step components (each ~200-300 lines)
+// Dynamic imports for quote step components
 const ContactStep = dynamic(
   () =>
     import("../../components/quote/contact-step").then((mod) => ({
       default: mod.ContactStep,
     })),
-  {
-    ssr: false,
-  },
+  { ssr: false },
 );
 const JobSpecsStep = dynamic(
   () =>
     import("../../components/quote/job-specs-step").then((mod) => ({
       default: mod.JobSpecsStep,
     })),
-  {
-    ssr: false,
-  },
+  { ssr: false },
 );
 const FileUploadStep = dynamic(
   () =>
     import("../../components/quote/file-upload-step").then((mod) => ({
       default: mod.FileUploadStep,
     })),
-  {
-    ssr: false,
-  },
+  { ssr: false },
 );
 const ReviewStep = dynamic(
   () =>
     import("../../components/quote/review-step").then((mod) => ({
       default: mod.ReviewStep,
     })),
-  {
-    ssr: false,
-  },
+  { ssr: false },
 );
 
-const FORM_NAME = "quote-request";
+const FORM_NAME = NETLIFY_FORMS.QUOTE;
 
 const steps = [
   {
@@ -83,10 +77,11 @@ const steps = [
 
 export default function QuotePage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [stepError, setStepError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     // Contact Info
     firstName: "",
@@ -110,6 +105,28 @@ export default function QuotePage() {
     // Options
     needsDesignAssistance: false,
     agreeToTerms: false,
+  });
+
+  const {
+    submit: submitToNetlify,
+    loading: isSubmitting,
+    error: submitError,
+    reset,
+  } = useNetlifyForm({
+    formName: FORM_NAME,
+    onSuccess: () => {
+      // Track conversion
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "quote_submit", {
+          event_category: "engagement",
+          event_label: formData.productType,
+          value: 1,
+        });
+      }
+      setTimeout(() => {
+        router.push(`/forms/success?form=${encodeURIComponent(FORM_NAME)}`);
+      }, 500);
+    },
   });
 
   // Pre-fill product type from URL parameter
@@ -144,9 +161,7 @@ export default function QuotePage() {
 
   const updateFormData = (data: Partial<typeof formData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-    if (stepError) {
-      setStepError(null);
-    }
+    if (stepError) setStepError(null);
   };
 
   const validateStep = (step: number) => {
@@ -156,25 +171,21 @@ export default function QuotePage() {
       if (!formData.email.trim()) return "Email is required.";
       if (!formData.phone.trim()) return "Phone number is required.";
     }
-
     if (step === 2) {
       if (!formData.productType.trim()) return "Product type is required.";
       if (!formData.quantity.trim()) return "Quantity is required.";
       if (!formData.turnaround.trim()) return "Turnaround time is required.";
     }
-
     if (step === 3) {
       if (!formData.needsDesignAssistance && formData.files.length === 0) {
         return "Upload at least one file or select design assistance.";
       }
     }
-
     if (step === 4) {
       if (!formData.agreeToTerms) {
         return "You must agree to the terms to submit.";
       }
     }
-
     return null;
   };
 
@@ -187,8 +198,6 @@ export default function QuotePage() {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-
-    // Validate PDF files only
     const invalidFiles = files.filter(
       (file) =>
         !file.type.includes("pdf") && !file.name.toLowerCase().endsWith(".pdf"),
@@ -199,7 +208,6 @@ export default function QuotePage() {
       );
       return;
     }
-
     const nextFiles = [...formData.files, ...files];
     updateFormData({ files: nextFiles });
     syncInputFiles(nextFiles);
@@ -207,7 +215,7 @@ export default function QuotePage() {
   };
 
   const removeFile = (index: number) => {
-    const newFiles = formData.files.filter((_: any, i: number) => i !== index);
+    const newFiles = formData.files.filter((_, i) => i !== index);
     updateFormData({ files: newFiles });
     syncInputFiles(newFiles);
   };
@@ -221,52 +229,45 @@ export default function QuotePage() {
       return;
     }
 
-    setIsSubmitting(true);
+    reset();
     setStepError(null);
 
-    try {
-      // Track conversion
-      if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", "quote_submit", {
-          event_category: "engagement",
-          event_label: formData.productType,
-          value: 1,
-        });
-      }
+    // Prepare FormData
+    const submissionData = new FormData();
+    submissionData.append(
+      "subject",
+      `New Quote Request - ${formData.productType} from ${formData.firstName} ${formData.lastName}`,
+    );
 
-      // Submit to our API endpoint
-      const response = await fetch("/api/submit-quote", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+    // Append text fields
+    Object.entries(formData).forEach(([key, value]) => {
+      if (
+        key === "files" ||
+        key === "agreeToTerms" ||
+        key === "needsDesignAssistance"
+      )
+        return;
+      submissionData.append(key, String(value || ""));
+    });
+
+    // Append checkboxes
+    submissionData.append(
+      "agreeToTerms",
+      formData.agreeToTerms ? "true" : "false",
+    );
+    submissionData.append(
+      "needsDesignAssistance",
+      formData.needsDesignAssistance ? "true" : "false",
+    );
+
+    // Append files
+    if (formData.files && formData.files.length > 0) {
+      formData.files.forEach((file) => {
+        submissionData.append("files", file);
       });
-
-      const contentType = response.headers.get("content-type") || "";
-      if (!contentType.includes("application/json")) {
-        throw new Error(
-          `Server error (${response.status}): unexpected response format. Please try again.`,
-        );
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to submit quote request");
-      }
-
-      // Redirect to success page
-      window.location.href = `/forms/success?form=${encodeURIComponent(FORM_NAME)}&requestId=${encodeURIComponent(data.requestId || "")}`;
-    } catch (error) {
-      console.error("Error submitting quote:", error);
-      setStepError(
-        error instanceof Error
-          ? error.message
-          : "Failed to submit quote request. Please try again.",
-      );
-      setIsSubmitting(false);
     }
+
+    await submitToNetlify(submissionData);
   };
 
   const renderStep = () => {

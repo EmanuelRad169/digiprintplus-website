@@ -8,6 +8,8 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Loader2, CheckCircle, XCircle, X } from "lucide-react";
+import { useNetlifyForm } from "@/hooks/useNetlifyForm";
+import { NETLIFY_FORMS } from "@/lib/netlify/forms";
 
 const customDesignSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -24,16 +26,7 @@ const customDesignSchema = z.object({
 
 type CustomDesignFormData = z.infer<typeof customDesignSchema>;
 
-const FORM_NAME = "custom-design-request";
-
-function encodeNetlifyForm(data: Record<string, string>) {
-  return Object.keys(data)
-    .map(
-      (key) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(data[key] ?? "")}`,
-    )
-    .join("&");
-}
+const FORM_NAME = NETLIFY_FORMS.CUSTOM_DESIGN;
 
 interface RequestCustomDesignModalProps {
   isOpen: boolean;
@@ -44,12 +37,6 @@ export default function RequestCustomDesignModal({
   isOpen,
   onClose,
 }: RequestCustomDesignModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-  const [errorMessage, setErrorMessage] = useState("");
-
   const {
     register,
     handleSubmit,
@@ -59,68 +46,39 @@ export default function RequestCustomDesignModal({
     resolver: zodResolver(customDesignSchema),
   });
 
-  const onSubmit = async (data: CustomDesignFormData) => {
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
-    setErrorMessage("");
-
-    try {
-      const payload: Record<string, string> = {
-        "form-name": FORM_NAME,
-        "bot-field": "",
-        name: data.name,
-        email: data.email,
-        company: data.company || "",
-        phone: data.phone || "",
-        projectType: data.projectType,
-        description: data.description,
-        budget: data.budget || "",
-        timeline: data.timeline || "",
-      };
-
-      const response = await fetch("/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: encodeNetlifyForm(payload),
-      });
-
-      // Netlify returns 200-399 for successful submissions (including redirects)
-      if (response.status >= 400) {
-        const errorText = await response.text();
-        console.error("Form submission error:", errorText);
-        throw new Error("Failed to send request");
-      }
-
-      setSubmitStatus("success");
+  const {
+    submit: submitToNetlify,
+    loading: isSubmitting,
+    success,
+    error: submitError,
+    reset: resetForm,
+  } = useNetlifyForm({
+    formName: FORM_NAME,
+    onSuccess: () => {
       reset();
-
       // Close modal after 2 seconds
       setTimeout(() => {
+        resetForm(); // Reset submission state
         onClose();
-        setSubmitStatus("idle");
       }, 2000);
-    } catch (error) {
-      setSubmitStatus("error");
-      setErrorMessage(
-        error instanceof Error ? error.message : "Something went wrong",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    },
+  });
 
-  const handleClose = () => {
-    if (!isSubmitting) {
-      onClose();
-      setSubmitStatus("idle");
-      setErrorMessage("");
-      reset();
-    }
+  const onSubmit = async (data: CustomDesignFormData) => {
+    await submitToNetlify({
+      subject: `New Custom Design Request: ${data.projectType} from ${data.name}`,
+      ...data,
+    });
   };
 
   if (!isOpen) return null;
+  const handleClose = () => {
+    if (!isSubmitting) {
+      onClose();
+      resetForm();
+      reset();
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -156,7 +114,7 @@ export default function RequestCustomDesignModal({
 
         {/* Body */}
         <div className="p-6">
-          {submitStatus === "success" && (
+          {success && (
             <div className="flex items-center justify-center p-6 bg-green-50 rounded-lg">
               <CheckCircle className="h-8 w-8 text-green-600 mr-3" />
               <div className="text-center">
@@ -170,35 +128,26 @@ export default function RequestCustomDesignModal({
             </div>
           )}
 
-          {submitStatus === "error" && (
+          {submitError && (
             <div className="flex items-center p-4 bg-magenta-50 rounded-lg mb-6">
               <XCircle className="h-6 w-6 text-magenta-600 mr-3" />
               <div>
                 <h3 className="text-sm font-medium text-magenta-900">
                   Error sending request
                 </h3>
-                <p className="text-magenta-700 text-sm">{errorMessage}</p>
+                <p className="text-magenta-700 text-sm">
+                  {submitError || "Something went wrong"}
+                </p>
               </div>
             </div>
           )}
 
-          {submitStatus !== "success" && (
+          {!success && (
             <form
               name={FORM_NAME}
-              method="POST"
-              action={`/forms/success?form=${encodeURIComponent(FORM_NAME)}`}
-              data-netlify="true"
-              netlify-honeypot="bot-field"
               onSubmit={handleSubmit(onSubmit)}
               className="space-y-6"
             >
-              <input type="hidden" name="form-name" value={FORM_NAME} />
-              <p className="hidden">
-                <label>
-                  Don’t fill this out if you’re human:{" "}
-                  <input name="bot-field" />
-                </label>
-              </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label

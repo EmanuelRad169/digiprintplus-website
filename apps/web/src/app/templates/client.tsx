@@ -21,6 +21,8 @@ import {
   type Template,
   type TemplateCategory,
 } from "../../lib/sanity/fetchers";
+import { useNetlifyForm } from "../../hooks/useNetlifyForm";
+import { NETLIFY_FORMS } from "../../lib/netlify/forms";
 import {
   Dialog,
   DialogContent,
@@ -61,7 +63,16 @@ export default function TemplatesPageClient({
   const [currentPage, setCurrentPage] = useState(1);
   const [templatesPerPage] = useState(12);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const {
+    submit: submitForm,
+    success: formSubmitted,
+    error: submitError,
+    loading: isSubmitting,
+    reset: resetForm,
+  } = useNetlifyForm({
+    formName: NETLIFY_FORMS.CUSTOM_TEMPLATE,
+  });
 
   // Log the received data
   useEffect(() => {
@@ -261,7 +272,7 @@ export default function TemplatesPageClient({
     <>
       {/* Hidden form for Netlify detection */}
       <form
-        name="custom-template-request"
+        name={NETLIFY_FORMS.CUSTOM_TEMPLATE}
         data-netlify="true"
         netlify-honeypot="bot-field"
         hidden
@@ -484,47 +495,18 @@ export default function TemplatesPageClient({
 
                   {!formSubmitted ? (
                     <form
-                      name="custom-template-request"
-                      method="POST"
-                      data-netlify="true"
-                      netlify-honeypot="bot-field"
-                      onSubmit={(e) => {
+                      name={NETLIFY_FORMS.CUSTOM_TEMPLATE}
+                      onSubmit={async (e) => {
                         e.preventDefault();
-                        const form = e.currentTarget;
-                        fetch("/", {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
-                          },
-                          body: new URLSearchParams(
-                            new FormData(form) as any,
-                          ).toString(),
-                        })
-                          .then((response) => {
-                            // Netlify returns 200-399 for successful submissions
-                            if (response.status < 400) {
-                              setFormSubmitted(true);
-                            } else {
-                              throw new Error("Submission failed");
-                            }
-                          })
-                          .catch((error) => {
-                            alert("Error submitting form. Please try again.");
-                            console.error(error);
-                          });
+                        await submitForm(new FormData(e.currentTarget));
                       }}
                       className="space-y-5 mt-6"
                     >
-                      <input
-                        type="hidden"
-                        name="form-name"
-                        value="custom-template-request"
-                      />
-                      <p className="hidden">
-                        <label>
-                          Don&apos;t fill this out: <input name="bot-field" />
-                        </label>
-                      </p>
+                      {submitError && (
+                        <div className="p-3 text-sm text-red-700 bg-red-100 rounded-lg">
+                          {submitError}
+                        </div>
+                      )}
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -685,7 +667,7 @@ export default function TemplatesPageClient({
                       <button
                         onClick={() => {
                           setIsModalOpen(false);
-                          setFormSubmitted(false);
+                          resetForm();
                         }}
                         className="bg-magenta-600 hover:bg-magenta-700 text-white px-6 py-2.5 rounded-lg font-semibold transition-all"
                       >

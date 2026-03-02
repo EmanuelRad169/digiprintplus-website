@@ -4,10 +4,10 @@
   "private": true,
   "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "dev": "pnpm exec sanity dev --port 3335",
-    "build": "pnpm exec sanity build",
-    "deploy": "pnpm exec sanity deploy",
-    "seed:blog": "pnpm exec sanity exec scripts/seedBlogCJS.js --with-user-token",
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "seed:blog": "sanity exec scripts/seedBlogCJS.js --with-user-token",
     "import:products": "ts-node scripts/import-products.ts",
     "seed:services": "ts-node scripts/seed-service-pages.ts"
   },
