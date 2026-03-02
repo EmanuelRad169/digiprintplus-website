@@ -207,7 +207,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1 sm:pt-2">
                 <Link
                   href={slides[currentSlide].ctaLink}
-                  className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-sm sm:text-base lg:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-600 hover:bg-magenta-700 text-white font-bold text-sm sm:text-base lg:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   {slides[currentSlide].ctaText}
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />

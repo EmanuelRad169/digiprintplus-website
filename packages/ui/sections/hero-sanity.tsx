@@ -187,7 +187,7 @@ export function HeroSanity({ slides: providedSlides, loading = false }: HeroSani
                 >
                   <Link
                     href={slides[currentSlide].ctaLink}
-                    className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-500 hover:bg-magenta-600 text-white font-bold text-base sm:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-600 hover:bg-magenta-700 text-white font-bold text-base sm:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     {slides[currentSlide].ctaText}
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
