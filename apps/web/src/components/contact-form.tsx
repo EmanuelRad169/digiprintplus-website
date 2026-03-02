@@ -7,8 +7,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldError } from "react-hook-form";
 import { CheckCircle } from "lucide-react";
-import { useNetlifyForm } from "@/hooks/useNetlifyForm";
-import { NETLIFY_FORMS } from "@/lib/netlify/forms";
+import { useNetlifyForm } from "@/hooks/use-netlify-form";
+import { NETLIFY_FORMS } from "@/lib/netlify/form-config";
 
 const contactFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
