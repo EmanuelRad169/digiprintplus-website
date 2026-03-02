@@ -8,8 +8,8 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Loader2, CheckCircle, XCircle, X } from "lucide-react";
-import { useNetlifyForm } from "@/hooks/use-netlify-form";
-import { NETLIFY_FORMS } from "@/lib/netlify/form-config";
+import { useNetlifyForm } from "../hooks/use-netlify-form";
+import { NETLIFY_FORMS } from "../lib/netlify/form-config";
 
 const customDesignSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),

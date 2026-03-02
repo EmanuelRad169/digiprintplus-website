@@ -21,8 +21,8 @@ import {
   type Template,
   type TemplateCategory,
 } from "@/lib/sanity/fetchers";
-import { useNetlifyForm } from "@/hooks/use-netlify-form";
-import { NETLIFY_FORMS } from "@/lib/netlify/form-config";
+import { useNetlifyForm } from "../../hooks/use-netlify-form";
+import { NETLIFY_FORMS } from "../../lib/netlify/form-config";
 import {
   Dialog,
   DialogContent,

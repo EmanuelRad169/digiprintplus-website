@@ -13,8 +13,8 @@ import {
   FileText,
   Send,
 } from "lucide-react";
-import { useNetlifyForm } from "@/hooks/use-netlify-form";
-import { NETLIFY_FORMS } from "@/lib/netlify/form-config";
+import { useNetlifyForm } from "../../hooks/use-netlify-form";
+import { NETLIFY_FORMS } from "../../lib/netlify/form-config";
 
 // Dynamic imports for quote step components
 const ContactStep = dynamic(
