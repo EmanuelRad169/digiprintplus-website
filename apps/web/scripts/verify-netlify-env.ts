@@ -135,6 +135,13 @@ function validateEnvironment(): ValidationResult {
           `⚠️  ${envVar.name} not set, using default: ${envVar.defaultValue}`,
         );
         result.info[envVar.name] = envVar.defaultValue;
+      } else if (!envVar.required) {
+        // `required` was declared on every entry but never read, so ANY unset
+        // variable without a defaultValue failed the build — optional ones
+        // included. That is what took the deploy down.
+        result.warnings.push(
+          `⚠️  ${envVar.name} not set (optional)\n   ${envVar.description}`,
+        );
       } else {
         result.errors.push(
           `❌ MISSING: ${envVar.name}\n   Description: ${envVar.description}\n   Set in: Netlify Dashboard → Site Settings → Environment Variables`,
@@ -144,10 +151,16 @@ function validateEnvironment(): ValidationResult {
     } else {
       // Validate format if validator provided
       if (envVar.validateFormat && !envVar.validateFormat(value)) {
-        result.errors.push(
-          `❌ INVALID FORMAT: ${envVar.name}\n   Current value: ${value}\n   Expected: ${envVar.description}`,
-        );
-        result.success = false;
+        if (!envVar.required) {
+          result.warnings.push(
+            `⚠️  ${envVar.name} is set but looks wrong\n   Expected: ${envVar.description}`,
+          );
+        } else {
+          result.errors.push(
+            `❌ INVALID FORMAT: ${envVar.name}\n   Expected: ${envVar.description}`,
+          );
+          result.success = false;
+        }
       } else {
         // Mask sensitive values in output
         const displayValue =
