@@ -146,8 +146,8 @@ export default defineType({
       type: 'text',
       group: 'content',
       rows: 3,
-      validation: Rule => Rule.required().min(50).max(300),
-      description: 'Brief product description for listings (50-300 characters)'
+      validation: Rule => Rule.required().min(50).max(400),
+      description: 'Brief product description for listings (50-400 characters)'
     }),
     defineField({
       name: 'detailedSpecs',
