@@ -237,14 +237,25 @@ export default function TemplatesPageClient({
   };
 
   const handleDownload = async (template: Template) => {
-    if (!template.downloadFile?.asset?.url) return;
+    // Templates arrive two ways: uploaded to Sanity (downloadFile) or imported
+    // with the file left on the supplier's server (externalDownloadUrl). Only
+    // the first was handled, so 50 of 61 downloads silently did nothing.
+    const sanityUrl = template.downloadFile?.asset?.url;
+    const href = sanityUrl || template.externalDownloadUrl;
+    if (!href) return;
 
     try {
       // Start download immediately so tracking failures never block the user.
       const link = document.createElement("a");
-      link.href = template.downloadFile.asset.url;
+      link.href = href;
       link.download =
-        template.downloadFile.asset.originalFilename || template.title;
+        template.downloadFile?.asset?.originalFilename || template.title;
+      // A cross-origin href ignores `download`, so open it in a new tab rather
+      // than navigating the user away from the templates page.
+      if (!sanityUrl) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -276,10 +287,14 @@ export default function TemplatesPageClient({
       className="bg-white rounded-xl shadow-md hover:shadow-xl overflow-hidden group border border-gray-100 hover:border-magenta-200 transition-all duration-300"
     >
       <div className="relative aspect-video overflow-hidden bg-gray-100">
-        {template.previewImage?.asset?.url ? (
+        {template.previewImage?.asset?.url ||
+        template.externalPreviewImageUrl ? (
           <Image
-            src={template.previewImage.asset.url}
-            alt={template.previewImage.alt || template.title}
+            src={
+              template.previewImage?.asset?.url ||
+              (template.externalPreviewImageUrl as string)
+            }
+            alt={template.previewImage?.alt || template.title}
             fill
             className="object-contain group-hover:scale-110 transition-transform duration-500"
           />

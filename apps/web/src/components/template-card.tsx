@@ -87,6 +87,20 @@ export default function TemplateCard({
               alt={template.previewImage.alt || template.title}
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
             />
+          ) : (template as { externalPreviewImageUrl?: string })
+              .externalPreviewImageUrl ? (
+            /* Imported templates keep their preview on the supplier's server
+               rather than as a Sanity asset. */
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={
+                (template as { externalPreviewImageUrl?: string })
+                  .externalPreviewImageUrl
+              }
+              alt={template.title}
+              loading="lazy"
+              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+            />
           ) : (
             <div className="w-full h-full bg-gray-100 flex items-center justify-center p-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
