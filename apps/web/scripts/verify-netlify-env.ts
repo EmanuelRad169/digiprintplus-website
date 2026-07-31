@@ -63,8 +63,12 @@ const REQUIRED_ENV_VARS: EnvVar[] = [
     description: "Secret for validating Sanity webhook signatures",
   },
   {
+    // Warn, do not block. Draft preview is an editor convenience; a missing or
+    // weak value degrades /api/draft to a 503 but leaves the public site fully
+    // functional. Failing the build here takes the whole site down to protect a
+    // preview link, which is the wrong trade.
     name: "SANITY_PREVIEW_SECRET",
-    required: true,
+    required: false,
     description:
       "Secret gating /api/draft. Must equal SANITY_STUDIO_PREVIEW_SECRET in the Studio. No fallback exists — /api/draft returns 503 without it.",
     validateFormat: (v) =>
