@@ -224,6 +224,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <SanityProductImage
                     src={product.image}
                     alt={product.image.alt || product.title}
+                    width={1400}
+                    height={1400}
+                    quality={90}
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 600px"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   />
                 )}

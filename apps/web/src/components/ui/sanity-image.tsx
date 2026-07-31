@@ -107,20 +107,34 @@ export function SanityHeroImage({
   );
 }
 
-// Helper component for product images
+/**
+ * Product imagery.
+ *
+ * width/height are now overridable. They were hardcoded to 400x300, which is a
+ * reasonable card thumbnail but far too small for the product page hero — a
+ * 1254x1254 source was being fetched at 400px and stretched about 3x on a
+ * retina display, which reads as a low-quality upload rather than a sizing bug.
+ *
+ * The default is also square rather than 4:3. Asking Sanity for 4:3 made it
+ * apply a `rect` crop to the source (slicing the top and bottom off a square
+ * image) before `object-cover` cropped it a second time in the browser.
+ */
 export function SanityProductImage({
   src,
   alt,
   className = "w-full h-48 object-cover",
+  width = 800,
+  height = 800,
+  quality = 85,
   ...props
-}: Omit<SanityImageProps, "width" | "height">) {
+}: SanityImageProps) {
   return (
     <SanityImage
       src={src}
       alt={alt}
-      width={400}
-      height={300}
-      quality={80}
+      width={width}
+      height={height}
+      quality={quality}
       className={className}
       {...props}
     />
