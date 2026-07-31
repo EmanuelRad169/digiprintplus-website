@@ -7,8 +7,12 @@ import Link from "next/link";
 import {
   getProductBySlug,
   getSiteSettings,
+  getProducts,
 } from "../../../lib/sanity/fetchers";
 import { PortableTextRenderer } from "../../../components/portable-text";
+import ProductDetailTabs from "../../../components/product-detail-tabs";
+import ProductTagList from "../../../components/product-tag-list";
+import AddToQuoteButton from "../../../components/add-to-quote-button";
 import {
   Product,
   ProductImage,
@@ -44,15 +48,61 @@ import {
 } from "lucide-react";
 
 export const revalidate = 60;
+export const dynamicParams = false;
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
+}
+
+/**
+ * Pull the first substantive paragraph out of a Portable Text array so the hero
+ * can carry real product copy instead of empty space. Purely a read of existing
+ * content — the full text still renders in the Product Details tab.
+ */
+/**
+ * Pull the opening prose out of Product Details for the hero.
+ *
+ * Returns whole paragraphs rather than a hard character slice — a single
+ * 240-char cut left every product ending mid-sentence on an ellipsis, which
+ * reads as broken content rather than a teaser.
+ *
+ * The budget is checked BEFORE adding, so a product whose opening paragraph
+ * already exceeds it shows that one paragraph in full and stops, while a
+ * product with a short opener gets a second. The rest stays in the Product
+ * Details tab — the hero should invite the read, not be the read.
+ */
+function extractIntro(
+  blocks: any,
+  { budget = 350, maxParagraphs = 2 } = {},
+): string[] {
+  if (!Array.isArray(blocks)) return [];
+
+  const paragraphs: string[] = [];
+  let used = 0;
+
+  for (const b of blocks) {
+    if (paragraphs.length >= maxParagraphs || used >= budget) break;
+    if (b?._type !== "block") continue;
+    if (b.style && b.style !== "normal") continue;
+
+    const text = (b.children || [])
+      .map((c: any) => c?.text || "")
+      .join("")
+      .trim();
+
+    if (text.length < 40) continue; // skip stubs and stray one-liners
+
+    paragraphs.push(text);
+    used += text.length;
+  }
+
+  return paragraphs;
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { slug } = params;
+  const { slug } = await params;
   const { isEnabled } = await draftMode();
 
   const [product, siteSettings] = await Promise.all([
@@ -118,6 +168,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const hasCertifications =
     product.certifications && product.certifications.length > 0;
   const hasTags = product.tags && product.tags.length > 0;
+  const productIntro = extractIntro(
+    product.productDetails || product.longDescription,
+  );
+  const hasIntro = productIntro.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -160,12 +214,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Hero Section - Enhanced Layout */}
       <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-16">
-          <div className="grid lg:grid-cols-2 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:pt-16 lg:pb-10">
+          <div className="grid items-start gap-8 lg:grid-cols-2 lg:grid-rows-[auto_auto]">
             {/* Product Images with Gallery */}
             <div className="space-y-4">
               {/* Main Image */}
-              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-xl">
+              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                 {product.image && product.image.asset && (
                   <SanityProductImage
                     src={product.image}
@@ -201,7 +255,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Product Information */}
-            <div className="space-y-6">
+            <div className="space-y-6 lg:col-start-2 lg:row-span-2 lg:row-start-1">
               {/* Status & Category Badges */}
               <div className="flex flex-wrap gap-2">
                 {product.category && (
@@ -254,20 +308,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {product.description}
               </p>
 
-              {/* Tags */}
-              {hasTags && (
-                <div className="flex flex-wrap gap-2">
-                  {product.tags.map((tag: string, index: number) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-sky-50 text-gray-800"
+              {/* Intro lifted from Product Details — fills the hero with real
+                  copy. Full text still lives in the Product Details tab. */}
+              {hasIntro && (
+                <div className="space-y-3">
+                  {productIntro.map((para, i) => (
+                    <p
+                      key={i}
+                      className="text-sm leading-relaxed text-gray-600"
                     >
-                      <Tag className="w-3 h-3 mr-1" />
-                      {tag}
-                    </span>
+                      {para}
+                    </p>
                   ))}
                 </div>
               )}
+
+              {/* Tags moved out of the hero — rendered compactly further down
+                  (see ProductTagList) so the hero stays readable. */}
 
               {/* Key Features */}
               {product.features && product.features.length > 0 && (
@@ -299,380 +356,340 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </ul>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* CTA */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
-          {/* Left Column - Trust Indicators */}
-          <div className="grid grid-cols-3 gap-4">
-            {product.qualityGuarantee && (
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <p className="text-xs text-gray-600 font-medium">
-                  Quality Guaranteed
-                </p>
-              </div>
-            )}
-            {product.fastDelivery && (
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Truck className="w-6 h-6 text-white" />
-                </div>
-                <p className="text-xs text-gray-600 font-medium">
-                  Fast Delivery
-                </p>
-              </div>
-            )}
-            {product.awardWinning && (
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Award className="w-6 h-6 text-white" />
-                </div>
-                <p className="text-xs text-gray-600 font-medium">
-                  Award Winning
-                </p>
-              </div>
-            )}
-            {hasCertifications &&
-              product.certifications
-                .slice(
-                  0,
-                  3 -
-                    [
-                      product.qualityGuarantee,
-                      product.fastDelivery,
-                      product.awardWinning,
-                    ].filter(Boolean).length,
-                )
-                .map((cert: string, index: number) => (
-                  <div key={index} className="text-center">
-                    <div className="w-12 h-12 bg-pink-500 rounded-xl flex items-center justify-center mx-auto mb-2">
-                      <BadgeCheck className="w-6 h-6 text-white" />
-                    </div>
-                    <p className="text-xs text-gray-600 font-medium">{cert}</p>
-                  </div>
-                ))}
-          </div>
-
-          {/* Right Column - Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href={
-                product.formLink || `/quote?product=${product.slug?.current}`
-              }
-              className="flex-1 bg-magenta-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center"
-            >
-              <Quote className="w-5 h-5 mr-2" />
-              Request a Quote
-            </Link>
-            <Link
-              href="/contact"
-              className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:bg-gray-50 flex items-center justify-center"
-            >
-              <Phone className="w-5 h-5 mr-2" />
-              Contact Sales
-            </Link>
-          </div>
-        </div>
-      </div>
-      {/* Product Content Sections - Vertical Flow */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-        {/* Product Details Section */}
-        <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
-          <div className="flex items-center mb-6">
-            <FileText className="w-6 h-6 text-magenta-500 mr-3" />
-            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
-              Product Details
-            </h2>
-          </div>
-          <div className="border-t border-gray-200 pt-6">
-            {product.productDetails ? (
-              <div className="prose prose-lg max-w-none">
-                <PortableTextRenderer content={product.productDetails} />
-              </div>
-            ) : product.longDescription ? (
-              <div className="prose prose-lg max-w-none">
-                <PortableTextRenderer content={product.longDescription} />
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center mb-4">
-                  <FileText className="w-8 h-8 text-blue-500" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  No Details Available
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Product details are not yet available. Contact us for more
-                  information.
-                </p>
+              {/* Primary CTA — kept inside the hero column so the main
+                  action sits above the fold beside the product image. */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href={
+                    product.formLink ||
+                    `/quote?product=${product.slug?.current}`
+                  }
+                  className="flex-1 bg-magenta-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center"
+                >
+                  <Quote className="w-5 h-5 mr-2" />
+                  Request a Quote
+                </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors"
+                  className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:bg-gray-50 flex items-center justify-center"
                 >
-                  Contact Us
+                  <Phone className="w-5 h-5 mr-2" />
+                  Contact Sales
                 </Link>
               </div>
-            )}
-          </div>
-        </section>
 
-        {/* Specifications Section */}
-        <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
-          <div className="flex items-center mb-6">
-            <BadgeCheck className="w-6 h-6 text-magenta-500 mr-3" />
-            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
-              Specifications
-            </h2>
-          </div>
-          <div className="border-t border-gray-200 pt-6">
-            {product.detailedSpecs ? (
-              <div className="prose prose-lg max-w-none">
-                <PortableTextRenderer content={product.detailedSpecs} />
+              {/* Secondary action on its own row: collecting a product for a
+                  multi-product quote should not crowd the primary CTAs. */}
+              <div className="mt-3">
+                <AddToQuoteButton
+                  slug={product.slug?.current || ""}
+                  title={product.title}
+                  categoryTitle={product.category?.title}
+                  imageUrl={product.mainImage?.asset?.url}
+                />
               </div>
-            ) : product.specifications && product.specifications.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {product.specifications.map(
-                  (spec: ProductSpecification, index: number) => (
-                    <div
-                      key={index}
-                      className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-gray-900">
-                          {spec.name}
-                        </span>
-                        <span className="text-magenta-600 font-medium">
-                          {spec.value}{" "}
-                          {spec.unit && (
-                            <span className="text-sm text-gray-500">
-                              {spec.unit}
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  ),
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mb-4">
-                  <BadgeCheck className="w-8 h-8 text-gray-400" />
+
+              {/* At a glance — top specs surfaced from the Specifications tab */}
+              {product.specifications && product.specifications.length > 0 && (
+                <div className="mt-2 border-t border-gray-200 pt-8">
+                  <h3 className="mb-5 text-sm font-semibold text-gray-900">
+                    At a glance
+                  </h3>
+                  <dl className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+                    {product.specifications
+                      .slice(0, 6)
+                      .map((spec: ProductSpecification, index: number) => (
+                        <div
+                          key={index}
+                          // Odd indexes land in the right-hand column, so the
+                          // left border reads as a single rule down the middle
+                          // rather than a box around every cell.
+                          className={`flex items-baseline justify-between gap-3 border-b border-gray-100 pb-2.5 text-sm ${
+                            index % 2 === 1
+                              ? "lg:border-l lg:border-l-gray-200 lg:pl-8"
+                              : ""
+                          }`}
+                        >
+                          <dt className="shrink-0 text-gray-500">
+                            {spec.name}
+                          </dt>
+                          <dd className="line-clamp-1 text-right font-medium text-gray-900">
+                            {spec.value}
+                          </dd>
+                        </div>
+                      ))}
+                  </dl>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  No Specifications Available
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Detailed specifications for this product are not yet
-                  available.
-                </p>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-semibold rounded-xl hover:bg-magenta-600 transition-colors"
-                >
-                  Contact Us
-                </Link>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Template Download Section */}
-        {product.template?.hasTemplate && (
-          <section className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg border border-purple-100 p-8 lg:p-12">
-            <div className="flex items-center mb-6">
-              <Download className="w-6 h-6 text-magenta-500 mr-3" />
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
-                Download Template
-              </h2>
-            </div>
-            <div className="border-t border-purple-200 pt-6">
-              {product.template.description && (
-                <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                  {product.template.description}
-                </p>
               )}
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {product.template.previewImage?.asset?.url && (
-                  <div className="rounded-xl overflow-hidden border border-gray-200 shadow-md">
-                    <Image
-                      src={product.template.previewImage.asset.url}
-                      alt={
-                        product.template.previewImage.alt || "Template preview"
-                      }
-                      width={500}
-                      height={400}
-                      className="w-full h-auto"
-                    />
+            </div>
+            {/* Trust indicators.
+                Source order is image → info → badges, which is the correct
+                MOBILE reading order: picture, then what it is and how to buy,
+                then reassurance. Previously these lived inside the image
+                column, so on a phone they stacked ABOVE the product title.
+                On lg they are placed back under the image via explicit grid
+                coordinates — no duplicated markup, one source of truth. */}
+            <div className="grid grid-cols-3 gap-4 border-t border-gray-200 pt-6 sm:grid-cols-3 lg:col-start-1 lg:row-start-2 lg:border-t-0 lg:pt-0">
+              {product.qualityGuarantee && (
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-0 sm:mb-2">
+                    <Shield className="w-6 h-6 text-white" />
                   </div>
-                )}
-
-                <div className="flex flex-col justify-center space-y-4">
-                  {product.template.downloadFile?.asset?.url && (
-                    <a
-                      href={product.template.downloadFile.asset.url}
-                      className="inline-flex items-center justify-center px-8 py-4 bg-magenta-600 text-white font-semibold rounded-xl hover:bg-magenta-700 transition-all shadow-lg hover:shadow-xl"
-                      download
-                    >
-                      <Download className="w-5 h-5 mr-2" />
-                      Download Template File
-                    </a>
-                  )}
-
-                  <p className="text-sm text-gray-600 text-center">
-                    Professional template ready for customization
+                  <p className="sr-only text-xs font-medium text-gray-600 sm:not-sr-only sm:block">
+                    Quality Guaranteed
                   </p>
                 </div>
-              </div>
+              )}
+              {product.fastDelivery && (
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-0 sm:mb-2">
+                    <Truck className="w-6 h-6 text-white" />
+                  </div>
+                  <p className="sr-only text-xs font-medium text-gray-600 sm:not-sr-only sm:block">
+                    Fast Delivery
+                  </p>
+                </div>
+              )}
+              {product.awardWinning && (
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-0 sm:mb-2">
+                    <Award className="w-6 h-6 text-white" />
+                  </div>
+                  <p className="sr-only text-xs font-medium text-gray-600 sm:not-sr-only sm:block">
+                    Award Winning
+                  </p>
+                </div>
+              )}
+              {hasCertifications &&
+                product.certifications
+                  .slice(
+                    0,
+                    3 -
+                      [
+                        product.qualityGuarantee,
+                        product.fastDelivery,
+                        product.awardWinning,
+                      ].filter(Boolean).length,
+                  )
+                  .map((cert: string, index: number) => (
+                    <div key={index} className="text-center">
+                      <div className="w-12 h-12 bg-pink-500 rounded-xl flex items-center justify-center mx-auto mb-0 sm:mb-2">
+                        <BadgeCheck className="w-6 h-6 text-white" />
+                      </div>
+                      <p className="sr-only text-xs font-medium text-gray-600 sm:not-sr-only sm:block">
+                        {cert}
+                      </p>
+                    </div>
+                  ))}
             </div>
-          </section>
-        )}
+          </div>
+        </div>
+      </div>
 
-        {/* Related Templates Section */}
-        {product.templates && product.templates.length > 0 && (
-          <section className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 lg:p-12">
-            <div className="flex items-center mb-6">
-              <FileText className="w-6 h-6 text-magenta-500 mr-3" />
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
-                Related Templates
-              </h2>
-            </div>
-            <p className="text-gray-600 mb-8">
-              Download these professionally designed templates for your{" "}
-              {product.title.toLowerCase()} projects.
-            </p>
-            <div className="border-t border-gray-200 pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {product.templates.slice(0, 6).map((template: any) => (
-                  <div
-                    key={template._id}
-                    className="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all"
-                  >
-                    {template.previewImage?.asset?.url && (
-                      <div className="aspect-video rounded-lg overflow-hidden mb-4">
+      {/* Product Content Sections - Vertical Flow */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-4 space-y-12">
+        {/* Tabbed detail — Product Details / Specifications / Template.
+            Replaces three stacked full-height sections. No data removed. */}
+        <ProductDetailTabs
+          tabs={[
+            {
+              id: "details",
+              label: "Product Details",
+              content: product.productDetails ? (
+                <div className="prose prose-lg max-w-none">
+                  <PortableTextRenderer content={product.productDetails} />
+                </div>
+              ) : product.longDescription ? (
+                <div className="prose prose-lg max-w-none">
+                  <PortableTextRenderer content={product.longDescription} />
+                </div>
+              ) : null,
+            },
+            {
+              id: "specs",
+              label: "Specifications",
+              content: product.detailedSpecs ? (
+                <div className="prose prose-lg max-w-none">
+                  <PortableTextRenderer content={product.detailedSpecs} />
+                </div>
+              ) : product.specifications &&
+                product.specifications.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {product.specifications.map(
+                    (spec: ProductSpecification, index: number) => (
+                      <div
+                        key={index}
+                        className="rounded-xl border border-gray-200 bg-gray-50 p-4"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <span className="font-semibold text-gray-900">
+                            {spec.name}
+                          </span>
+                          <span className="text-right font-medium text-magenta-600">
+                            {spec.value}{" "}
+                            {spec.unit && (
+                              <span className="text-sm text-gray-500">
+                                {spec.unit}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              ) : null,
+            },
+            {
+              id: "template",
+              label: "Download Template",
+              content: product.template?.hasTemplate ? (
+                <div>
+                  {product.template.description && (
+                    <p className="mb-6 leading-relaxed text-gray-700">
+                      {product.template.description}
+                    </p>
+                  )}
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {product.template.previewImage?.asset?.url && (
+                      <div className="overflow-hidden rounded-xl border border-gray-200 shadow-md">
                         <Image
-                          src={template.previewImage.asset.url}
-                          alt={template.title}
-                          width={300}
-                          height={200}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          src={product.template.previewImage.asset.url}
+                          alt={
+                            product.template.previewImage.alt ||
+                            "Template preview"
+                          }
+                          width={500}
+                          height={400}
+                          className="h-auto w-full"
                         />
                       </div>
                     )}
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      {template.title}
-                    </h3>
-                    <Link
-                      href={`/templates/${template.slug?.current}`}
-                      className="inline-flex items-center text-magenta-600 hover:text-magenta-700 font-medium text-sm"
-                    >
-                      View Template
-                      <ArrowLeft className="w-4 h-4 ml-1 rotate-180" />
-                    </Link>
-                  </div>
-                ))}
-              </div>
-              {product.templates.length > 6 && (
-                <div className="text-center mt-8">
-                  <Link
-                    href="/templates"
-                    className="inline-flex items-center px-6 py-3 bg-magenta-500 text-white font-medium rounded-xl hover:bg-magenta-600 transition-colors"
-                  >
-                    View All Templates
-                  </Link>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-      </div>
-
-      {/* Sticky CTA Bar - Request Quote */}
-      <div className="sticky bottom-0 z-40 bg-gradient-to-r from-magenta-600 to-purple-600 shadow-2xl border-t border-magenta-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-center sm:text-left">
-              <h3 className="text-lg font-bold text-white">{product.title}</h3>
-              <p className="text-sm text-white/90">
-                Ready to get started? Request your custom quote now.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Link
-                href={
-                  product.formLink || `/quote?product=${product.slug?.current}`
-                }
-                className="inline-flex items-center px-6 py-3 bg-white text-magenta-600 font-semibold rounded-lg hover:bg-gray-100 transition-all shadow-lg"
-              >
-                <Quote className="w-5 h-5 mr-2" />
-                Request Quote
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center px-6 py-3 bg-magenta-700 text-white font-semibold rounded-lg hover:bg-magenta-800 transition-all border border-white/20"
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                Call Us
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Enhanced Gallery */}
-      {product.gallery &&
-        product.gallery.length > 0 &&
-        product.gallery.some((image: ProductImage) => image?.asset?.url) && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Product Gallery
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Explore detailed images of our {product.title} to see the
-                quality and craftsmanship up close.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {product.gallery
-                .filter((image: ProductImage) => image?.asset?.url)
-                .map((image: ProductImage, index: number) => (
-                  <div
-                    key={index}
-                    className="group relative aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
-                  >
-                    <Image
-                      src={image.asset.url}
-                      alt={
-                        image.alt ||
-                        `${product.title} gallery image ${index + 1}`
-                      }
-                      width={400}
-                      height={400}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-                      <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="flex flex-col justify-center space-y-4">
+                      {product.template.downloadFile?.asset?.url && (
+                        <a
+                          href={product.template.downloadFile.asset.url}
+                          className="inline-flex items-center justify-center rounded-xl bg-magenta-600 px-8 py-4 font-semibold text-white shadow-lg transition-all hover:bg-magenta-700 hover:shadow-xl"
+                          download
+                        >
+                          <Download className="mr-2 h-5 w-5" />
+                          Download Template File
+                        </a>
+                      )}
+                      <p className="text-center text-sm text-gray-600">
+                        Professional template ready for customization
+                      </p>
                     </div>
-                    {image.caption && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <p className="text-sm">{image.caption}</p>
+                  </div>
+                </div>
+              ) : null,
+            },
+            {
+              id: "templates",
+              label: "Related Templates",
+              content:
+                product.templates && product.templates.length > 0 ? (
+                  <div>
+                    <p className="mb-6 text-gray-600">
+                      Download these professionally designed templates for your{" "}
+                      {product.title.toLowerCase()} projects.
+                    </p>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                      {product.templates.slice(0, 6).map((template: any) => (
+                        <div
+                          key={template._id}
+                          className="group rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:shadow-lg"
+                        >
+                          <div className="mb-4 aspect-video overflow-hidden rounded-lg bg-gray-100">
+                            <Image
+                              src={
+                                template.previewImage?.asset?.url ||
+                                "/template-placeholder.png"
+                              }
+                              alt={template.title}
+                              width={300}
+                              height={200}
+                              className={`h-full w-full transition-transform group-hover:scale-105 ${
+                                template.previewImage?.asset?.url
+                                  ? "object-cover"
+                                  : "object-contain p-4"
+                              }`}
+                            />
+                          </div>
+                          <h3 className="mb-2 font-semibold text-gray-900">
+                            {template.title}
+                          </h3>
+                          <Link
+                            href={`/templates/${template.slug?.current}`}
+                            className="inline-flex items-center text-sm font-medium text-magenta-600 hover:text-magenta-700"
+                          >
+                            View Template
+                            <ArrowLeft className="ml-1 h-4 w-4 rotate-180" />
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                    {product.templates.length > 6 && (
+                      <div className="mt-8 text-center">
+                        <Link
+                          href="/templates"
+                          className="inline-flex items-center rounded-xl bg-magenta-500 px-6 py-3 font-medium text-white transition-colors hover:bg-magenta-600"
+                        >
+                          View All Templates
+                        </Link>
                       </div>
                     )}
                   </div>
-                ))}
-            </div>
-          </div>
-        )}
+                ) : null,
+            },
+            {
+              id: "gallery",
+              label: "Gallery",
+              content:
+                product.gallery &&
+                product.gallery.length > 0 &&
+                product.gallery.some(
+                  (image: ProductImage) => image?.asset?.url,
+                ) ? (
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {product.gallery
+                      .filter((image: ProductImage) => image?.asset?.url)
+                      .map((image: ProductImage, index: number) => (
+                        <div
+                          key={index}
+                          className="group relative aspect-square overflow-hidden rounded-xl"
+                        >
+                          <Image
+                            src={image.asset.url}
+                            alt={
+                              image.alt ||
+                              `${product.title} gallery image ${index + 1}`
+                            }
+                            width={400}
+                            height={400}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                          {image.caption && (
+                            <div className="absolute inset-x-0 bottom-0 translate-y-full bg-black/70 p-3 text-white transition-transform duration-300 group-hover:translate-y-0">
+                              <p className="text-sm">{image.caption}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                ) : null,
+            },
+          ]}
+        />
+      </div>
+
+      {/* Keywords — end of page, no card */}
+      {hasTags && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+          <ProductTagList tags={product.tags} />
+        </div>
+      )}
 
       {/* Enhanced CTA Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
@@ -736,7 +753,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
 
   if (!product) {
@@ -754,7 +771,11 @@ export async function generateMetadata({
 
 // Generate static params for products
 export async function generateStaticParams() {
-  // You can fetch all product slugs from Sanity here if needed
-  // For now, return empty array to use ISR
-  return [];
+  const products = await getProducts();
+
+  return products
+    .filter((product: Product) => product?.slug?.current)
+    .map((product: Product) => ({
+      slug: product.slug!.current,
+    }));
 }

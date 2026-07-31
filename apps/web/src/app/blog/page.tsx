@@ -32,7 +32,7 @@ export default async function BlogPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative bg-slate-900 overflow-hidden min-h-[20vh] flex items-center">
+      <section className="relative w-full bg-slate-900 overflow-hidden min-h-[60vh] flex items-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -45,30 +45,30 @@ export default async function BlogPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/60"></div>
         </div>
 
-        <div className="container mx-auto px-4 py-14 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 relative z-10">
+          <div className="max-w-7xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Print Industry Insights
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 max-w-2xl">
+            <p className="text-base sm:text-lg md:text-2xl text-white/90 leading-relaxed mb-8 max-w-2xl">
               Stay updated with the latest trends, tips, and best practices in
               professional printing and design.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="#featured"
-                className="bg-gradient-to-r from-[#ea088c] to-pink-500 hover:from-pink-600 hover:to-[#ea088c] text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-[#ea088c]/20 hover:shadow-[#ea088c]/30 flex items-center gap-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-[#ea088c] to-pink-500 hover:from-pink-600 hover:to-[#ea088c] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-[#ea088c]/20 hover:shadow-[#ea088c]/30 inline-flex items-center justify-center gap-2"
               >
                 Explore Articles <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Content */}
-      <div className="py-16 lg:py-24">
-        <div className="container mx-auto px-4">
+      <div className="py-12 sm:py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Featured Posts Section */}
           {featuredPosts.length > 0 && (
             <section id="featured" className="mb-10">
@@ -81,9 +81,10 @@ export default async function BlogPage() {
 
               <div className="grid lg:grid-cols-3 gap-8">
                 {featuredPosts.map((post) => (
-                  <article
+                  <Link
                     key={post._id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                    href={`/blog/${post.slug.current}`}
+                    className="group block bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-magenta-500"
                   >
                     {post.coverImage && (
                       <div className="relative h-48 overflow-hidden">
@@ -114,13 +115,8 @@ export default async function BlogPage() {
                         </div>
                       </div>
 
-                      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                        <Link
-                          href={`/blog/${post.slug.current}`}
-                          className="hover:text-[#ea088c] transition-colors"
-                        >
-                          {post.title}
-                        </Link>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 transition-colors group-hover:text-[#ea088c]">
+                        {post.title}
                       </h3>
 
                       {post.excerpt && (
@@ -143,14 +139,11 @@ export default async function BlogPage() {
                         </div>
                       )}
 
-                      <Link
-                        href={`/blog/${post.slug.current}`}
-                        className="inline-flex items-center gap-2 text-[#ea088c] font-semibold hover:gap-3 transition-all"
-                      >
+                      <span className="inline-flex items-center gap-2 text-[#ea088c] font-semibold transition-all group-hover:gap-3">
                         Read More <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      </span>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -185,9 +178,10 @@ export default async function BlogPage() {
             {regularPosts.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {regularPosts.map((post) => (
-                  <article
+                  <Link
                     key={post._id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                    href={`/blog/${post.slug.current}`}
+                    className="group block bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-magenta-500"
                   >
                     {post.coverImage && (
                       <div className="relative h-48 overflow-hidden">
@@ -212,13 +206,8 @@ export default async function BlogPage() {
                         </div>
                       </div>
 
-                      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                        <Link
-                          href={`/blog/${post.slug.current}`}
-                          className="hover:text-[#ea088c] transition-colors"
-                        >
-                          {post.title}
-                        </Link>
+                      <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 transition-colors group-hover:text-[#ea088c]">
+                        {post.title}
                       </h3>
 
                       {post.excerpt && (
@@ -241,14 +230,11 @@ export default async function BlogPage() {
                         </div>
                       )}
 
-                      <Link
-                        href={`/blog/${post.slug.current}`}
-                        className="inline-flex items-center gap-2 text-[#ea088c] font-semibold hover:gap-3 transition-all"
-                      >
+                      <span className="inline-flex items-center gap-2 text-[#ea088c] font-semibold transition-all group-hover:gap-3">
                         Read More <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      </span>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </div>
             ) : (
@@ -261,26 +247,26 @@ export default async function BlogPage() {
           </section>
 
           {/* Bottom CTA */}
-          <div className="bg-magenta-500 rounded-2xl p-8 md:p-12 relative overflow-hidden mt-12">
+          <div className="bg-magenta-500 rounded-2xl p-6 sm:p-8 md:p-12 relative overflow-hidden mt-12">
             <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
             <div className="relative z-10 max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
                 Ready to start your next print project?
               </h2>
-              <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+              <p className="text-white/90 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
                 Contact us today to discuss how our printing services can help
                 bring your ideas to life.
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <Link
                   href="/quote"
-                  className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Get a Quote
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="w-full sm:w-auto inline-flex items-center justify-center bg-white text-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Contact Us
                 </Link>

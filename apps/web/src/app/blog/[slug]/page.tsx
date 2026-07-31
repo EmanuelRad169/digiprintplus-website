@@ -12,6 +12,7 @@ import { ArrowLeft } from "lucide-react";
 import { ShareButton } from "../../../components/share-button";
 
 export const revalidate = 60;
+export const dynamicParams = false;
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
@@ -110,7 +111,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* Simple Header */}
       <div className="border-b border-gray-100">
-        <div className="container mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-[#ea088c] transition-colors text-sm"
@@ -122,7 +123,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </div>
 
       {/* Article */}
-      <article className="container mx-auto px-4 py-6">
+      <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto">
           {/* Article Header */}
           <header className="mb-4">
@@ -141,19 +142,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             )}
 
             {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
               {post.title}
             </h1>
 
             {/* Excerpt */}
             {post.excerpt && (
-              <p className="text-lg text-gray-600 mb-4 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 mb-4 leading-relaxed">
                 {post.excerpt}
               </p>
             )}
 
             {/* Meta */}
-            <div className="flex items-center gap-6 text-sm text-gray-500 mb-8">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm text-gray-500 mb-8">
               <div className="flex items-center gap-2">
                 {post.author.image && (
                   <Image
@@ -174,7 +175,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* Cover Image */}
             {post.coverImage && (
-              <div className="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8">
+              <div className="relative h-56 sm:h-64 md:h-96 rounded-lg overflow-hidden mb-8">
                 <Image
                   src={post.coverImage.asset.url}
                   alt={post.coverImage.alt || post.title}
@@ -228,8 +229,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* Related Posts - Simplified */}
       {relatedPosts.length > 0 && (
-        <section className="bg-gray-50 py-16">
-          <div className="container mx-auto px-4">
+        <section className="bg-gray-50 py-12 sm:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
               <h2 className="text-2xl font-bold text-gray-900 mb-8">
                 Related Articles
@@ -241,9 +242,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     key={relatedPost._id}
                     className="bg-white rounded-lg p-6 hover:shadow-md transition-shadow"
                   >
-                    <div className="flex gap-6">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       {relatedPost.coverImage && (
-                        <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="relative w-full sm:w-24 h-40 sm:h-24 rounded-lg overflow-hidden flex-shrink-0">
                           <Image
                             src={relatedPost.coverImage.asset.url}
                             alt={
@@ -286,32 +287,34 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       )}
 
       {/* Simple CTA */}
-      <div className="container bg-magenta-500 rounded-2xl p-8 md:p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
-        <div className="relative z-10 max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-            Ready to start your next print project?
-          </h2>
-          <p className="text-white/90 text-lg mb-8 max-w-2xlxl mx-auto">
-            Contact us today to discuss how our printing services can help bring
-            your ideas to life.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/quote"
-              className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              Get a Quote
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              Contact Us
-            </Link>
+      <section className="w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
+        <div className="max-w-7xl mx-auto bg-magenta-500 rounded-2xl p-6 sm:p-8 md:p-12 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
+          <div className="relative z-10 max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+              Ready to start your next print project?
+            </h2>
+            <p className="text-white/90 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
+              Contact us today to discuss how our printing services can help
+              bring your ideas to life.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+              <Link
+                href="/quote"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Get a Quote
+              </Link>
+              <Link
+                href="/contact"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-white text-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Contact Us
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

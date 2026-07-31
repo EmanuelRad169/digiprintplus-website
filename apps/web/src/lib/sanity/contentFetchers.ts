@@ -674,3 +674,50 @@ export async function getAboutPageData(): Promise<AboutPageData | null> {
     },
   );
 }
+
+// ---------------------------------------------------------------------------
+// Quote form: product context
+// ---------------------------------------------------------------------------
+
+export interface QuoteProductContext {
+  _id: string;
+  title: string;
+  slug: string;
+  categoryTitle?: string;
+  categorySlug?: string;
+  imageUrl?: string;
+  shortDescription?: string;
+}
+
+/**
+ * Look up the product a visitor clicked "Request a Quote" from.
+ *
+ * The quote form's product dropdown is a short editorial list in
+ * `quoteSettings`, so a real catalogue slug will never match one of its
+ * options. Product mode locks the field to this record instead and sends the
+ * slug through, so the quote request names the actual product.
+ */
+export async function getProductForQuote(
+  slug: string,
+): Promise<QuoteProductContext | null> {
+  if (!slug) return null;
+
+  const query = `
+    *[_type == "product" && slug.current == $slug && !(_id in path('drafts.**'))][0] {
+      _id,
+      title,
+      "slug": slug.current,
+      "categoryTitle": category->title,
+      "categorySlug": category->slug.current,
+      "imageUrl": coalesce(mainImage.asset->url, image.asset->url),
+      "shortDescription": coalesce(shortDescription, description)
+    }
+  `;
+
+  try {
+    return await client.fetch(query, { slug }, { next: { revalidate: 60 } });
+  } catch (error) {
+    console.error("Error fetching product for quote:", error);
+    return null;
+  }
+}

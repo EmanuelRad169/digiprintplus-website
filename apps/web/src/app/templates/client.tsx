@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import {
@@ -32,19 +32,98 @@ import {
   DialogTrigger,
 } from "../../components/ui/dialog";
 
-const defaultFormats = [
-  "All Formats",
-  "PDF",
-  "AI",
-  "PSD",
-  "INDD",
-  "PPTX",
-  "DOCX",
-];
+const defaultFormats = ["All Formats", "JPG", "EPS"];
 
 interface TemplatesPageClientProps {
   initialTemplates: Template[];
   initialCategories: TemplateCategory[];
+}
+
+function toTimestamp(input?: string): number {
+  if (!input) return 0;
+  const ts = Date.parse(input);
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+function getFamilyKey(template: Template): string {
+  const categorySlug = template.category?.slug?.current || "uncategorized";
+  let key = (template.slug?.current || template.title || "")
+    .toLowerCase()
+    .trim();
+
+  if (categorySlug && key.startsWith(`${categorySlug}-`)) {
+    key = key.slice(categorySlug.length + 1);
+  }
+
+  key = key
+    .replace(/\d+(?:-\d+)?x\d+(?:-\d+)?/g, " ")
+    .replace(
+      /\b(v|h|vertical|horizontal|smart|v2|drillhole|roundcorner)\b/g,
+      " ",
+    )
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!key) {
+    key = `${template.fileType || "unknown"}-${template.size || "na"}`;
+  }
+
+  return `${categorySlug}:${key}`;
+}
+
+function sortTemplatesForVariety(input: Template[]): Template[] {
+  const remaining = [...input];
+
+  const baseScore = (template: Template): number => {
+    const premiumBoost = template.isPremium ? 10_000 : 0;
+    const ratingBoost = (template.rating || 0) * 1_000;
+    const downloadBoost = Math.min(template.downloadCount || 0, 500);
+    const freshnessBoost = Math.floor(
+      toTimestamp(template.publishedAt) / 1_000_000_000,
+    );
+
+    return premiumBoost + ratingBoost + downloadBoost + freshnessBoost;
+  };
+
+  const pickOrder: Template[] = [];
+
+  while (remaining.length > 0) {
+    const prev = pickOrder[pickOrder.length - 1];
+    const prevFamily = prev ? getFamilyKey(prev) : "";
+    const prevCategory = prev?.category?.slug?.current || "";
+
+    let bestIndex = 0;
+    let bestScore = -Infinity;
+
+    for (let i = 0; i < remaining.length; i += 1) {
+      const candidate = remaining[i];
+      const candidateFamily = getFamilyKey(candidate);
+      const candidateCategory = candidate.category?.slug?.current || "";
+
+      let score = baseScore(candidate);
+
+      if (prevFamily && candidateFamily === prevFamily) {
+        // Strongly avoid back-to-back near-identical variants.
+        score -= 50_000;
+      }
+
+      if (prevCategory && candidateCategory === prevCategory) {
+        // Mildly favor category alternation when possible.
+        score -= 500;
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = i;
+      }
+    }
+
+    pickOrder.push(remaining[bestIndex]);
+    remaining.splice(bestIndex, 1);
+  }
+
+  return pickOrder;
 }
 
 export default function TemplatesPageClient({
@@ -111,6 +190,13 @@ export default function TemplatesPageClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const categoryOptions = categories.filter((category, index, self) => {
+    const slug = category.slug?.current;
+    if (!slug || slug === "all") return false;
+
+    return self.findIndex((item) => item.slug?.current === slug) === index;
+  });
+
   const filteredTemplates = templates.filter((template) => {
     const title = (template.title || "").toLowerCase();
     const description = (template.description || "").toLowerCase();
@@ -131,10 +217,19 @@ export default function TemplatesPageClient({
     return matchesCategory && matchesFormat && matchesSearch;
   });
 
-  const totalPages = Math.ceil(filteredTemplates.length / templatesPerPage);
+  const orderedTemplates = useMemo(() => {
+    // Preserve natural matching order for active text search.
+    if (searchTerm.trim().length > 0) {
+      return filteredTemplates;
+    }
+
+    return sortTemplatesForVariety(filteredTemplates);
+  }, [filteredTemplates, searchTerm]);
+
+  const totalPages = Math.ceil(orderedTemplates.length / templatesPerPage);
   const startIndex = (currentPage - 1) * templatesPerPage;
   const endIndex = startIndex + templatesPerPage;
-  const currentTemplates = filteredTemplates.slice(startIndex, endIndex);
+  const currentTemplates = orderedTemplates.slice(startIndex, endIndex);
 
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
@@ -142,11 +237,19 @@ export default function TemplatesPageClient({
   };
 
   const handleDownload = async (template: Template) => {
-    try {
-      // Increment download count
-      await incrementTemplateDownload(template._id);
+    if (!template.downloadFile?.asset?.url) return;
 
-      // Update local state
+    try {
+      // Start download immediately so tracking failures never block the user.
+      const link = document.createElement("a");
+      link.href = template.downloadFile.asset.url;
+      link.download =
+        template.downloadFile.asset.originalFilename || template.title;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Update local state optimistically
       setTemplates((prev) =>
         prev.map((t) =>
           t._id === template._id
@@ -155,14 +258,10 @@ export default function TemplatesPageClient({
         ),
       );
 
-      // Trigger download
-      const link = document.createElement("a");
-      link.href = template.downloadFile.asset.url;
-      link.download =
-        template.downloadFile.asset.originalFilename || template.title;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Track download asynchronously without blocking UX.
+      void incrementTemplateDownload(template._id).catch((error) => {
+        console.error("Error tracking template download:", error);
+      });
     } catch (error) {
       console.error("Error downloading template:", error);
     }
@@ -185,13 +284,14 @@ export default function TemplatesPageClient({
             className="object-contain group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-            <div className="text-center px-4">
-              <p className="text-sm font-semibold text-gray-700">
-                {template.title}
-              </p>
-              <p className="mt-1 text-xs text-gray-500">No preview available</p>
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 p-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/template-placeholder.png"
+              alt={`${template.title} template`}
+              loading="lazy"
+              className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
+            />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
@@ -291,11 +391,11 @@ export default function TemplatesPageClient({
 
       <div className="min-h-screen bg-gray-50">
         {/* Two Column Layout */}
-        <div className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left Sidebar - 30% */}
             <aside className="lg:w-[30%]">
-              <div className="sticky top-4 space-y-2">
+              <div className="lg:sticky lg:top-4 space-y-3">
                 {/* Search */}
                 <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">
@@ -339,7 +439,28 @@ export default function TemplatesPageClient({
                   <h3 className="text-lg font-bold text-gray-900 mb-4">
                     Categories
                   </h3>
-                  <div className="space-y-1">
+                  <div className="lg:hidden">
+                    <div className="relative">
+                      <select
+                        value={activeCategory}
+                        onChange={(e) => handleCategoryChange(e.target.value)}
+                        className="appearance-none w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-magenta-500 focus:border-transparent"
+                      >
+                        <option value="all">All Templates</option>
+                        {categoryOptions.map((category) => (
+                          <option
+                            key={category._id}
+                            value={category.slug.current}
+                          >
+                            {category.title}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  <div className="hidden lg:block space-y-1">
                     <button
                       onClick={() => handleCategoryChange("all")}
                       className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -350,7 +471,7 @@ export default function TemplatesPageClient({
                     >
                       All Templates
                     </button>
-                    {categories.map((category) => (
+                    {categoryOptions.map((category) => (
                       <button
                         key={category._id}
                         onClick={() =>
@@ -396,7 +517,7 @@ export default function TemplatesPageClient({
                 ) : (
                   <>
                     {/* Header */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                       <h2 className="text-2xl font-bold text-gray-900">
                         {activeCategory === "all"
                           ? "All Templates"
@@ -465,19 +586,19 @@ export default function TemplatesPageClient({
           </div>
 
           {/* CTA Section */}
-          <div className="mt-16 -mx-4 bg-gradient-to-r from-magenta-600 via-magenta-500 to-pink-500 rounded-2xl p-8 md:p-12 relative overflow-hidden shadow-xl">
+          <div className="max-w-7xl mx-auto mt-10 bg-gradient-to-r from-magenta-600 via-magenta-500 to-pink-500 rounded-2xl p-6 sm:p-8 md:p-12 relative overflow-hidden">
             <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
             <div className="relative z-10 max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
                 Can&apos;t Find What You&apos;re Looking For?
               </h2>
-              <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+              <p className="text-white/90 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
                 Request a custom template tailored to your specific needs. Our
                 design team will create exactly what you need.
               </p>
               <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogTrigger asChild>
-                  <button className="inline-flex items-center justify-center gap-2 bg-white text-magenta-600 px-8 py-4 rounded-lg font-bold text-base transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105">
+                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-magenta-600 px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-bold text-base transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105">
                     <MessageSquare className="w-5 h-5" />
                     Request Custom Template
                   </button>

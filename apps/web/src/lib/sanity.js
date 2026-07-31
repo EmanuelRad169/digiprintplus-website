@@ -4,7 +4,13 @@ const createSanityClient = (useToken = false) => {
   return createClient({
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
     dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-    token: useToken ? process.env.SANITY_API_TOKEN : undefined, // Only use token on server-side
+    // SERVER-ONLY. The `typeof window` guard means this expression can never
+    // resolve to a real token inside a browser bundle, even if a future
+    // next.config.js change re-exposes SANITY_API_TOKEN via `env`.
+    token:
+      useToken && typeof window === "undefined"
+        ? process.env.SANITY_API_TOKEN
+        : undefined,
     useCdn: false, // Disable CDN for immediate updates from CMS
     apiVersion: "2024-01-01",
     perspective: "published",

@@ -31,29 +31,29 @@ export default async function ContactPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-gray-900 to-gray-800 text-white py-6 overflow-hidden">
+      <section className="relative w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] flex items-center">
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
               {pageData?.title || "Contact Us"}
             </h1>
-            <p className="text-xl text-white/90 max-w-4xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-7xl mx-auto">
               {pageData?.subtitle ||
                 "Get in touch with our team of experts. We're here to help bring your vision to life."}
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Content */}
-      <div className="relative -mt-16 z-10">
+      <div className="relative z-10 -mt-10 sm:-mt-12 lg:-mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Contact Form Card */}
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             <div className="grid lg:grid-cols-3 gap-0">
               {/* Left Side - Contact Info */}
-              <div className="bg-gray-50 p-8 lg:p-12">
+              <div className="bg-gray-50 p-6 sm:p-8 lg:p-12">
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -174,9 +174,9 @@ export default async function ContactPage() {
               </div>
 
               {/* Right Side - Contact Form */}
-              <div className="lg:col-span-2 p-8 lg:p-12">
+              <div className="lg:col-span-2 p-6 sm:p-8 lg:p-12">
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
                     Send us a message
                   </h2>
                   <p className="text-gray-600">
@@ -203,5 +203,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       pageData?.seo?.metaDescription ||
       "Contact us for quotes, questions, or to discuss your printing needs.",
+    alternates: {
+      canonical: "/contact",
+    },
   };
 }

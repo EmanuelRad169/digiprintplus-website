@@ -9,10 +9,22 @@
     "deploy": "sanity deploy",
     "seed:blog": "sanity exec scripts/seedBlogCJS.js --with-user-token",
     "import:products": "ts-node scripts/import-products.ts",
-    "seed:services": "ts-node scripts/seed-service-pages.ts"
+    "seed:services": "ts-node scripts/seed-service-pages.ts",
+    "import:template-files": "ts-node scripts/media/import-template-files.ts",
+    "import:templates:4over": "ts-node scripts/migration/import-templates-from-4over.ts",
+    "rollback:templates:4over": "ts-node scripts/migration/rollback-templates-from-4over.ts",
+    "verify:templates:4over": "ts-node scripts/migration/verify-templates-from-4over.ts",
+    "audit:templates:quality": "ts-node scripts/migration/audit-template-quality.ts",
+    "enrich:templates:4over": "ts-node scripts/migration/enrich-templates-from-4over.ts",
+    "audit:templates:seo-search": "ts-node scripts/migration/audit-template-seo-search.ts",
+    "enrich:templates:seo-search": "ts-node scripts/migration/enrich-template-seo-search.ts",
+    "remediate:templates:previews": "ts-node scripts/migration/remediate-template-previews-4over.ts",
+    "audit:templates:merchandising": "ts-node scripts/migration/audit-template-merchandising.ts",
+    "enrich:templates:merchandising": "ts-node scripts/migration/enrich-template-merchandising.ts"
   },
   "dependencies": {
     "@sanity/client": "^7.13.2",
+    "@sanity/icons": "^3.7.4",
     "@sanity/vision": "^3.95.0",
     "@sanity/visual-editing": "^2.15.0",
     "react": "^19.2.2",

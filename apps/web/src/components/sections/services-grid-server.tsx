@@ -48,23 +48,15 @@ export async function ServicesGridServer({
 
     // If we don't have enough featured services and a limit is set, fall back to all services
     if (featuredOnly && limit && sanityServices.length < limit) {
-      console.log(
-        `Only ${sanityServices.length} featured services found, falling back to all services`,
-      );
+      // Fallback silently or log at debug level if needed
       sanityServices = await getServices();
     }
-
-    console.log(
-      `Fetched ${sanityServices.length} services (featuredOnly: ${featuredOnly})`,
-    ); // Add this debug line
 
     let services = sanityServices;
 
     if (limit && services.length > limit) {
       services = services.slice(0, limit);
     }
-
-    console.log(`Displaying ${services.length} services after limit applied`); // Add this debug line
 
     if (services.length === 0) {
       return (

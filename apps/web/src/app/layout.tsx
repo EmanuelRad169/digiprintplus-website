@@ -35,6 +35,12 @@ export const metadata = generateSEO({
   canonical: "/",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default async function RootLayout({
   children,
 }: {
@@ -66,7 +72,6 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         {/* Preconnect to Sanity CDN for faster image loading */}
         <link
@@ -108,9 +113,12 @@ export default async function RootLayout({
           </>
         )}
       </head>
-      <body className="font-sans">
+      {/* Ensure body has overflow-x-hidden to prevent horizontal scrolling */}
+      <body
+        className={`${inter.className} font-sans overflow-x-hidden antialiased`}
+      >
         <Providers>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen flex flex-col w-full">
             <HeaderTop siteSettings={siteSettings} />
             <Navigation
               navigationData={navigationData}

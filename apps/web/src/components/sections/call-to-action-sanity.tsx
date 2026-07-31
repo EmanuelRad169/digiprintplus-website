@@ -73,9 +73,9 @@ export function CallToActionSanity({
 
   if (loading) {
     return (
-      <section className="py-20 bg-magenta-500 text-white">
-        <div className="container">
-          <div className="text-center max-w-4xl mx-auto">
+      <section className="pb-16 pt-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl bg-magenta-500 px-6 py-16 text-center text-white sm:px-10 lg:px-16">
             <div className="animate-pulse">
               <div className="h-12 bg-white/20 rounded mb-6"></div>
               <div className="h-6 bg-white/20 rounded mb-8"></div>
@@ -103,9 +103,9 @@ export function CallToActionSanity({
     }[ctaData.backgroundColor] || "bg-magenta-500";
 
   return (
-    <section
-      className={`py-20 bg-magenta-500 text-white relative overflow-hidden`}
-    >
+    <section className="pb-16 pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl bg-magenta-500 px-6 py-16 text-white sm:px-10 lg:px-16">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -116,9 +116,9 @@ export function CallToActionSanity({
         />
       </div>
 
-      <div className="container relative">
+      <div className="relative">
         <div
-          className={`text-center max-w-4xl mx-auto transition-all duration-800 ${
+          className={`text-center max-w-7xl mx-auto transition-all duration-800 ${
             shouldAnimate
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-12"
@@ -198,6 +198,8 @@ export function CallToActionSanity({
               </p>
             </div>
           )}
+        </div>
+      </div>
         </div>
       </div>
     </section>

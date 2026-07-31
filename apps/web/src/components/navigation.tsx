@@ -438,7 +438,9 @@ export default function Navigation({
           <div className="md:hidden">
             <button
               onClick={handleToggle}
-              className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-magenta-500"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+              className="-mr-2 inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-magenta-500"
             >
               {isOpen ? (
                 <X className="h-6 w-6" />

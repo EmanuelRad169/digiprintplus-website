@@ -168,7 +168,7 @@ export function About() {
               initial={{ opacity: 0 }}
               animate={isInView ? { opacity: 1 } : { opacity: 0 }}
               transition={{ delay: 0.7, duration: 0.8, ease: easeOut }}
-              className="grid grid-cols-2 gap-4 mt-6"
+              className="grid grid-cols-1 gap-4 mt-6 sm:grid-cols-2"
             >
               <Image
                 src="https://images.pexels.com/photos/6863183/pexels-photo-6863183.jpeg?auto=compress&cs=tinysrgb&w=300"

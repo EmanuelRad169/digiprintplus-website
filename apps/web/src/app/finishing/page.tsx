@@ -29,7 +29,7 @@ const portableTextComponents = {
       </h4>
     ),
     normal: ({ children }: any) => (
-      <p className="text-gray-700 leading-relaxed mb-4">{children}</p>
+      <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-4">{children}</p>
     ),
     blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 border-magenta-500 pl-4 italic text-gray-600 my-4">
@@ -39,22 +39,26 @@ const portableTextComponents = {
   },
   list: {
     bullet: ({ children }: any) => (
-      <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
+      <ul className="list-disc list-outside pl-5 text-gray-700 mb-4 space-y-2 marker:text-gray-400">
         {children}
       </ul>
     ),
     number: ({ children }: any) => (
-      <ol className="list-decimal list-inside text-gray-700 mb-4 space-y-2">
+      <ol className="list-decimal list-outside pl-5 text-gray-700 mb-4 space-y-2 marker:text-gray-400">
         {children}
       </ol>
     ),
   },
   listItem: {
     bullet: ({ children }: any) => (
-      <li className="text-gray-700">{children}</li>
+      <li className="pl-1 text-base leading-relaxed text-gray-700">
+        {children}
+      </li>
     ),
     number: ({ children }: any) => (
-      <li className="text-gray-700">{children}</li>
+      <li className="pl-1 text-base leading-relaxed text-gray-700">
+        {children}
+      </li>
     ),
   },
   marks: {
@@ -148,7 +152,7 @@ export default async function FinishingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative bg-slate-900 overflow-hidden min-h-[20vh] flex items-center">
+      <section className="relative w-full bg-slate-900 overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] flex items-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -162,13 +166,13 @@ export default async function FinishingPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/60"></div>
         </div>
 
-        <div className="container mx-auto px-4 py-14 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 relative z-10">
+          <div className="max-w-7xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               {page.title}
             </h1>
             {page.heroText ? (
-              <div className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 max-w-2xl">
+              <div className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed mb-8">
                 <PortableText
                   value={page.heroText}
                   components={{
@@ -176,7 +180,7 @@ export default async function FinishingPage() {
                     block: {
                       ...portableTextComponents.block,
                       normal: ({ children }: any) => (
-                        <p className="text-white/90 leading-relaxed mb-4">
+                        <p className="text-white/90 leading-relaxed mb-3 last:mb-0">
                           {children}
                         </p>
                       ),
@@ -200,36 +204,36 @@ export default async function FinishingPage() {
                 />
               </div>
             ) : (
-              <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 max-w-2xl">
+              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed mb-8">
                 Transform your printed materials with our comprehensive
                 finishing services. From binding and lamination to die-cutting
                 and foil stamping, we deliver professional results that make
                 your projects stand out.
               </p>
             )}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
                 href="/quote"
-                className="bg-gradient-to-r from-[#ea088c] to-pink-500 hover:from-pink-600 hover:to-[#ea088c] text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-[#ea088c]/20 hover:shadow-[#ea088c]/30 flex items-center gap-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-[#ea088c] to-pink-500 hover:from-pink-600 hover:to-[#ea088c] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-[#ea088c]/20 hover:shadow-[#ea088c]/30 inline-flex items-center justify-center gap-2"
               >
                 Request a Quote <span className="ml-1">→</span>
               </Link>
               <Link
                 href="/contact"
-                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/20 px-8 py-4 rounded-lg font-semibold transition-all duration-300"
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 inline-flex items-center justify-center"
               >
                 Contact Us
               </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Content */}
       <div className="py-1">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Finishing Story Section */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center py-14">
+          <div className="grid lg:grid-cols-2 gap-12 py-14">
             <div>
               <div className="inline-flex items-center bg-yellow-300 text-black px-4 py-2 rounded-full text-sm font-semibold mb-6">
                 <span className="w-4 h-4 mr-2">✨</span>
@@ -241,7 +245,7 @@ export default async function FinishingPage() {
 
               {/* Dynamic content from Sanity */}
               {page.description ? (
-                <div className="prose prose-lg mb-8 text-gray-600">
+                <div className="mb-8 max-w-none">
                   <PortableText
                     value={page.description}
                     components={portableTextComponents}
@@ -266,7 +270,7 @@ export default async function FinishingPage() {
 
             {/* Finishing Image */}
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-100 to-magenta-100 relative">
+              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cyan-100 to-magenta-100 relative lg:sticky lg:top-28">
                 {page.featuredImage ? (
                   <Image
                     src={page.featuredImage.asset.url}
@@ -392,32 +396,34 @@ export default async function FinishingPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="container bg-magenta-500 rounded-2xl p-8 md:p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
-        <div className="relative z-10 max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-            Ready to start your next print project?
-          </h2>
-          <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-            Contact us today to discuss how our printing services can help bring
-            your ideas to life.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/quote"
-              className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              Get a Quote
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center bg-white text-black px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              Contact Us
-            </Link>
+      <section className="w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
+        <div className="max-w-7xl mx-auto bg-magenta-500 rounded-2xl p-6 sm:p-8 md:p-12 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-white/5 bg-[length:20px_20px]"></div>
+          <div className="relative z-10 max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+              Ready to start your next print project?
+            </h2>
+            <p className="text-white/90 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
+              Contact us today to discuss how our printing services can help
+              bring your ideas to life.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+              <Link
+                href="/quote"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-black text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Get a Quote
+              </Link>
+              <Link
+                href="/contact"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-white text-black px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Contact Us
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

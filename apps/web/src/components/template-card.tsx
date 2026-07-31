@@ -35,27 +35,31 @@ export default function TemplateCard({
     try {
       setIsDownloading(true);
 
-      // Increment download count
-      await incrementTemplateDownload(template._id);
-
-      // Trigger download
-      if (template.downloadFile?.asset?.url) {
-        const link = document.createElement("a");
-        link.href = template.downloadFile.asset.url;
-        link.download =
-          template.downloadFile.asset.originalFilename || template.title;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Notify parent component
-        if (onDownloadComplete) {
-          onDownloadComplete({
-            ...template,
-            downloadCount: template.downloadCount + 1,
-          });
-        }
+      if (!template.downloadFile?.asset?.url) {
+        throw new Error("Template file is unavailable");
       }
+
+      // Start download immediately so tracking cannot block it.
+      const link = document.createElement("a");
+      link.href = template.downloadFile.asset.url;
+      link.download =
+        template.downloadFile.asset.originalFilename || template.title;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Notify parent component optimistically
+      if (onDownloadComplete) {
+        onDownloadComplete({
+          ...template,
+          downloadCount: template.downloadCount + 1,
+        });
+      }
+
+      // Track asynchronously without impacting download UX.
+      void incrementTemplateDownload(template._id).catch((error) => {
+        console.error("Download tracking failed:", error);
+      });
     } catch (error) {
       console.error("Download failed:", error);
       alert("Download failed. Please try again.");
@@ -84,8 +88,13 @@ export default function TemplateCard({
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-400 text-sm">No preview</span>
+            <div className="w-full h-full bg-gray-100 flex items-center justify-center p-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/template-placeholder.png"
+                alt={`${template.title} template`}
+                className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+              />
             </div>
           )}
         </div>

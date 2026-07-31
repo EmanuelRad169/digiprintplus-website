@@ -209,9 +209,9 @@ export function ContactForm() {
           type="checkbox"
           id="agreeToTerms"
           {...register("agreeToTerms")}
-          className="mt-1 h-4 w-4 text-magenta-600 focus:ring-magenta-500 border-gray-300 rounded"
+          className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-gray-300 text-magenta-600 focus:ring-magenta-500"
         />
-        <label htmlFor="agreeToTerms" className="text-sm text-gray-600">
+        <label htmlFor="agreeToTerms" className="cursor-pointer py-1 text-sm leading-relaxed text-gray-600">
           I agree to the{" "}
           <Link
             href="/terms"

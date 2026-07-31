@@ -85,7 +85,7 @@ export default async function ServicesPage() {
               )}
 
               {/* Key Benefits */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2">
                 <div className="flex items-center">
                   <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
                   <span className="text-gray-700 font-medium">
@@ -114,7 +114,7 @@ export default async function ServicesPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                 <div className="text-3xl font-bold text-magenta-600 mb-2">
                   50K+
@@ -306,5 +306,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       pageData?.seo?.metaDescription ||
       "Explore our comprehensive printing services including digital printing, offset printing, large format, design services and more.",
+    alternates: {
+      canonical: "/services",
+    },
   };
 }

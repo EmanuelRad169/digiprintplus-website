@@ -3,6 +3,17 @@ import { Stack, Button, Card, Text, Flex } from '@sanity/ui'
 import { DownloadIcon } from '@sanity/icons'
 import { useClient } from 'sanity'
 
+interface QuoteLineItem {
+  productType?: string
+  productSlug?: string
+  quantity?: string
+  size?: string
+  paperType?: string
+  finish?: string[] | string
+  turnaround?: string
+  additionalNotes?: string
+}
+
 interface QuoteData {
   requestId: string
   contact: {
@@ -12,21 +23,50 @@ interface QuoteData {
     phone: string
     company?: string
   }
-  jobSpecs: {
-    productType: string
-    quantity: string
-    size?: string
-    paperType?: string
-    finish?: string
-    turnaround: string
-    additionalNotes?: string
-  }
+  // jobSpecs is an ARRAY of line items — one quote can cover several products.
+  jobSpecs: QuoteLineItem[]
   estimate?: {
     amount: number
     currency: string
     validUntil: string
     notes?: string
   }
+}
+
+/** Renders every line item. Older records were migrated to single-item arrays,
+ *  so this also copes with a legacy object arriving from an unmigrated source. */
+function renderLineItems(jobSpecs: QuoteLineItem[] | QuoteLineItem | undefined) {
+  const items: QuoteLineItem[] = Array.isArray(jobSpecs)
+    ? jobSpecs
+    : jobSpecs
+      ? [jobSpecs]
+      : []
+
+  if (items.length === 0) return 'Products: (none specified)'
+
+  const turnaround = items.find((i) => i.turnaround)?.turnaround
+
+  const lines = items.map((item, index) => {
+    const finish = Array.isArray(item.finish) ? item.finish.join(', ') : item.finish
+    return [
+      `${index + 1}. ${item.productType || 'Untitled product'}`,
+      item.quantity ? `   Quantity: ${item.quantity}` : '',
+      item.size ? `   Size: ${item.size}` : '',
+      item.paperType ? `   Paper: ${item.paperType}` : '',
+      finish ? `   Finish: ${finish}` : '',
+      item.additionalNotes ? `   Notes: ${item.additionalNotes}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+  })
+
+  return [
+    `PRODUCTS (${items.length}):`,
+    lines.join('\n\n'),
+    turnaround ? `\nTurnaround: ${turnaround}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n')
 }
 
 export const QuotePDFGenerator = ({ document }: { document: any }) => {
@@ -54,13 +94,7 @@ Email: ${quoteData.contact.email}
 Phone: ${quoteData.contact.phone}
 ${quoteData.contact.company ? `Company: ${quoteData.contact.company}` : ''}
 
-Product: ${quoteData.jobSpecs.productType}
-Quantity: ${quoteData.jobSpecs.quantity}
-${quoteData.jobSpecs.size ? `Size: ${quoteData.jobSpecs.size}` : ''}
-${quoteData.jobSpecs.paperType ? `Paper: ${quoteData.jobSpecs.paperType}` : ''}
-${quoteData.jobSpecs.finish ? `Finish: ${quoteData.jobSpecs.finish}` : ''}
-Turnaround: ${quoteData.jobSpecs.turnaround}
-${quoteData.jobSpecs.additionalNotes ? `Notes: ${quoteData.jobSpecs.additionalNotes}` : ''}
+${renderLineItems(quoteData.jobSpecs)}
 
 ${quoteData.estimate ? `
 QUOTE ESTIMATE: ${quoteData.estimate.currency === 'USD' ? '$' : quoteData.estimate.currency}${quoteData.estimate.amount}

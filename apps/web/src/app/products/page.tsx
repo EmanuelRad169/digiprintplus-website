@@ -1,12 +1,21 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Package, Tag } from "lucide-react";
 import { getProductCategories } from "../../lib/sanity/fetchers";
-import * as LucideIcons from "lucide-react";
 import Image from "next/image";
 
 // Enable ISR - revalidate every 60 seconds
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Product Categories - DigiPrintPlus",
+  description:
+    "Explore DigiPrintPlus product categories and find the right printing solution for your business.",
+  alternates: {
+    canonical: "/products",
+  },
+};
 
 // Updated Category type to include image
 interface Category {
@@ -21,16 +30,6 @@ interface Category {
 
 // Category card component
 function CategoryCard({ category }: { category: Category }) {
-  // Get icon component from Lucide
-  const getIconComponent = (iconName?: string) => {
-    if (!iconName) return Package;
-
-    const IconComponent = (LucideIcons as any)[iconName];
-    return IconComponent || Package;
-  };
-
-  const IconComponent = getIconComponent(category.icon);
-
   return (
     <Link href={`/products/category/${category.slug.current}`}>
       <div className="bg-white shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 hover:border-magenta-200">
@@ -45,7 +44,7 @@ function CategoryCard({ category }: { category: Category }) {
             />
           ) : (
             <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-              <IconComponent className="w-8 h-8 text-magenta-600" />
+              <Package className="w-8 h-8 text-magenta-600" />
             </div>
           )}
         </div>
@@ -86,7 +85,7 @@ function CategoryCard({ category }: { category: Category }) {
 // Loading component
 function CategoriesLoading() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {[...Array(8)].map((_, i) => (
         <div
           key={i}
@@ -113,90 +112,92 @@ export default async function ProductsPage() {
   const categories = await getProductCategories();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-2 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-white mb-4">
+      <section className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-sm">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+          <div className="text-center max-w-7xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
               Product <span className="text-magenta-500">Categories</span>
             </h1>
-            <p className="text-lg text-white max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
               Explore our comprehensive range of high-quality printing products
               and services. Choose from our specialized categories to find
               exactly what you need for your business.
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Categories Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Suspense fallback={<CategoriesLoading />}>
-          {categories.length > 0 ? (
-            <>
-              <div className="flex items-center justify-between mb-8">
-                <p className="text-gray-600">
-                  Browse {categories.length} product categor
-                  {categories.length !== 1 ? "ies" : "y"}
-                </p>
-                <div className="text-sm text-gray-500">
-                  Need help choosing?{" "}
+      <section className="w-full flex-grow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <Suspense fallback={<CategoriesLoading />}>
+            {categories.length > 0 ? (
+              <>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-12">
+                  <p className="text-gray-600 text-sm sm:text-base font-medium">
+                    Browse {categories.length} product categor
+                    {categories.length !== 1 ? "ies" : "y"}
+                  </p>
+                  <div className="text-sm text-gray-500">
+                    Need help choosing?{" "}
+                    <Link
+                      href="/contact"
+                      className="text-magenta-600 hover:underline"
+                    >
+                      Contact us
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {categories.map((category: Category) => (
+                    <CategoryCard key={category._id} category={category} />
+                  ))}
+                </div>
+
+                {/* CTA Section */}
+                <div className="mt-12 sm:mt-16 bg-magenta-600 rounded-2xl p-6 sm:p-10 text-center text-white shadow-xl mx-auto max-w-7xl">
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">
+                    Looking for something specific?
+                  </h2>
+                  <p className="text-magenta-100 mb-6 sm:mb-8 text-base sm:text-lg max-w-2xl mx-auto">
+                    We offer custom printing solutions for unique requirements.
+                    Get in touch with our team for personalized assistance.
+                  </p>
                   <Link
-                    href="/contact"
-                    className="text-magenta-600 hover:underline"
+                    href="/quote"
+                    className="inline-flex w-full sm:w-auto items-center justify-center bg-white text-magenta-600 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all duration-200 shadow-lg hover:shadow-xl hover:bg-gray-50 transform hover:-translate-y-0.5 text-base sm:text-lg"
                   >
-                    Contact us
+                    <span>Request Custom Quote</span>
+                    <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {categories.map((category: Category) => (
-                  <CategoryCard key={category._id} category={category} />
-                ))}
-              </div>
-
-              {/* CTA Section */}
-              <div className="mt-16 bg-magenta-500 rounded-2xl p-8 text-center text-white">
-                <h2 className="text-2xl font-bold mb-4">
-                  Looking for something specific?
-                </h2>
-                <p className="text-magenta-100 mb-6">
-                  We offer custom printing solutions for unique requirements.
-                  Get in touch with our team for personalized assistance.
+              </>
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-gray-400 mb-4">
+                  <Package className="w-16 h-16 mx-auto" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                  No categories available
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  We&apos;re currently setting up our product categories. Please
+                  check back soon or contact us for information.
                 </p>
                 <Link
-                  href="/quote"
-                  className="inline-flex items-center justify-center bg-black text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  href="/contact"
+                  className="bg-magenta-600 text-white w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold hover:bg-magenta-700 transition-colors inline-flex justify-center items-center shadow-md hover:shadow-lg text-base sm:text-lg"
                 >
-                  <span>Request Custom Quote</span>
-                  <ArrowRight className="w-4 h-4" />
+                  Contact Us for Information
                 </Link>
               </div>
-            </>
-          ) : (
-            <div className="text-center py-16">
-              <div className="text-gray-400 mb-4">
-                <Package className="w-16 h-16 mx-auto" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                No categories available
-              </h3>
-              <p className="text-gray-500 mb-6">
-                We&apos;re currently setting up our product categories. Please
-                check back soon or contact us for information.
-              </p>
-              <Link
-                href="/contact"
-                className="bg-magenta-600 text-white px-6 py-3 rounded-lg hover:bg-magenta-700 transition-colors"
-              >
-                Contact Us for Information
-              </Link>
-            </div>
-          )}
-        </Suspense>
-      </div>
+            )}
+          </Suspense>
+        </div>
+      </section>
     </div>
   );
 }

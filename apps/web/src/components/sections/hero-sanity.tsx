@@ -9,8 +9,8 @@ import {
   Printer,
 } from "lucide-react";
 import { SanityHeroImage } from "../ui/sanity-image";
-import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import {
   getHeroSlides,
   type HeroSlide,
@@ -57,7 +57,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [direction, setDirection] = useState(0);
 
   // Load hero slides from Sanity
   useEffect(() => {
@@ -82,39 +82,66 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
     loadSlides();
   }, [initialSlides]);
 
+  const paginate = useCallback(
+    (newDirection: number) => {
+      setDirection(newDirection);
+      setCurrentSlide((prev) => {
+        let next = prev + newDirection;
+        if (next < 0) next = slides.length - 1;
+        if (next >= slides.length) next = 0;
+        return next;
+      });
+      setIsAutoPlaying(false);
+    },
+    [slides.length],
+  );
+
+  const goToSlide = (index: number) => {
+    setDirection(index > currentSlide ? 1 : -1);
+    setCurrentSlide(index);
+    setIsAutoPlaying(false);
+  };
+
   // Auto-advance slides
   useEffect(() => {
     if (!isAutoPlaying || loading) return;
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      paginate(1);
     }, 7000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, loading, slides.length]);
+  }, [isAutoPlaying, loading, paginate]);
 
-  const nextSlide = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => setIsTransitioning(false), 800);
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-    setIsAutoPlaying(false);
+  // Swipe handling
+  const onDragEnd = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo,
+  ) => {
+    // Threshold for swipe
+    if (info.offset.x < -50) {
+      paginate(1);
+    } else if (info.offset.x > 50) {
+      paginate(-1);
+    }
   };
 
-  const prevSlide = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => setIsTransitioning(false), 800);
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-    setIsAutoPlaying(false);
-  };
-
-  const goToSlide = (index: number) => {
-    if (isTransitioning || index === currentSlide) return;
-    setIsTransitioning(true);
-    setTimeout(() => setIsTransitioning(false), 800);
-    setCurrentSlide(index);
-    setIsAutoPlaying(false);
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? "100%" : "-100%",
+      opacity: 0,
+      zIndex: 0,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? "100%" : "-100%",
+      opacity: 0,
+    }),
   };
 
   if (loading) {
@@ -128,72 +155,110 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
     );
   }
 
+  const slide = slides[currentSlide];
+
   return (
-    <section className="relative min-h-[500px] h-auto sm:h-[70vh] lg:h-[80vh] overflow-hidden bg-slate-900">
-      {/* Background Images */}
-      {slides.map((slide, index) => (
-        <div
-          key={slide._id}
-          className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-            index === currentSlide
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-110 pointer-events-none"
-          }`}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-slate-900/95 via-slate-900/80 sm:via-slate-900/60 to-slate-900/70 sm:to-slate-900/40 z-10" />
-          {slide.image?.asset?.url ? (
-            <SanityHeroImage
-              src={slide.image}
-              alt={slide.image.alt || slide.title}
-              className="absolute inset-0 w-full h-full object-cover"
-              priority={index === 0}
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900" />
-          )}
-        </div>
-      ))}
+    <section className="relative min-h-[500px] h-auto sm:h-[70vh] lg:h-[80vh] overflow-hidden bg-slate-900 group">
+      {/* Background Slider */}
+      <div className="absolute inset-0 z-0">
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.div
+            key={currentSlide}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-slate-900/95 via-slate-900/80 sm:via-slate-900/60 to-slate-900/70 sm:to-slate-900/40 z-10" />
+            {slide.image?.asset?.url ? (
+              <SanityHeroImage
+                src={slide.image}
+                alt={slide.image.alt || slide.title}
+                className="absolute inset-0 w-full h-full object-cover"
+                priority={true}
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900" />
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Swipe Layer (Transparent) */}
+      <motion.div
+        className="absolute inset-0 z-10"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={1}
+        onDragEnd={onDragEnd}
+        style={{ touchAction: "pan-y" }}
+      />
 
       {/* Main Content */}
-      <div className="relative z-20 h-full flex items-center">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-20 h-full flex items-center pointer-events-none w-full">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center h-full py-10 sm:py-12 lg:py-20">
             {/* Content Column */}
-            <div
-              key={currentSlide}
-              className="text-white space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 transition-opacity duration-800"
-            >
+            <div className="text-white space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8 pointer-events-auto">
               {/* Subtitle */}
-              <div className="flex items-center space-x-2 sm:space-x-3">
+              <motion.div
+                key={`sub-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center space-x-2 sm:space-x-3"
+              >
                 <div className="w-8 sm:w-12 h-0.5 bg-white" />
                 <span className="text-white font-bold text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase">
-                  {slides[currentSlide].subtitle}
+                  {slide.subtitle}
                 </span>
-              </div>
+              </motion.div>
 
-              {/* Main Title */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] sm:leading-tight tracking-tight">
-                {slides[currentSlide].title.split(" ").map((word, index) => (
+              {/* Main Title - Optimized for mobile */}
+              <motion.h1
+                key={`title-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] sm:leading-tight tracking-tight"
+              >
+                {slide.title.split(" ").map((word, index) => (
                   <span
                     key={index}
                     className={index === 1 ? "text-magenta-500" : ""}
                   >
                     {word}
-                    {index < slides[currentSlide].title.split(" ").length - 1
-                      ? " "
-                      : ""}
+                    {index < slide.title.split(" ").length - 1 ? " " : ""}
                   </span>
                 ))}
-              </h1>
+              </motion.h1>
 
               {/* Description */}
-              <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl lg:max-w-2xl">
-                {slides[currentSlide].description}
-              </p>
+              <motion.p
+                key={`desc-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-sm sm:text-base lg:text-lg xl:text-xl text-slate-300 leading-relaxed max-w-xl lg:max-w-2xl"
+              >
+                {slide.description}
+              </motion.p>
 
               {/* Features */}
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 lg:gap-3">
-                {slides[currentSlide].features.map((feature, index) => (
+              <motion.div
+                key={`feat-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="flex flex-wrap gap-1.5 sm:gap-2 lg:gap-3"
+              >
+                {slide.features.map((feature, index) => (
                   <div
                     key={index}
                     className="flex items-center space-x-1 sm:space-x-1.5 bg-white/10 backdrop-blur-sm px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20"
@@ -204,89 +269,105 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                     </span>
                   </div>
                 ))}
-              </div>
+              </motion.div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1 sm:pt-2">
+              <motion.div
+                key={`cta-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1 sm:pt-2 w-full"
+              >
                 <Link
-                  href={slides[currentSlide].ctaLink}
-                  className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-600 hover:bg-magenta-700 text-white font-bold text-sm sm:text-base lg:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  href={slide.ctaLink}
+                  className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-magenta-600 hover:bg-magenta-700 text-white font-bold text-sm sm:text-base lg:text-lg rounded-none uppercase tracking-wide transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl w-full sm:w-auto"
                 >
-                  {slides[currentSlide].ctaText}
+                  {slide.ctaText}
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
-              </div>
+              </motion.div>
             </div>
 
             {/* Stats/Info Column */}
-            <div
-              key={`stats-${currentSlide}`}
-              className="relative flex justify-center lg:justify-end mt-4 sm:mt-6 lg:mt-0 transition-opacity duration-800"
-            >
+            <div className="relative flex justify-center lg:justify-end mt-8 lg:mt-0 pointer-events-auto w-full">
               {/* Large Stat Display */}
-              <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-none">
-                <div className="bg-white/95 backdrop-blur-sm text-slate-900 p-4 sm:p-6 lg:p-8 rounded-none shadow-2xl border-l-4 sm:border-l-8 border-magenta-500">
+              <motion.div
+                key={`stat-${currentSlide}`}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 }}
+                className="relative w-full lg:max-w-md"
+              >
+                <div className="bg-white/95 backdrop-blur-sm text-slate-900 p-6 sm:p-8 rounded-none shadow-2xl border-l-4 sm:border-l-8 border-magenta-500 w-full">
                   <div className="text-center">
-                    <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-magenta-500 mb-1 sm:mb-2">
-                      {slides[currentSlide].stats.number}
+                    <div className="text-5xl sm:text-6xl font-bold text-magenta-500 mb-2">
+                      {slide.stats.number}
                     </div>
-                    <div className="text-base sm:text-lg lg:text-xl font-bold text-slate-700 uppercase tracking-wide">
-                      {slides[currentSlide].stats.text}
+                    <div className="text-lg sm:text-xl font-bold text-slate-700 uppercase tracking-wide">
+                      {slide.stats.text}
                     </div>
                   </div>
                 </div>
 
-                {/* Additional Info Cards - Hidden on mobile */}
-                <div className="hidden md:block absolute -bottom-16 lg:-bottom-20 -left-12 lg:-left-16 bg-slate-800 text-white p-4 lg:p-6 rounded-none shadow-xl border-t-4 border-magenta-500">
-                  <div className="flex items-center space-x-2 lg:space-x-3">
-                    <Printer className="w-6 h-6 lg:w-8 lg:h-8 text-magenta-500" />
+                {/* Additional Info Cards - Mobile Optimized */}
+                <div className="mt-4 md:absolute md:mt-0 md:-bottom-10 md:left-0 lg:-bottom-16 lg:-left-16 bg-slate-800 text-white p-5 lg:p-6 rounded-none shadow-xl border-t-4 border-magenta-500 w-full md:w-auto">
+                  <div className="flex items-center space-x-4 justify-center md:justify-start">
+                    <Printer className="w-8 h-8 text-magenta-500" />
                     <div>
-                      <div className="text-xl lg:text-2xl font-bold">50K+</div>
-                      <div className="text-xs lg:text-sm text-slate-300">
+                      <div className="text-2xl font-bold">50K+</div>
+                      <div className="text-sm text-slate-300">
                         Projects Done
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Arrow Controls - Hidden on mobile */}
+      {/* Arrow Controls - Visible on larger screens, larger touch targets if on mobile but typically hidden */}
       {slides.length > 1 && (
         <>
           <button
-            onClick={prevSlide}
-            className="hidden sm:flex absolute left-4 lg:left-8 top-1/2 transform -translate-y-1/2 z-30 w-10 h-10 lg:w-12 lg:h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-none items-center justify-center text-white transition-all duration-300 group"
+            onClick={() => paginate(-1)}
+            className="hidden sm:flex absolute left-4 lg:left-8 top-1/2 transform -translate-y-1/2 z-30 w-12 h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full items-center justify-center text-white transition-all duration-300 group pointer-events-auto"
+            aria-label="Previous slide"
           >
-            <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6 group-hover:-translate-x-1 transition-transform" />
+            <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
           </button>
 
           <button
-            onClick={nextSlide}
-            className="hidden sm:flex absolute right-4 lg:right-8 top-1/2 transform -translate-y-1/2 z-30 w-10 h-10 lg:w-12 lg:h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-none items-center justify-center text-white transition-all duration-300 group"
+            onClick={() => paginate(1)}
+            className="hidden sm:flex absolute right-4 lg:right-8 top-1/2 transform -translate-y-1/2 z-30 w-12 h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-full items-center justify-center text-white transition-all duration-300 group pointer-events-auto"
+            aria-label="Next slide"
           >
-            <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6 group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </button>
         </>
       )}
 
       {/* Slide Indicators */}
       {slides.length > 1 && (
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex space-x-2">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex space-x-2 pointer-events-auto">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? "bg-magenta-500 w-6 sm:w-8"
-                  : "bg-white/50 hover:bg-white/75"
-              }`}
-            />
+              className="group flex h-11 items-center justify-center px-1.5"
+            >
+              <span
+                aria-hidden
+                className={`block h-2 rounded-full transition-all duration-300 ${
+                  index === currentSlide
+                    ? "bg-magenta-500 w-8"
+                    : "bg-white/50 w-2 group-hover:bg-white/75"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}
@@ -294,29 +375,15 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
       {/* Progress Bar */}
       {isAutoPlaying && (
         <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20 z-30">
-          <div
+          <motion.div
             key={currentSlide}
-            className="h-full bg-magenta-500 animate-progress"
-            style={{ animation: "progressBar 7s linear" }}
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 7, ease: "linear" }}
+            className="h-full bg-magenta-500"
           />
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes progressBar {
-          from {
-            width: 0%;
-          }
-          to {
-            width: 100%;
-          }
-        }
-      `}</style>
-
-      {/* Decorative Elements - Hidden on mobile */}
-      <div className="hidden lg:block absolute top-20 right-20 w-2 h-2 bg-magenta-500 transform rotate-45 z-20" />
-      <div className="hidden lg:block absolute bottom-32 left-32 w-3 h-3 bg-white/30 transform rotate-45 z-20" />
-      <div className="hidden lg:block absolute top-1/3 right-1/3 w-1 h-1 bg-magenta-500 rounded-full z-20" />
     </section>
   );
 }

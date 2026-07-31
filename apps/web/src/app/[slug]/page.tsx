@@ -6,6 +6,7 @@ import { getPageBySlug, getAboutPage } from "../../lib/sanity/fetchers";
 import { PortableTextRenderer } from "../../components/portable-text";
 
 export const revalidate = 60;
+export const dynamicParams = false;
 
 // Generate static params for known pages
 export async function generateStaticParams() {
@@ -67,7 +68,7 @@ export default async function Page({ params }: PageProps) {
         {/* Hero Section */}
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center max-w-4xl mx-auto">
+            <div className="text-center max-w-7xl mx-auto">
               {pageData.heroImage && (
                 <div className="mb-8">
                   <Image

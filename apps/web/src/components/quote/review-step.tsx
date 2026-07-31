@@ -114,52 +114,83 @@ export function ReviewStep({ formData, updateFormData }: ReviewStepProps) {
         </div>
       </div>
 
-      {/* Job Specifications */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <div className="flex items-center justify-between mb-4">
+      {/* Products — a quote can cover several, so render a table not a
+          field list. */}
+      <div className="rounded-lg bg-gray-50 p-6">
+        <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">
-            Job Specifications
+            Products
+            <span className="ml-2 text-sm font-normal text-gray-500">
+              ({(formData.lineItems || []).length})
+            </span>
           </h3>
-          <Edit className="w-5 h-5 text-gray-400" />
+          <Edit className="h-5 w-5 text-gray-400" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="font-medium text-gray-700">Product Type:</span>{" "}
-            {formData.productType}
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Quantity:</span>{" "}
-            {formData.quantity}
-          </div>
-          {formData.size && (
-            <div>
-              <span className="font-medium text-gray-700">Size:</span>{" "}
-              {formData.size}
+
+        <div className="space-y-3">
+          {(formData.lineItems || []).map((item: any, index: number) => (
+            <div
+              key={item.id || index}
+              className="rounded-lg border border-gray-200 bg-white p-4"
+            >
+              <div className="mb-2 flex items-start justify-between gap-3">
+                <span className="flex items-center gap-2 font-semibold text-gray-900">
+                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-magenta-100 text-[11px] font-bold text-magenta-700">
+                    {index + 1}
+                  </span>
+                  {item.productType || "Untitled product"}
+                </span>
+                {item.quantity && (
+                  <span className="flex-shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+                    Qty {item.quantity}
+                  </span>
+                )}
+              </div>
+              <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm text-gray-600 sm:grid-cols-2 lg:grid-cols-3">
+                {item.size && (
+                  <div>
+                    <dt className="inline font-medium text-gray-700">Size: </dt>
+                    <dd className="inline">{item.size}</dd>
+                  </div>
+                )}
+                {item.paperType && (
+                  <div>
+                    <dt className="inline font-medium text-gray-700">
+                      Paper:{" "}
+                    </dt>
+                    <dd className="inline">{item.paperType}</dd>
+                  </div>
+                )}
+                {item.finish && (
+                  <div>
+                    <dt className="inline font-medium text-gray-700">
+                      Finish:{" "}
+                    </dt>
+                    <dd className="inline">{item.finish}</dd>
+                  </div>
+                )}
+              </dl>
+              {item.additionalNotes && (
+                <p className="mt-2 border-t border-gray-100 pt-2 text-sm text-gray-600">
+                  {item.additionalNotes}
+                </p>
+              )}
             </div>
-          )}
-          {formData.paperType && (
-            <div>
-              <span className="font-medium text-gray-700">Paper Type:</span>{" "}
-              {formData.paperType}
-            </div>
-          )}
-          {formData.finish && (
-            <div>
-              <span className="font-medium text-gray-700">Finish:</span>{" "}
-              {formData.finish}
-            </div>
-          )}
-          <div>
-            <span className="font-medium text-gray-700">Turnaround:</span>{" "}
-            {formData.turnaround}
-          </div>
+          ))}
         </div>
-        {formData.additionalNotes && (
-          <div className="mt-4">
-            <span className="font-medium text-gray-700">Additional Notes:</span>
-            <p className="text-gray-600 mt-1">{formData.additionalNotes}</p>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 border-t border-gray-200 pt-4 text-sm sm:grid-cols-2">
+          <div>
+            <span className="font-medium text-gray-700">Turnaround: </span>
+            {formData.turnaround || "—"}
           </div>
-        )}
+          {formData.additionalNotes && (
+            <div>
+              <span className="font-medium text-gray-700">Notes: </span>
+              {formData.additionalNotes}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Files */}

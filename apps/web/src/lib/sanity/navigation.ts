@@ -66,8 +66,11 @@ export const getNavigation = async () => {
 // Build navigation dynamically from product categories
 export const buildNavigationFromCategories = async () => {
   try {
+    // Sorted alphabetically by title so the mega menu reads A→Z down each
+    // column. (Deliberately ignores the Sanity `order` field — the menu is a
+    // lookup list, not a merchandised one.)
     const categories: ProductCategory[] = await sanityClient.fetch(
-      `*[_type == "productCategory"] | order(order asc, title asc) {
+      `*[_type == "productCategory"] | order(lower(title) asc) {
         _id,
         title,
         "slug": slug.current,

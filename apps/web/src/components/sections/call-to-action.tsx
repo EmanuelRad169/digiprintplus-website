@@ -50,7 +50,7 @@ export function CallToAction() {
 
       <div className="container relative">
         <div
-          className={`text-center max-w-4xl mx-auto transition-all duration-800 ${
+          className={`text-center max-w-7xl mx-auto transition-all duration-800 ${
             isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
           }`}
         >

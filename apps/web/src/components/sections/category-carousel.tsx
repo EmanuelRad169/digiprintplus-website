@@ -123,7 +123,7 @@ export default function CategoryCarousel({
 
           {/* Slider track */}
           <div ref={containerRef} className="overflow-x-hidden md:mx-10">
-            <div className="flex gap-4 md:gap-6 lg:gap-8 py-2">
+            <div className="flex gap-2 md:gap-3 lg:gap-4 py-2">
               {loopedCategories.map((category, index) => {
                 const slugValue =
                   typeof category.slug === "string"
@@ -138,19 +138,19 @@ export default function CategoryCarousel({
                   <div
                     key={`${category._id}-${slugValue}-${index}`}
                     data-category-card
-                    className="flex-shrink-0 w-36 md:w-40 lg:w-44 cursor-pointer"
+                    className="flex-shrink-0 w-40 md:w-44 lg:w-48 cursor-pointer"
                   >
                     <Link
                       href={href}
                       className="flex flex-col items-center text-center group"
                     >
-                      <div className="mb-3 w-28 h-28 md:w-32 md:h-32 rounded-2xl bg-gray-100 overflow-hidden relative shadow-sm group-hover:shadow-lg transition-shadow">
+                      <div className="mb-2 w-full aspect-square rounded-2xl bg-gray-100 overflow-hidden relative shadow-sm group-hover:shadow-lg transition-shadow">
                         {category.image ? (
                           <Image
                             src={category.image}
                             alt={category.title}
                             fill
-                            sizes="(max-width: 768px) 112px, 128px"
+                            sizes="(max-width: 768px) 160px, (max-width: 1024px) 176px, 192px"
                             loading="lazy"
                             className="object-cover group-hover:scale-110 transition-transform duration-300"
                           />

@@ -50,9 +50,12 @@ export interface Template {
       originalFilename: string;
     };
   };
+  externalDownloadUrl?: string;
+  externalPreviewImageUrl?: string;
   fileSize?: string;
   instructions?: string;
-  requiredSoftware?: string[];
+  sourceProvider?: string;
+  sourcePageUrl?: string;
   publishedAt: string;
 }
 
@@ -128,9 +131,12 @@ export async function getAllTemplates(): Promise<Template[]> {
           originalFilename
         }
       },
+      externalDownloadUrl,
+      externalPreviewImageUrl,
       fileSize,
       instructions,
-      requiredSoftware,
+      sourceProvider,
+      sourcePageUrl,
       publishedAt
     }`;
 
@@ -194,9 +200,12 @@ export async function getTemplatesByCategory(
           originalFilename
         }
       },
+      externalDownloadUrl,
+      externalPreviewImageUrl,
       fileSize,
       instructions,
-      requiredSoftware,
+      sourceProvider,
+      sourcePageUrl,
       publishedAt
     }`;
 
@@ -260,9 +269,12 @@ export async function getTemplateBySlug(
           originalFilename
         }
       },
+      externalDownloadUrl,
+      externalPreviewImageUrl,
       fileSize,
       instructions,
-      requiredSoftware,
+      sourceProvider,
+      sourcePageUrl,
       publishedAt
     }`;
 
@@ -1330,7 +1342,7 @@ export async function getNavigationMenu(isPreview = false) {
             megaMenu[] {
               sectionTitle,
               sectionDescription,
-              links[] {
+              "links": links[] | order(lower(name) asc) {
                 name,
                 href,
                 description,
@@ -1360,7 +1372,7 @@ export async function getNavigationMenu(isPreview = false) {
             megaMenu[] {
               sectionTitle,
               sectionDescription,
-              links[] {
+              "links": links[] | order(lower(name) asc) {
                 name,
                 href,
                 description,

@@ -48,7 +48,7 @@ export function HeaderTop({ siteSettings }: HeaderTopProps) {
             {siteSettings?.contact?.phone && (
               <a
                 href={`tel:${siteSettings.contact.phone.replace(/\D/g, "")}`}
-                className="flex items-center justify-start gap-2 text-xs lg:text-sm hover:text-white/80 transition-colors"
+                className="flex min-h-11 items-center justify-start gap-2 py-1 text-xs lg:text-sm hover:text-white/80 transition-colors"
               >
                 <Phone className="w-4 h-4 flex-shrink-0" />
                 <span className="font-semibold">
@@ -60,7 +60,7 @@ export function HeaderTop({ siteSettings }: HeaderTopProps) {
             {siteSettings?.contact?.email && (
               <a
                 href={`mailto:${siteSettings.contact.email}`}
-                className="flex items-center justify-start gap-2 text-xs lg:text-sm hover:text-white/80 transition-colors"
+                className="flex min-h-11 items-center justify-start gap-2 py-1 text-xs lg:text-sm hover:text-white/80 transition-colors"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <span className="truncate font-semibold">
@@ -83,14 +83,14 @@ export function HeaderTop({ siteSettings }: HeaderTopProps) {
               <>
                 <a
                   href="tel:9497705000"
-                  className="flex items-center justify-start gap-2 text-xs lg:text-sm hover:text-white/80 transition-colors"
+                  className="flex min-h-11 items-center justify-start gap-2 py-1 text-xs lg:text-sm hover:text-white/80 transition-colors"
                 >
                   <Phone className="w-4 h-4 flex-shrink-0" />
                   <span className="font-semibold">(949) 770-5000</span>
                 </a>
                 <a
                   href="mailto:orders@digiprintplus.com"
-                  className="flex items-center justify-start gap-2 text-xs lg:text-sm hover:text-white/80 transition-colors"
+                  className="flex min-h-11 items-center justify-start gap-2 py-1 text-xs lg:text-sm hover:text-white/80 transition-colors"
                 >
                   <Mail className="w-4 h-4 flex-shrink-0" />
                   <span className="truncate font-semibold">

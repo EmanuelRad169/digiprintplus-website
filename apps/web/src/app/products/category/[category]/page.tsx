@@ -10,7 +10,14 @@ import {
 } from "../../../../lib/sanity/fetchers";
 import { Product, ProductCategory } from "../../../../types/product";
 import { generateCategorySEO } from "../../../../lib/seo";
-import { ShoppingCart, ArrowLeft, Tag, Package, Sparkles } from "lucide-react";
+import {
+  ShoppingCart,
+  ArrowLeft,
+  ArrowRight,
+  Tag,
+  Package,
+  Sparkles,
+} from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 export const revalidate = 60;
@@ -25,43 +32,50 @@ interface CategoryPageProps {
 // Product Card Component
 function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="group overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      {/* Product Image */}
-      <div className="relative aspect-square overflow-hidden bg-gray-50">
+    <Link
+      href={`/products/${product.slug?.current}`}
+      className="group block overflow-hidden border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:border-magenta-200 hover:shadow-xl outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-magenta-500"
+    >
+      {/* Product Image — matches CategoryCard */}
+      <div className="relative flex aspect-square items-center justify-center bg-gradient-to-br from-magenta-50 to-magenta-100 transition-colors group-hover:from-magenta-100 group-hover:to-magenta-200">
         {product.image?.asset?.url ? (
           <Image
             src={product.image.asset.url}
             alt={product.image.alt || product.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover"
           />
         ) : (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-magenta-600 text-center">
-              <Package className="w-12 h-12 mx-auto mb-2" />
-              <p className="text-sm">Product Image</p>
-            </div>
+          <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-white shadow-md transition-shadow group-hover:shadow-lg">
+            <Package className="h-8 w-8 text-magenta-600" />
           </div>
         )}
       </div>
 
-      {/* Product Info */}
       <div className="p-3">
-        {/* Title & Description */}
-        <div className="mb-2">
-          <Link href={`/products/${product.slug?.current}`}>
-            <h3 className="text-base font-semibold text-gray-900 transition-colors group-hover:text-magenta-600 cursor-pointer">
-              {product.title}
-            </h3>
-          </Link>
-        </div>
+        {/* Product Title */}
+        <h3 className="mb-2 text-base font-bold text-gray-900 transition-colors group-hover:text-magenta-600">
+          {product.title}
+        </h3>
 
-        {/* Description */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-          {product.description}
-        </p>
+        {/* Product Description */}
+        {product.description && (
+          <p className="mb-4 line-clamp-2 text-sm text-gray-600">
+            {product.description}
+          </p>
+        )}
+
+        {/* CTA — same row treatment as CategoryCard. Products have no count or
+            price in the schema, so the left meta slot is intentionally omitted
+            rather than filled with a placeholder. */}
+        <div className="flex items-center justify-end">
+          <div className="flex items-center text-magenta-600 transition-colors group-hover:text-magenta-700">
+            <span className="mr-2 text-sm font-medium">View Details</span>
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -129,7 +143,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <div className="absolute inset-0 bg-black bg-opacity-50" />
             {/* Content */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white max-w-4xl mx-auto px-4">
+              <div className="text-center text-white max-w-7xl mx-auto px-4">
                 <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
                   {currentCategory.title}
                 </h1>
@@ -144,7 +158,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         ) : (
           <div className="bg-gradient-to-br from-magenta-600 to-magenta-800 py-24 lg:py-32">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center text-white max-w-4xl mx-auto">
+              <div className="text-center text-white max-w-7xl mx-auto">
                 <div className="flex items-center justify-center mb-6">
                   <div className="w-20 h-20 bg-white bg-opacity-20 rounded-xl flex items-left justify-center backdrop-blur-sm">
                     <IconComponent className="w-10 h-10 text-white" />
@@ -164,27 +178,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         )}
       </div>
 
-      {/* Category Content Section */}
-      <div className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-left">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Professional {currentCategory.title} Solutions
-            </h2>
-            <div className="prose prose-lg prose-gray mx-auto">
-              <p className="text-gray-600 leading-relaxed">
-                {currentCategory.description
-                  ? `Discover our comprehensive range of ${currentCategory.title.toLowerCase()} solutions designed to meet your business needs. 
-                  Each product is crafted with precision and attention to detail, ensuring professional results that make a lasting impression.`
-                  : `Explore our professional ${currentCategory.title.toLowerCase()} collection with a variety of options to suit different requirements and budgets.`}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Products Grid Section */}
-      <div className="bg-gray-50 pb-12">
+      <div className="bg-gray-50 pt-12 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {products.length > 0 ? (
             <>

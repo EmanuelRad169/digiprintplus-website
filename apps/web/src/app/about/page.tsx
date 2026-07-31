@@ -29,7 +29,7 @@ export default async function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Hero Section */}
-      <div className="relative bg-slate-900 overflow-hidden min-h-[20vh] flex items-center">
+      <section className="relative w-full bg-slate-900 overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] flex items-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -45,37 +45,37 @@ export default async function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/60"></div>
         </div>
 
-        <div className="container mx-auto px-4 pb-14 relative z-10 pt-10">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-12 relative z-10 pt-10 sm:pt-12">
+          <div className="max-w-7xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
               {enhancedData?.title || pageData?.title || "About DigiPrintPlus"}
             </h1>
-            <p className="text-xl md:text-xl text-white/90 leading-relaxed mb-8 max-w-2xl">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed mb-8 max-w-2xl">
               {enhancedData?.subtitle ||
                 pageData?.subtitle ||
                 "Delivering exceptional printing solutions with over 15 years of industry experience and unwavering commitment to quality."}
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
                 href="/quote"
-                className="bg-gradient-to-r from-magenta-500 to-magenta-600 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-magenta-500 to-magenta-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2"
               >
                 Get Your Quote <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/contact"
-                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/20 px-8 py-4 rounded-lg font-semibold transition-all duration-300"
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 inline-flex items-center justify-center"
               >
                 Contact Us
               </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Content */}
       <div className="py-1">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* About Story Section */}
           <div className="grid lg:grid-cols-2 gap-12 items-center py-14">
             <div>
@@ -112,7 +112,7 @@ export default async function AboutPage() {
               )}
 
               {/* Key Values - Dynamic from Sanity */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2">
                 {(
                   enhancedData?.achievements || [
                     { text: "Quality Guaranteed", icon: "checkCircle" },
@@ -157,7 +157,7 @@ export default async function AboutPage() {
           <AboutSanity />
 
           {/* Mission & Vision Section */}
-          <div className="bg-gray-50p-8 lg:p-16">
+          <div className="py-8 lg:py-16">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-8 leading-tight">
                 Our Mission & <span className="text-magenta-500">Values</span>
@@ -229,5 +229,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       pageData?.seo?.metaDescription ||
       "Learn about our commitment to quality printing and exceptional customer service with over 15 years of industry experience.",
+    alternates: {
+      canonical: "/about",
+    },
   };
 }

@@ -77,7 +77,7 @@ export function Footer({
 
   return (
     <footer className="bg-gray-50 text-black">
-      <div className="container py-16">
+      <div className="container px-4 md:px-8 py-12 md:py-16">
         {/* Company Info - Full Width on Mobile */}
         <div className="mb-8 md:mb-12">
           <div className="space-y-5 max-w-md md:max-w-none">
@@ -116,7 +116,7 @@ export function Footer({
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-800 hover:text-white hover:bg-magenta-600 p-2 rounded-full transition-colors"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full text-gray-800 transition-colors hover:bg-magenta-600 hover:text-white"
                       aria-label={`Visit our ${platform} page`}
                     >
                       {getSocialIcon(platform)}

@@ -241,160 +241,194 @@ export default defineType({
         }),
       ],
     }),
+    // Printing specifications — an ARRAY of line items.
+    // A quote request routinely covers more than one product (a new
+    // business ordering cards + letterhead + booklets is one job, not
+    // three). This was a single object, which forced customers to submit
+    // the form once per product and arrived as unrelated requests.
     defineField({
       name: "jobSpecs",
       title: "Printing Specifications",
-      type: "object",
+      type: "array",
       group: "project",
-      options: {
-        collapsible: false,
-      },
-      fields: [
-        defineField({
-          name: "productType",
-          title: "Product Type",
-          type: "string",
-          validation: (Rule) => Rule.required(),
-          options: {
-            list: [
-              "Business Cards",
-              "Flyers/Leaflets",
-              "Brochures",
-              "Posters",
-              "Banners",
-              "Postcards",
-              "Letterheads",
-              "Envelopes",
-              "Labels/Stickers",
-              "Booklets",
-              "Catalogs",
-              "Invitations",
-              "Custom",
-            ],
-          },
-          placeholder: "Select or type product type",
-        }),
-        defineField({
-          name: "quantity",
-          title: "Quantity Needed",
-          type: "string",
-          validation: (Rule) => Rule.required(),
-          placeholder: 'e.g., 1000, 500-1000, or "Large volume"',
-        }),
-        defineField({
-          name: "size",
-          title: "Size/Dimensions",
-          type: "string",
-          placeholder: 'e.g., 8.5" x 11", A4, Custom size',
-        }),
-        defineField({
-          name: "paperType",
-          title: "Paper/Material Type",
-          type: "string",
-          options: {
-            list: [
-              "Standard Paper (80gsm)",
-              "Heavy Paper (120gsm)",
-              "Cardstock (250gsm)",
-              "Glossy Paper",
-              "Matte Paper",
-              "Vinyl",
-              "Canvas",
-              "Fabric",
-              "Other/Custom",
-            ],
-          },
-        }),
-        defineField({
-          name: "printing",
-          title: "Printing Options",
+      validation: (Rule) =>
+        Rule.min(1).error("At least one product is required"),
+      of: [
+        defineArrayMember({
           type: "object",
-          options: {
-            collapsible: true,
-            collapsed: false,
-          },
+          name: "lineItem",
+          title: "Product",
           fields: [
             defineField({
-              name: "colorType",
-              title: "Color Type",
+              name: "productSlug",
+              title: "Catalogue Slug",
+              type: "string",
+              description:
+                "Set automatically when the request came from a product page.",
+              readOnly: true,
+            }),
+            defineField({
+              name: "productType",
+              title: "Product Type",
+              type: "string",
+              validation: (Rule) => Rule.required(),
+              options: {
+                list: [
+                  "Business Cards",
+                  "Flyers/Leaflets",
+                  "Brochures",
+                  "Posters",
+                  "Banners",
+                  "Postcards",
+                  "Letterheads",
+                  "Envelopes",
+                  "Labels/Stickers",
+                  "Booklets",
+                  "Catalogs",
+                  "Invitations",
+                  "Custom",
+                ],
+              },
+              placeholder: "Select or type product type",
+            }),
+            defineField({
+              name: "quantity",
+              title: "Quantity Needed",
+              type: "string",
+              validation: (Rule) => Rule.required(),
+              placeholder: 'e.g., 1000, 500-1000, or "Large volume"',
+            }),
+            defineField({
+              name: "size",
+              title: "Size/Dimensions",
+              type: "string",
+              placeholder: 'e.g., 8.5" x 11", A4, Custom size',
+            }),
+            defineField({
+              name: "paperType",
+              title: "Paper/Material Type",
               type: "string",
               options: {
                 list: [
-                  { title: "Full Color (CMYK)", value: "full-color" },
-                  { title: "Black & White", value: "bw" },
-                  { title: "Spot Colors", value: "spot" },
+                  "Standard Paper (80gsm)",
+                  "Heavy Paper (120gsm)",
+                  "Cardstock (250gsm)",
+                  "Glossy Paper",
+                  "Matte Paper",
+                  "Vinyl",
+                  "Canvas",
+                  "Fabric",
+                  "Other/Custom",
                 ],
-                layout: "radio",
               },
             }),
             defineField({
-              name: "sides",
-              title: "Print Sides",
+              name: "printing",
+              title: "Printing Options",
+              type: "object",
+              options: {
+                collapsible: true,
+                collapsed: false,
+              },
+              fields: [
+                defineField({
+                  name: "colorType",
+                  title: "Color Type",
+                  type: "string",
+                  options: {
+                    list: [
+                      { title: "Full Color (CMYK)", value: "full-color" },
+                      { title: "Black & White", value: "bw" },
+                      { title: "Spot Colors", value: "spot" },
+                    ],
+                    layout: "radio",
+                  },
+                }),
+                defineField({
+                  name: "sides",
+                  title: "Print Sides",
+                  type: "string",
+                  options: {
+                    list: [
+                      { title: "Single Side", value: "single" },
+                      { title: "Double Side", value: "double" },
+                    ],
+                    layout: "radio",
+                  },
+                }),
+              ],
+            }),
+            defineField({
+              name: "finish",
+              title: "Finishing Options",
+              type: "array",
+              of: [{ type: "string" }],
+              options: {
+                list: [
+                  "Glossy Lamination",
+                  "Matte Lamination",
+                  "UV Coating",
+                  "Embossing",
+                  "Foil Stamping",
+                  "Die Cutting",
+                  "Folding",
+                  "Binding",
+                  "Perforation",
+                ],
+              },
+            }),
+            defineField({
+              name: "turnaround",
+              title: "Required Turnaround Time",
+              type: "string",
+              validation: (Rule) => Rule.required(),
+              options: {
+                list: [
+                  { title: "⚡ Rush (1-2 days)", value: "rush" },
+                  { title: "🚀 Standard (3-5 days)", value: "standard" },
+                  { title: "📅 Extended (1-2 weeks)", value: "extended" },
+                  { title: "🗓️ Flexible", value: "flexible" },
+                ],
+              },
+            }),
+            defineField({
+              name: "deliveryMethod",
+              title: "Preferred Delivery",
               type: "string",
               options: {
                 list: [
-                  { title: "Single Side", value: "single" },
-                  { title: "Double Side", value: "double" },
+                  "Pickup",
+                  "Local Delivery",
+                  "Standard Shipping",
+                  "Express Shipping",
+                  "Digital Delivery",
                 ],
-                layout: "radio",
               },
             }),
+            defineField({
+              name: "additionalNotes",
+              title: "Additional Specifications",
+              type: "text",
+              rows: 3,
+              placeholder:
+                "Any special requirements, questions, or additional details...",
+            }),
           ],
-        }),
-        defineField({
-          name: "finish",
-          title: "Finishing Options",
-          type: "array",
-          of: [{ type: "string" }],
-          options: {
-            list: [
-              "Glossy Lamination",
-              "Matte Lamination",
-              "UV Coating",
-              "Embossing",
-              "Foil Stamping",
-              "Die Cutting",
-              "Folding",
-              "Binding",
-              "Perforation",
-            ],
+          preview: {
+            select: {
+              productType: "productType",
+              quantity: "quantity",
+              size: "size",
+            },
+            prepare({ productType, quantity, size }: any) {
+              return {
+                title: productType || "Untitled item",
+                subtitle: [quantity && `Qty ${quantity}`, size]
+                  .filter(Boolean)
+                  .join(" · "),
+              };
+            },
           },
-        }),
-        defineField({
-          name: "turnaround",
-          title: "Required Turnaround Time",
-          type: "string",
-          validation: (Rule) => Rule.required(),
-          options: {
-            list: [
-              { title: "⚡ Rush (1-2 days)", value: "rush" },
-              { title: "🚀 Standard (3-5 days)", value: "standard" },
-              { title: "📅 Extended (1-2 weeks)", value: "extended" },
-              { title: "🗓️ Flexible", value: "flexible" },
-            ],
-          },
-        }),
-        defineField({
-          name: "deliveryMethod",
-          title: "Preferred Delivery",
-          type: "string",
-          options: {
-            list: [
-              "Pickup",
-              "Local Delivery",
-              "Standard Shipping",
-              "Express Shipping",
-              "Digital Delivery",
-            ],
-          },
-        }),
-        defineField({
-          name: "additionalNotes",
-          title: "Additional Specifications",
-          type: "text",
-          rows: 3,
-          placeholder:
-            "Any special requirements, questions, or additional details...",
         }),
       ],
     }),
@@ -681,7 +715,8 @@ export default defineType({
       firstName: "contact.firstName",
       lastName: "contact.lastName",
       company: "contact.company",
-      productType: "jobSpecs.productType",
+      productType: "jobSpecs.0.productType",
+      lineItems: "jobSpecs",
       status: "status",
       priority: "priority",
       amount: "estimate.amount",

@@ -63,6 +63,14 @@ const REQUIRED_ENV_VARS: EnvVar[] = [
     description: "Secret for validating Sanity webhook signatures",
   },
   {
+    name: "SANITY_PREVIEW_SECRET",
+    required: true,
+    description:
+      "Secret gating /api/draft. Must equal SANITY_STUDIO_PREVIEW_SECRET in the Studio. No fallback exists — /api/draft returns 503 without it.",
+    validateFormat: (v) =>
+      v.length >= 24 && v !== "sanity-preview-secret" && !/^your[-_]/i.test(v),
+  },
+  {
     name: "NETLIFY_BUILD_HOOK_URL",
     required: true,
     description: "Netlify build hook URL for triggering rebuilds from Sanity",
