@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@sanity/client";
-import { sendQuoteNotifications } from "@/lib/notifications/quote-emails";
+import { sendQuoteNotifications } from "../../../lib/notifications/quote-emails";
 
 const sanityClient = createClient({
   projectId:

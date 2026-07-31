@@ -8,7 +8,7 @@ import {
   readBasket,
   subscribeToBasket,
   type BasketItem,
-} from "@/lib/quote-basket";
+} from "../lib/quote-basket";
 
 /**
  * Secondary CTA on a product page: collect this product for a multi-product
