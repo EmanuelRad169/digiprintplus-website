@@ -192,7 +192,20 @@ export default function TemplatesPageClient({
 
   const categoryOptions = categories.filter((category, index, self) => {
     const slug = category.slug?.current;
-    if (!slug || slug === "all") return false;
+    if (!slug) return false;
+
+    // This component renders its own "All Templates" control. A category
+    // document literally named "All Templates" (slug "all-templates") therefore
+    // showed up as a second, identical entry directly beneath it. The existing
+    // guard only caught the slug "all", so the real one slipped through.
+    if (slug === "all" || slug === "all-templates") return false;
+
+    // Hide categories that contain nothing. 19 of 27 were empty, and clicking
+    // one just emptied the grid with no explanation.
+    const hasTemplates = templates.some(
+      (template) => template.category?.slug?.current === slug,
+    );
+    if (!hasTemplates) return false;
 
     return self.findIndex((item) => item.slug?.current === slug) === index;
   });
