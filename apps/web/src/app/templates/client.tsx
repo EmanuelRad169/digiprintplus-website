@@ -247,7 +247,9 @@ export default function TemplatesPageClient({
     // with the file left on the supplier's server (externalDownloadUrl). Only
     // the first was handled, so 50 of 61 downloads silently did nothing.
     const sanityUrl = template.downloadFile?.asset?.url;
-    const href = sanityUrl || template.externalDownloadUrl;
+    const href =
+      sanityUrl ||
+      (template as { externalDownloadUrl?: string }).externalDownloadUrl;
     if (!href) return;
 
     try {
@@ -294,11 +296,13 @@ export default function TemplatesPageClient({
     >
       <div className="relative aspect-video overflow-hidden bg-gray-100">
         {template.previewImage?.asset?.url ||
-        template.externalPreviewImageUrl ? (
+        (template as { externalPreviewImageUrl?: string })
+          .externalPreviewImageUrl ? (
           <Image
             src={
               template.previewImage?.asset?.url ||
-              (template.externalPreviewImageUrl as string)
+              ((template as { externalPreviewImageUrl?: string })
+                .externalPreviewImageUrl as string)
             }
             alt={template.previewImage?.alt || template.title}
             fill
