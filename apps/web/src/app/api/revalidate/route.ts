@@ -19,7 +19,11 @@ export async function POST(req: NextRequest) {
   try {
     const { isValidSignature, body } = await parseBody<{
       _type: string;
-      slug?: { current?: string };
+      // A raw webhook sends the document, where slug is an object. A webhook
+      // with a GROQ projection usually flattens it to a string. Accept both so
+      // the route works either way.
+      slug?: { current?: string } | string;
+      categorySlug?: string;
     }>(req, process.env.SANITY_REVALIDATE_SECRET);
 
     // Verify webhook signature
@@ -42,44 +46,83 @@ export async function POST(req: NextRequest) {
     const documentType = body._type;
     const revalidated: string[] = [];
 
+    const slug =
+      typeof body.slug === "string" ? body.slug : body.slug?.current;
+
+    const bump = (path: string) => {
+      if (!isSafePath(path)) return;
+      revalidatePath(path);
+      revalidated.push(path);
+    };
+
     // Revalidate based on document type
     switch (documentType) {
       case "post":
-        // Revalidate blog pages
-        revalidatePath("/blog");
-        revalidated.push("/blog");
-        if (body.slug?.current) {
-          revalidatePath(`/blog/${body.slug.current}`);
-          revalidated.push(`/blog/${body.slug.current}`);
-        }
+        bump("/blog");
+        if (slug) bump(`/blog/${slug}`);
         break;
 
       case "product":
-        // Revalidate product pages
-        revalidatePath("/products");
-        revalidated.push("/products");
-        if (body.slug?.current) {
-          revalidatePath(`/products/${body.slug.current}`);
-          revalidated.push(`/products/${body.slug.current}`);
+        // The product page, the full listing, and the category grid the product
+        // appears in — updating only the product page leaves a stale thumbnail
+        // on every grid that links to it.
+        bump("/products");
+        bump("/");
+        if (slug) bump(`/products/${slug}`);
+        if (body.categorySlug) {
+          bump(`/products/category/${body.categorySlug}`);
         }
+        break;
+
+      case "template":
+        bump("/templates");
+        if (slug) bump(`/templates/${slug}`);
+        break;
+
+      case "productCategory":
+        // Navigation and the homepage carousel are both built from categories,
+        // so this has to invalidate the shared layout as well as the grids.
+        bump("/products");
+        bump("/");
+        if (slug) bump(`/products/category/${slug}`);
+        revalidatePath("/", "layout");
+        revalidated.push("/ (layout - categories)");
+        break;
+
+      case "templateCategory":
+        bump("/templates");
+        break;
+
+      case "finishingPage":
+        bump("/finishing");
+        break;
+
+      case "aboutPage":
+      case "about":
+        bump("/about");
+        break;
+
+      case "homepageSettings":
+      case "heroSlide":
+        bump("/");
+        break;
+
+      case "quoteSettings":
+        bump("/quote");
+        break;
+
+      case "footer":
+        revalidatePath("/", "layout");
+        revalidated.push("/ (layout - footer)");
         break;
 
       case "service":
-        // Revalidate service pages
-        revalidatePath("/services");
-        revalidated.push("/services");
-        if (body.slug?.current) {
-          revalidatePath(`/services/${body.slug.current}`);
-          revalidated.push(`/services/${body.slug.current}`);
-        }
+        bump("/services");
+        if (slug) bump(`/services/${slug}`);
         break;
 
       case "page":
-        // Revalidate dynamic pages
-        if (body.slug?.current) {
-          revalidatePath(`/${body.slug.current}`);
-          revalidated.push(`/${body.slug.current}`);
-        }
+        if (slug) bump(`/${slug}`);
         break;
 
       case "siteSettings":
