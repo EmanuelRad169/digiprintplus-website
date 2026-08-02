@@ -23,8 +23,12 @@ export default defineType({
     }),
     defineField({
       name: 'description',
-      title: 'Description',
-      type: 'text'
+      title: 'Short Description',
+      type: 'text',
+      rows: 2,
+      description:
+        'One short line shown under the category title in the hero and on the category card. Keep it to a single sentence.',
+      validation: Rule => Rule.max(120).warning('Keep this under 120 characters so it stays on one or two lines.')
     }),
     defineField({
       name: 'icon',
@@ -34,11 +38,67 @@ export default defineType({
     }),
     defineField({
       name: 'image',
-      title: 'Category Image',
+      title: 'Category Card Image',
       type: 'image',
+      description:
+        'Square thumbnail used on the Products grid and in the navigation menu.',
       options: {
         hotspot: true
-      }
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string'
+        })
+      ]
+    }),
+    defineField({
+      name: 'heroImage',
+      title: 'Category Hero Image',
+      type: 'image',
+      description:
+        'Wide banner behind the title at the top of the category page. Use a landscape image (about 1920×600). If left empty, the card image is used instead.',
+      options: {
+        hotspot: true
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string'
+        })
+      ]
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'object',
+      options: { collapsible: true, collapsed: true },
+      description:
+        'Optional. Overrides what search engines show. Leave empty to fall back to the title and short description.',
+      fields: [
+        defineField({
+          name: 'metaTitle',
+          title: 'Meta Title',
+          type: 'string',
+          validation: Rule => Rule.max(60).warning('Google truncates titles past ~60 characters.')
+        }),
+        defineField({
+          name: 'metaDescription',
+          title: 'Meta Description',
+          type: 'text',
+          rows: 3,
+          validation: Rule => Rule.max(320).warning('Google truncates descriptions past ~160 characters.')
+        }),
+        defineField({
+          name: 'keywords',
+          title: 'Keywords',
+          type: 'array',
+          of: [{ type: 'string' }],
+          options: { layout: 'tags' }
+        })
+      ]
     }),
     defineField({
       name: 'order',

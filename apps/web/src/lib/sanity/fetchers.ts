@@ -1278,6 +1278,13 @@ export async function getCategoryBySlug(
             },
             alt
           },
+          heroImage {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
           featured,
           order,
           seo {
@@ -1292,6 +1299,13 @@ export async function getCategoryBySlug(
           description,
           icon,
           image {
+            asset->{
+              _id,
+              url
+            },
+            alt
+          },
+          heroImage {
             asset->{
               _id,
               url

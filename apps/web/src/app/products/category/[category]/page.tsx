@@ -101,6 +101,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   const IconComponent = getIconComponent(currentCategory.icon);
 
+  // Hero banner prefers the dedicated landscape image, and falls back to the
+  // square card image so categories without a hero still render an image.
+  const heroImage = currentCategory.heroImage?.asset?.url
+    ? currentCategory.heroImage
+    : currentCategory.image;
+  const heroImageUrl = heroImage?.asset?.url;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb Navigation */}
@@ -130,13 +137,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
       {/* Hero Section with Full-Width Image */}
       <div className="relative">
-        {currentCategory.image?.asset?.url ? (
-          <div className="relative h-96 lg:h-[300px] overflow-hidden">
+        {heroImageUrl ? (
+          <div className="relative h-64 sm:h-80 lg:h-[340px] overflow-hidden">
             <Image
-              src={currentCategory.image.asset.url}
-              alt={currentCategory.image.alt || currentCategory.title}
+              src={heroImageUrl}
+              alt={heroImage?.alt || currentCategory.title}
               fill
-              className="object-cover"
+              sizes="100vw"
+              quality={90}
+              className="object-cover object-center"
               priority
             />
             {/* Overlay */}
@@ -144,11 +153,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             {/* Content */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center text-white max-w-7xl mx-auto px-4">
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
                   {currentCategory.title}
                 </h1>
                 {currentCategory.description && (
-                  <p className="text-xl md:text-2xl text-gray-100 leading-relaxed max-w-3xl mx-auto">
+                  <p className="text-lg md:text-xl text-gray-100 leading-relaxed max-w-2xl mx-auto">
                     {currentCategory.description}
                   </p>
                 )}
@@ -156,19 +165,19 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-br from-magenta-600 to-magenta-800 py-24 lg:py-32">
+          <div className="bg-gradient-to-br from-magenta-600 to-magenta-800 py-16 lg:py-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center text-white max-w-7xl mx-auto">
                 <div className="flex items-center justify-center mb-6">
-                  <div className="w-20 h-20 bg-white bg-opacity-20 rounded-xl flex items-left justify-center backdrop-blur-sm">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white bg-opacity-20 backdrop-blur-sm">
                     <IconComponent className="w-10 h-10 text-white" />
                   </div>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
                   {currentCategory.title}
                 </h1>
                 {currentCategory.description && (
-                  <p className="text-xl md:text-2xl text-gray-100 leading-relaxed max-w-3xl mx-auto">
+                  <p className="text-lg md:text-xl text-gray-100 leading-relaxed max-w-2xl mx-auto">
                     {currentCategory.description}
                   </p>
                 )}
