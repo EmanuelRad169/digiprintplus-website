@@ -138,7 +138,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       {/* Hero Section with Full-Width Image */}
       <div className="relative">
         {heroImageUrl ? (
-          <div className="relative h-64 sm:h-80 lg:h-[340px] overflow-hidden">
+          <div className="relative h-[400px] min-h-[400px] lg:h-[460px] overflow-hidden">
             <Image
               src={heroImageUrl}
               alt={heroImage?.alt || currentCategory.title}
@@ -165,8 +165,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-br from-magenta-600 to-magenta-800 py-16 lg:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex min-h-[400px] items-center bg-gradient-to-br from-magenta-600 to-magenta-800 py-16 lg:min-h-[460px] lg:py-20">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center text-white max-w-7xl mx-auto">
                 <div className="flex items-center justify-center mb-6">
                   <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white bg-opacity-20 backdrop-blur-sm">
