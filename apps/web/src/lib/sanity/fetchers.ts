@@ -76,7 +76,7 @@ export async function getAllTemplateCategories(): Promise<TemplateCategory[]> {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return categories || [];
@@ -144,7 +144,7 @@ export async function getAllTemplates(): Promise<Template[]> {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return templates || [];
@@ -213,7 +213,7 @@ export async function getTemplatesByCategory(
       query,
       { categorySlug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return templates || [];
@@ -282,7 +282,7 @@ export async function getTemplateBySlug(
       query,
       { slug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return template;
@@ -331,7 +331,7 @@ export async function getContactPage(isPreview = false) {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return contactPage;
@@ -385,7 +385,7 @@ export async function getPageBySlug(slug: string, isPreview = false) {
       query,
       { slug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return page;
@@ -553,7 +553,7 @@ export async function getAboutPage(slug: string, isPreview = false) {
       query,
       { slug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return aboutPage;
@@ -637,7 +637,7 @@ export async function getFinishingPage(slug: string, isPreview = false) {
       query,
       { slug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return finishingPage;
@@ -931,7 +931,7 @@ export async function getProductBySlug(slug: string, isPreview = false) {
       query,
       { slug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return product;
@@ -1032,7 +1032,7 @@ export async function getProducts(category?: string, isPreview = false) {
       query,
       { category },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return products;
@@ -1066,7 +1066,7 @@ export async function getProductCategories(isPreview = false) {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return categories;
@@ -1144,7 +1144,7 @@ export async function getFeaturedProducts(isPreview = false) {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return products;
@@ -1249,7 +1249,7 @@ export async function getProductsByCategory(
       query,
       { categorySlug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return products;
@@ -1324,7 +1324,7 @@ export async function getCategoryBySlug(
       query,
       { categorySlug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return category;
@@ -1403,7 +1403,7 @@ export async function getNavigationMenu(isPreview = false) {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return navigationMenu;
@@ -1545,7 +1545,7 @@ export async function getAllBlogPosts(isPreview = false): Promise<BlogPost[]> {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return posts || [];
@@ -1668,7 +1668,7 @@ export async function getBlogPostBySlug(
       query,
       { slug },
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return post;
@@ -1755,7 +1755,7 @@ export async function getFeaturedBlogPosts(
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return posts || [];
@@ -1775,7 +1775,7 @@ export async function getAllBlogSlugs(): Promise<{ slug: string }[]> {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return slugs || [];
@@ -1807,7 +1807,7 @@ export async function getBlogCategories(
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return categories || [];
@@ -1863,7 +1863,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       query,
       {},
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 60, tags: ["sanity"] },
       },
     );
     return settings;

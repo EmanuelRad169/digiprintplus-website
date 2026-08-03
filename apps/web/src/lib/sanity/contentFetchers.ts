@@ -70,7 +70,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -127,7 +127,7 @@ export async function getServices(): Promise<Service[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -159,7 +159,7 @@ export async function getFeaturedServices(): Promise<Service[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -191,7 +191,7 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
     query,
     { slug },
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -248,7 +248,7 @@ export async function getAboutSections(): Promise<AboutSection[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -279,7 +279,7 @@ export async function getAboutSectionByType(
     query,
     { sectionType },
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -319,7 +319,7 @@ export async function getContactInfo(): Promise<ContactInfo[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -344,7 +344,7 @@ export async function getMainContactInfo(): Promise<ContactInfo[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -386,7 +386,7 @@ export async function getFAQItems(): Promise<FAQItem[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -412,7 +412,7 @@ export async function getPopularFAQs(): Promise<FAQItem[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -438,7 +438,7 @@ export async function getFAQsByCategory(category: string): Promise<FAQItem[]> {
     query,
     { category },
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -481,7 +481,7 @@ export async function getCTASections(): Promise<CTASection[]> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -506,7 +506,7 @@ export async function getCTASectionById(
     query,
     { sectionId },
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -570,7 +570,7 @@ export async function getQuoteSettings(): Promise<QuoteSettings | null> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -603,7 +603,7 @@ export async function getPageSettings(
     query,
     { pageId },
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -670,7 +670,7 @@ export async function getAboutPageData(): Promise<AboutPageData | null> {
     query,
     {},
     {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["sanity"] },
     },
   );
 }
@@ -715,7 +715,7 @@ export async function getProductForQuote(
   `;
 
   try {
-    return await client.fetch(query, { slug }, { next: { revalidate: 60 } });
+    return await client.fetch(query, { slug }, { next: { revalidate: 60, tags: ["sanity"] } });
   } catch (error) {
     console.error("Error fetching product for quote:", error);
     return null;

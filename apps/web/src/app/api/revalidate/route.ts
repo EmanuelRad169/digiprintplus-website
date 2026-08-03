@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
@@ -54,6 +54,13 @@ export async function POST(req: NextRequest) {
       revalidatePath(path);
       revalidated.push(path);
     };
+
+    // Every Sanity fetch is tagged "sanity". revalidatePath alone only drops
+    // the rendered route, not the cached fetch responses behind it, so an
+    // edit could re-render a page from stale data. Dropping the tag first
+    // guarantees the re-render actually re-queries Sanity.
+    revalidateTag("sanity");
+    revalidated.push("tag:sanity");
 
     // Revalidate based on document type
     switch (documentType) {
