@@ -1,36 +1,75 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "target": "ES2020",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": false,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
       "@/*": [
-        "./*"
+        "*"
       ],
       "@/components/*": [
-        "./components/*"
+        "components/*"
       ],
       "@/lib/*": [
-        "./lib/*"
+        "lib/*"
       ],
       "@/types/*": [
-        "./types/*"
+        "types/*"
       ],
       "@/hooks/*": [
-        "./hooks/*"
+        "hooks/*"
       ],
       "@/app/*": [
-        "./app/*"
+        "app/*"
       ],
       "@/utils/*": [
-        "./lib/utils/*"
+        "lib/utils/*",
+        "utils/*"
+      ],
+      "@workspace/ui": [
+        "../../packages/ui"
+      ],
+      "@workspace/ui/*": [
+        "../../packages/ui/*"
+      ],
+      "@workspace/utils": [
+        "../../packages/utils/src"
+      ],
+      "@workspace/hooks": [
+        "../../packages/hooks/src"
+      ],
+      "@workspace/types": [
+        "../../packages/types/src"
       ]
     },
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "ignoreDeprecations": "5.0"
   },
   "include": [
     "next-env.d.ts",
@@ -42,5 +81,19 @@
     "node_modules",
     ".next",
     "dist"
+  ],
+  "references": [
+    {
+      "path": "../../packages/ui"
+    },
+    {
+      "path": "../../packages/utils"
+    },
+    {
+      "path": "../../packages/hooks"
+    },
+    {
+      "path": "../../packages/types"
+    }
   ]
 }
