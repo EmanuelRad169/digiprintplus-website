@@ -6,6 +6,7 @@ import {
 } from "../../../lib/sanity/contentFetchers";
 import { PortableTextRenderer } from "../../../components/portable-text";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 
 export const revalidate = 60;
@@ -55,17 +56,22 @@ export default async function ServicePage({ params }: ServicePageProps) {
   return (
     <div className="w-full min-h-screen bg-gray-50 overflow-x-clip">
       {/* Hero Section */}
-      <section className="w-full relative bg-slate-900 overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] flex items-center">
+      <section className="w-full relative bg-slate-800 overflow-hidden min-h-[400px] flex items-center">
         {/* Background Image */}
         {service.image?.asset?.url && (
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url('${service.image.asset.url}')`,
-            }}
-          >
-            {/* Dark Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/70"></div>
+          <div className="absolute inset-0">
+            <Image
+              src={service.image.asset.url}
+              alt={service.image.alt || service.title}
+              fill
+              sizes="100vw"
+              quality={90}
+              className="object-cover object-center"
+              priority
+            />
+            {/* Scrim — dark enough for white text on the left, light enough
+                that the photo still reads across the rest of the band. */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20"></div>
           </div>
         )}
 

@@ -16,7 +16,7 @@ export default async function ServicesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative bg-slate-900 overflow-hidden min-h-[20vh] flex items-center">
+      <div className="relative bg-slate-800 overflow-hidden min-h-[400px] flex items-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -25,8 +25,9 @@ export default async function ServicesPage() {
               "url('https://images.pexels.com/photos/5816293/pexels-photo-5816293.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
           }}
         >
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+          {/* Scrim — dark enough for white text on the left, light enough
+              that the photo still reads across the rest of the band. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20"></div>
         </div>
 
         <div className="container mx-auto px-4 py-14 relative z-10">
