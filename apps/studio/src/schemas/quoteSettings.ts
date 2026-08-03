@@ -12,6 +12,69 @@ export default defineType({
       initialValue: 'Request a Quote'
     }),
     defineField({
+      name: 'hero',
+      title: 'Page Heading',
+      type: 'object',
+      description: 'The heading and intro at the top of the quote page.',
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        {
+          name: 'title',
+          type: 'string',
+          title: 'Heading',
+          description: 'First part of the heading, shown in dark text.',
+          initialValue: 'Get Your'
+        },
+        {
+          name: 'titleAccent',
+          type: 'string',
+          title: 'Heading Accent',
+          description: 'Second part of the heading, shown in magenta.',
+          initialValue: 'Free Quote'
+        },
+        {
+          name: 'subtitle',
+          type: 'text',
+          rows: 2,
+          title: 'Intro Line',
+          initialValue:
+            "Tell us about your project and we'll provide a detailed quote within 24 hours"
+        },
+        {
+          name: 'productEyebrow',
+          type: 'string',
+          title: 'Product Quote Label',
+          description:
+            'Small label above the heading when someone arrives from a product page.',
+          initialValue: 'Product Quote'
+        },
+        {
+          name: 'productTitlePrefix',
+          type: 'string',
+          title: 'Product Heading Prefix',
+          description: 'The product name is appended to this.',
+          initialValue: 'Request a Quote for'
+        },
+        {
+          name: 'productSubtitleSingle',
+          type: 'text',
+          rows: 2,
+          title: 'Product Intro (one product)',
+          initialValue:
+            "We'll price this exact product for you and reply within 24 hours"
+        },
+        {
+          name: 'productSubtitleMultiple',
+          type: 'text',
+          rows: 2,
+          title: 'Product Intro (several products)',
+          description: 'Use {count} where the number of products should appear.',
+          initialValue:
+            "We'll price all {count} products together and reply within 24 hours"
+        }
+      ]
+    }),
+    defineField({
       name: 'jobSpecsStep',
       title: 'Job Specifications Step',
       type: 'object',
@@ -32,6 +95,15 @@ export default defineType({
       fields: [
         { name: 'title', type: 'string', initialValue: 'Contact Information' },
         { name: 'description', type: 'string', initialValue: 'How can we reach you?' },
+      ]
+    }),
+    defineField({
+      name: 'fileUploadStep',
+      title: 'File Upload Step',
+      type: 'object',
+      fields: [
+        { name: 'title', type: 'string', initialValue: 'File Upload' },
+        { name: 'description', type: 'string', initialValue: 'Upload your files' },
       ]
     }),
     defineField({

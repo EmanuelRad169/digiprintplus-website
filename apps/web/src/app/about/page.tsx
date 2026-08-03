@@ -38,6 +38,22 @@ const VALUE_COLORS = {
   purple: { wrap: "bg-purple-100", icon: "text-purple-600" },
 } as const;
 
+const FALLBACK = {
+  heroButtons: {
+    primaryLabel: "Get Your Quote",
+    primaryHref: "/quote",
+    secondaryLabel: "Contact Us",
+    secondaryHref: "/contact",
+  },
+  storyHeading: "Your Trusted Printing Partner",
+  valuesSection: {
+    heading: "Our Mission &",
+    headingAccent: "Values",
+    intro:
+      "Driving excellence in every project while building lasting relationships with our clients",
+  },
+};
+
 const DEFAULT_VALUES = [
   {
     title: "Customer First",
@@ -68,6 +84,16 @@ export default async function AboutPage() {
     getAboutPage("about", isEnabled),
     getAboutPageData(),
   ]);
+
+  const heroButtons = {
+    ...FALLBACK.heroButtons,
+    ...(enhancedData?.heroButtons || {}),
+  };
+  const storyHeading = enhancedData?.storyHeading || FALLBACK.storyHeading;
+  const valuesSection = {
+    ...FALLBACK.valuesSection,
+    ...(enhancedData?.valuesSection || {}),
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -101,16 +127,16 @@ export default async function AboutPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
-                href="/quote"
+                href={heroButtons.primaryHref}
                 className="w-full sm:w-auto bg-gradient-to-r from-magenta-500 to-magenta-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2"
               >
-                Get Your Quote <ArrowRight className="w-4 h-4" />
+                {heroButtons.primaryLabel} <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/contact"
+                href={heroButtons.secondaryHref}
                 className="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/20 px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 inline-flex items-center justify-center"
               >
-                Contact Us
+                {heroButtons.secondaryLabel}
               </Link>
             </div>
           </div>
@@ -140,7 +166,7 @@ export default async function AboutPage() {
                 );
               })()}
               <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-gray-900">
-                Your Trusted Printing Partner
+                {storyHeading}
               </h2>
 
               {/* Dynamic content from Sanity */}
@@ -221,11 +247,13 @@ export default async function AboutPage() {
           <div className="py-8 lg:py-16">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-8 leading-tight">
-                Our Mission & <span className="text-magenta-500">Values</span>
+                {valuesSection.heading}{" "}
+                <span className="text-magenta-500">
+                  {valuesSection.headingAccent}
+                </span>
               </h2>
               <p className="text-gray-600 text-lg max-w-5xl mx-auto">
-                Driving excellence in every project while building lasting
-                relationships with our clients
+                {valuesSection.intro}
               </p>
             </div>
 

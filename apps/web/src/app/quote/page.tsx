@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
@@ -18,7 +18,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   getProductForQuote,
+  getQuoteSettings,
   QuoteProductContext,
+  QuoteSettings,
 } from "../../lib/sanity/contentFetchers";
 import {
   readBasket,
@@ -64,32 +66,51 @@ const ReviewStep = dynamic(
 
 const FORM_NAME = NETLIFY_FORMS.QUOTE;
 
-const steps = [
-  {
-    id: 1,
-    name: "Contact Info",
-    icon: User,
-    description: "Your contact details",
-  },
-  {
-    id: 2,
-    name: "Job Specifications",
-    icon: FileText,
-    description: "Project requirements",
-  },
-  {
-    id: 3,
-    name: "File Upload",
-    icon: Upload,
-    description: "Upload your files",
-  },
-  {
-    id: 4,
-    name: "Review & Submit",
-    icon: Send,
-    description: "Review and submit",
-  },
+// Copy of last resort. Every one of these strings is editable in the Studio
+// under Quote Form Settings; these values only apply if that document is
+// missing or has not loaded yet.
+const FALLBACK_STEPS = [
+  { name: "Contact Info", description: "Your contact details" },
+  { name: "Job Specifications", description: "Project requirements" },
+  { name: "File Upload", description: "Upload your files" },
+  { name: "Review & Submit", description: "Review and submit" },
 ];
+
+const FALLBACK_HERO = {
+  title: "Get Your",
+  titleAccent: "Free Quote",
+  subtitle:
+    "Tell us about your project and we'll provide a detailed quote within 24 hours",
+  productEyebrow: "Product Quote",
+  productTitlePrefix: "Request a Quote for",
+  productSubtitleSingle:
+    "We'll price this exact product for you and reply within 24 hours",
+  productSubtitleMultiple:
+    "We'll price all {count} products together and reply within 24 hours",
+};
+
+const FALLBACK_BUTTONS = {
+  next: "Next",
+  previous: "Previous",
+  submit: "Submit Quote Request",
+};
+
+const STEP_ICONS = [User, FileText, Upload, Send];
+
+function buildSteps(settings: QuoteSettings | null) {
+  const fromSettings = [
+    settings?.contactStep,
+    settings?.jobSpecsStep,
+    settings?.fileUploadStep,
+    settings?.reviewStep,
+  ];
+  return FALLBACK_STEPS.map((fallback, i) => ({
+    id: i + 1,
+    icon: STEP_ICONS[i],
+    name: fromSettings[i]?.title || fallback.name,
+    description: fromSettings[i]?.description || fallback.description,
+  }));
+}
 
 export default function QuotePage() {
   const searchParams = useSearchParams();
@@ -103,6 +124,30 @@ export default function QuotePage() {
   const [productLoading, setProductLoading] = useState(false);
   const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
   const formTopRef = useRef<HTMLDivElement>(null);
+  const [quoteSettings, setQuoteSettings] = useState<QuoteSettings | null>(
+    null,
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    getQuoteSettings()
+      .then((settings) => {
+        if (!cancelled) setQuoteSettings(settings);
+      })
+      .catch((err) => {
+        console.error("Failed to load quote settings:", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const steps = useMemo(() => buildSteps(quoteSettings), [quoteSettings]);
+  const buttonText = {
+    ...FALLBACK_BUTTONS,
+    ...(quoteSettings?.buttonText || {}),
+  };
+  const heroCopy = { ...FALLBACK_HERO, ...(quoteSettings?.hero || {}) };
 
   const [formData, setFormData] = useState({
     // Contact Info
@@ -516,27 +561,28 @@ export default function QuotePage() {
           {lockedProduct ? (
             <>
               <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-magenta-600">
-                Product Quote
+                {heroCopy.productEyebrow}
               </p>
               <h1 className="mb-4 text-4xl font-bold text-gray-900">
-                Request a Quote for{" "}
+                {heroCopy.productTitlePrefix}{" "}
                 <span className="text-magenta-600">{lockedProduct.title}</span>
               </h1>
               <p className="text-xl text-gray-600">
                 {basketItems.length > 1
-                  ? `We'll price all ${basketItems.length} products together and reply within 24 hours`
-                  : "We'll price this exact product for you and reply within 24 hours"}
+                  ? heroCopy.productSubtitleMultiple.replace(
+                      "{count}",
+                      String(basketItems.length),
+                    )
+                  : heroCopy.productSubtitleSingle}
               </p>
             </>
           ) : (
             <>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Get Your <span className="text-magenta-600">Free Quote</span>
+                {heroCopy.title}{" "}
+                <span className="text-magenta-600">{heroCopy.titleAccent}</span>
               </h1>
-              <p className="text-xl text-gray-600">
-                Tell us about your project and we&#39;ll provide a detailed
-                quote within 24 hours
-              </p>
+              <p className="text-xl text-gray-600">{heroCopy.subtitle}</p>
             </>
           )}
         </motion.div>
@@ -670,7 +716,7 @@ export default function QuotePage() {
                 }`}
               >
                 <ChevronLeft className="w-5 h-5 mr-2" />
-                Previous
+                {buttonText.previous}
               </button>
 
               {currentStep < steps.length ? (
@@ -679,7 +725,7 @@ export default function QuotePage() {
                   onClick={nextStep}
                   className="flex items-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200"
                 >
-                  Next
+                  {buttonText.next}
                   <ChevronRight className="w-5 h-5 ml-2" />
                 </button>
               ) : (
@@ -688,7 +734,7 @@ export default function QuotePage() {
                   disabled={isSubmitting}
                   className="flex items-center px-6 py-3 bg-magenta-600 text-white rounded-lg font-medium hover:bg-magenta-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Quote Request"}
+                  {isSubmitting ? "Submitting..." : buttonText.submit}
                   <Send className="w-5 h-5 ml-2" />
                 </button>
               )}

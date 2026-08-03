@@ -528,6 +528,19 @@ export interface QuoteSettings {
     title: string;
     description: string;
   };
+  hero?: {
+    title?: string;
+    titleAccent?: string;
+    subtitle?: string;
+    productEyebrow?: string;
+    productTitlePrefix?: string;
+    productSubtitleSingle?: string;
+    productSubtitleMultiple?: string;
+  };
+  fileUploadStep: {
+    title: string;
+    description: string;
+  };
   reviewStep: {
     title: string;
     description: string;
@@ -559,8 +572,10 @@ export async function getQuoteSettings(): Promise<QuoteSettings | null> {
     *[_type == "quoteSettings" && !(_id in path('drafts.**'))][0] {
       _id,
       formTitle,
+      hero,
       jobSpecsStep,
       contactStep,
+      fileUploadStep,
       reviewStep,
       labels,
       buttonText
@@ -614,6 +629,18 @@ export interface AboutPageData {
   title: string;
   subtitle?: string;
   heroImage?: any;
+  heroButtons?: {
+    primaryLabel?: string;
+    primaryHref?: string;
+    secondaryLabel?: string;
+    secondaryHref?: string;
+  };
+  storyHeading?: string;
+  valuesSection?: {
+    heading?: string;
+    headingAccent?: string;
+    intro?: string;
+  };
   content?: any[];
   achievements?: Array<{
     text: string;
@@ -651,6 +678,9 @@ export async function getAboutPageData(): Promise<AboutPageData | null> {
         },
         alt
       },
+      heroButtons,
+      storyHeading,
+      valuesSection,
       content,
       achievements,
       teamImage {
@@ -720,4 +750,50 @@ export async function getProductForQuote(
     console.error("Error fetching product for quote:", error);
     return null;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Contact page copy
+// ---------------------------------------------------------------------------
+// Only the page's own labels and copy. The phone/email/address/opening hours
+// themselves come from Site Settings, since the footer shares them.
+
+export interface ContactPageData {
+  _id: string;
+  title?: string;
+  subtitle?: string;
+  infoHeading?: string;
+  infoBody?: string;
+  labels?: {
+    phone?: string;
+    phoneNote?: string;
+    email?: string;
+    emailNote?: string;
+    address?: string;
+    businessHours?: string;
+  };
+  formHeading?: string;
+  formIntro?: string;
+  seo?: { metaTitle?: string; metaDescription?: string };
+}
+
+export async function getContactPage(): Promise<ContactPageData | null> {
+  const query = `
+    *[_type == "contactPage" && !(_id in path('drafts.**'))][0] {
+      _id,
+      title,
+      subtitle,
+      infoHeading,
+      infoBody,
+      labels,
+      formHeading,
+      formIntro,
+      seo
+    }
+  `;
+  return await client.fetch(
+    query,
+    {},
+    { next: { revalidate: 60, tags: ["sanity"] } },
+  );
 }

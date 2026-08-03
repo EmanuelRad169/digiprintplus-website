@@ -20,6 +20,7 @@ import pageSettings from './pageSettings'
 import aboutPage from './aboutPage'
 import integrationSettings from './integrationSettings'
 import finishingPage from './finishingPage'
+import contactPage from './contactPage'
 import post from './post'
 import author from './author'
 import category from './category'
@@ -48,6 +49,7 @@ export const schemaTypes = [
   aboutPage,
   integrationSettings,
   finishingPage,
+  contactPage,
   homepageSettings,
   faqCategory,
   

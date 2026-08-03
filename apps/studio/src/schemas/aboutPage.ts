@@ -26,11 +26,61 @@ export default defineType({
       }
     }),
     defineField({
+      name: 'heroButtons',
+      title: 'Hero Buttons',
+      type: 'object',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        { name: 'primaryLabel', type: 'string', title: 'Primary Button Label', initialValue: 'Get Your Quote' },
+        { name: 'primaryHref', type: 'string', title: 'Primary Button Link', initialValue: '/quote' },
+        { name: 'secondaryLabel', type: 'string', title: 'Secondary Button Label', initialValue: 'Contact Us' },
+        { name: 'secondaryHref', type: 'string', title: 'Secondary Button Link', initialValue: '/contact' }
+      ]
+    }),
+    defineField({
+      name: 'storyHeading',
+      title: 'Story Heading',
+      type: 'string',
+      description: 'Heading above the main content, beside the team photo.',
+      initialValue: 'Your Trusted Printing Partner'
+    }),
+    defineField({
       name: 'content',
       title: 'Main Content',
       type: 'array',
       of: [{ type: 'block' }],
       description: 'Main story content about the company'
+    }),
+    defineField({
+      name: 'valuesSection',
+      title: 'Values Section Heading',
+      type: 'object',
+      description: 'The heading and intro above the Company Values cards below.',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        {
+          name: 'heading',
+          type: 'string',
+          title: 'Heading',
+          description: 'First part, shown in dark text.',
+          initialValue: 'Our Mission &'
+        },
+        {
+          name: 'headingAccent',
+          type: 'string',
+          title: 'Heading Accent',
+          description: 'Second part, shown in magenta.',
+          initialValue: 'Values'
+        },
+        {
+          name: 'intro',
+          type: 'text',
+          rows: 2,
+          title: 'Intro Line',
+          initialValue:
+            'Driving excellence in every project while building lasting relationships with our clients'
+        }
+      ]
     }),
     defineField({
       name: 'achievements',

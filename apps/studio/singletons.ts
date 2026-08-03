@@ -7,6 +7,7 @@ import {
   PlugIcon,
   InfoOutlineIcon,
   SparklesIcon,
+  EnvelopeIcon,
 } from "@sanity/icons";
 import type { StructureBuilder } from "sanity/desk";
 
@@ -64,6 +65,12 @@ export const SINGLETONS = [
     id: "RZx0J9OO64IBrJbakgmQYf",
     title: "Finishing Page",
     icon: SparklesIcon,
+  },
+  {
+    type: "contactPage",
+    id: "contact-page",
+    title: "Contact Page",
+    icon: EnvelopeIcon,
   },
 ] as const;
 

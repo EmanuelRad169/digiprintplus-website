@@ -1,8 +1,31 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getPageBySlug, getSiteSettings } from "../../lib/sanity/fetchers";
+import { getContactPage } from "../../lib/sanity/contentFetchers";
 import { PortableTextRenderer } from "../../components/portable-text";
 import { draftMode } from "next/headers";
+
+// Every visible string on this page is editable in the Studio under
+// Contact Page. These apply only if that document is missing.
+const FALLBACK = {
+  title: "Contact Us",
+  subtitle:
+    "Get in touch with our team of experts. We're here to help bring your vision to life.",
+  infoHeading: "Get in Touch",
+  infoBody:
+    "Whether you need business cards, brochures, banners, or custom printing solutions, we're here to bring your vision to life.",
+  labels: {
+    phone: "Phone",
+    phoneNote: "Mon-Fri 8AM-6PM EST",
+    email: "Email",
+    emailNote: "We respond within 24 hours",
+    address: "Address",
+    businessHours: "Business Hours",
+  },
+  formHeading: "Send us a message",
+  formIntro:
+    "Fill out the form below and we'll get back to you within 24 hours.",
+};
 
 // Dynamic import for contact form (286 lines)
 const ContactForm = dynamic(
@@ -21,12 +44,16 @@ export const revalidate = 60;
 
 export default async function ContactPage() {
   const { isEnabled } = await draftMode();
-  const [pageData, siteSettings] = await Promise.all([
+  const [pageData, siteSettings, contactPage] = await Promise.all([
     getPageBySlug("contact", isEnabled),
     getSiteSettings(),
+    getContactPage(),
   ]);
 
   const contactInfo = siteSettings?.contact || {};
+  const copy = { ...FALLBACK, ...(contactPage || {}) };
+  const labels = { ...FALLBACK.labels, ...(contactPage?.labels || {}) };
+  const businessHours = contactInfo.businessHours || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,11 +63,10 @@ export default async function ContactPage() {
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-              {pageData?.title || "Contact Us"}
+              {copy.title}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-7xl mx-auto">
-              {pageData?.subtitle ||
-                "Get in touch with our team of experts. We're here to help bring your vision to life."}
+{copy.subtitle}
             </p>
           </div>
         </div>
@@ -57,13 +83,17 @@ export default async function ContactPage() {
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                      Get in Touch
+                      {copy.infoHeading}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      Whether you need business cards, brochures, banners, or
-                      custom printing solutions, we&apos;re here to bring your
-                      vision to life.
-                    </p>
+                    {pageData?.content ? (
+                      <div className="prose prose-gray max-w-none text-gray-600">
+                        <PortableTextRenderer content={pageData.content} />
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 leading-relaxed">
+                        {copy.infoBody}
+                      </p>
+                    )}
                   </div>
 
                   {/* Contact Methods */}
@@ -86,10 +116,10 @@ export default async function ContactPage() {
                           </svg>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-gray-900">Phone</h4>
+                          <h4 className="font-semibold text-gray-900">{labels.phone}</h4>
                           <p className="text-gray-600">{contactInfo.phone}</p>
                           <p className="text-sm text-gray-500">
-                            Mon-Fri 8AM-6PM EST
+                            {labels.phoneNote}
                           </p>
                         </div>
                       </div>
@@ -113,10 +143,10 @@ export default async function ContactPage() {
                           </svg>
                         </div>
                         <div>
-                          <h4 className="font-semibold text-gray-900">Email</h4>
+                          <h4 className="font-semibold text-gray-900">{labels.email}</h4>
                           <p className="text-gray-600">{contactInfo.email}</p>
                           <p className="text-sm text-gray-500">
-                            We respond within 24 hours
+                            {labels.emailNote}
                           </p>
                         </div>
                       </div>
@@ -147,7 +177,7 @@ export default async function ContactPage() {
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">
-                            Address
+                            {labels.address}
                           </h4>
                           <div className="text-gray-600 whitespace-pre-line">
                             {contactInfo.address}
@@ -158,16 +188,29 @@ export default async function ContactPage() {
                   </div>
 
                   {/* Business Hours */}
-                  {pageData?.businessHours && (
+                  {businessHours.length > 0 && (
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-3">
-                        Business Hours
+                        {labels.businessHours}
                       </h4>
-                      <div className="prose prose-gray prose-sm max-w-none">
-                        <PortableTextRenderer
-                          content={pageData.businessHours}
-                        />
-                      </div>
+                      <dl className="space-y-1.5 text-sm">
+                        {businessHours.map(
+                          (
+                            entry: { day?: string; hours?: string },
+                            index: number,
+                          ) => (
+                            <div
+                              key={index}
+                              className="flex justify-between gap-4"
+                            >
+                              <dt className="text-gray-600">{entry.day}</dt>
+                              <dd className="font-medium text-gray-900">
+                                {entry.hours}
+                              </dd>
+                            </div>
+                          ),
+                        )}
+                      </dl>
                     </div>
                   )}
                 </div>
@@ -177,12 +220,9 @@ export default async function ContactPage() {
               <div className="lg:col-span-2 p-6 sm:p-8 lg:p-12">
                 <div className="mb-8">
                   <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                    Send us a message
+                    {copy.formHeading}
                   </h2>
-                  <p className="text-gray-600">
-                    Fill out the form below and we&apos;ll get back to you
-                    within 24 hours.
-                  </p>
+                  <p className="text-gray-600">{copy.formIntro}</p>
                 </div>
                 <ContactForm />
               </div>
@@ -196,11 +236,18 @@ export default async function ContactPage() {
 
 // Generate metadata from Sanity content
 export async function generateMetadata(): Promise<Metadata> {
-  const pageData = await getPageBySlug("contact");
+  const [pageData, contactPage] = await Promise.all([
+    getPageBySlug("contact"),
+    getContactPage(),
+  ]);
 
   return {
-    title: pageData?.seo?.metaTitle || "Contact DigiPrintPlus - Get in Touch",
+    title:
+      contactPage?.seo?.metaTitle ||
+      pageData?.seo?.metaTitle ||
+      "Contact DigiPrintPlus - Get in Touch",
     description:
+      contactPage?.seo?.metaDescription ||
       pageData?.seo?.metaDescription ||
       "Contact us for quotes, questions, or to discuss your printing needs.",
     alternates: {
