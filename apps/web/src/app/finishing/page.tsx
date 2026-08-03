@@ -152,7 +152,7 @@ export default async function FinishingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative w-full bg-slate-900 overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] flex items-center">
+      <section className="relative w-full bg-slate-800 overflow-hidden min-h-[400px] flex items-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -162,17 +162,18 @@ export default async function FinishingPage() {
               : "url('https://images.pexels.com/photos/5816293/pexels-photo-5816293.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
           }}
         >
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+          {/* Scrim — dark enough for white text on the left, light enough
+              that the photo still reads across the rest of the band. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20"></div>
         </div>
 
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 relative z-10">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-12 relative z-10 pt-10 sm:pt-12">
           <div className="max-w-7xl">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
               {page.title}
             </h1>
             {page.heroText ? (
-              <div className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed mb-8">
+              <div className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed mb-8 max-w-2xl">
                 <PortableText
                   value={page.heroText}
                   components={{
@@ -204,7 +205,7 @@ export default async function FinishingPage() {
                 />
               </div>
             ) : (
-              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed mb-8 max-w-2xl">
                 Transform your printed materials with our comprehensive
                 finishing services. From binding and lamination to die-cutting
                 and foil stamping, we deliver professional results that make
@@ -214,7 +215,7 @@ export default async function FinishingPage() {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
                 href="/quote"
-                className="w-full sm:w-auto bg-gradient-to-r from-[#ea088c] to-pink-500 hover:from-pink-600 hover:to-[#ea088c] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-[#ea088c]/20 hover:shadow-[#ea088c]/30 inline-flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-magenta-500 to-magenta-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2"
               >
                 Request a Quote <span className="ml-1">→</span>
               </Link>
