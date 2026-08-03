@@ -11,10 +11,7 @@ import {
 import { SanityHeroImage } from "../ui/sanity-image";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
-import {
-  getHeroSlides,
-  type HeroSlide,
-} from "../../lib/sanity/contentFetchers";
+import type { HeroSlide } from "../../lib/sanity/contentFetchers";
 
 // Fallback slides for when Sanity data is not available
 const fallbackSlides: HeroSlide[] = [
@@ -67,6 +64,13 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
     setLoading(true);
     async function loadSlides() {
       try {
+        // Loaded on demand rather than imported at module scope: a static
+        // import pulls @sanity/client (and get-it, and rxjs) into the initial
+        // client bundle on every page that renders this, where it costs seconds
+        // of script evaluation. This path usually never runs.
+        const { getHeroSlides } = await import(
+          "../../lib/sanity/contentFetchers"
+        );
         const sanitySlides = await getHeroSlides();
         if (sanitySlides && sanitySlides.length > 0) {
           setSlides(sanitySlides);

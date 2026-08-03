@@ -16,8 +16,11 @@ import {
   Printer,
   Clock,
 } from "lucide-react";
-import { type Footer as FooterType, DEFAULT_FOOTER } from "@/lib/sanity/footer";
-import { urlForImage } from "@/lib/sanity/settings";
+import {
+  type Footer as FooterType,
+  DEFAULT_FOOTER,
+} from "@/lib/sanity/footer-defaults";
+import { urlForImage } from "@/lib/sanity/image-url";
 import type { SiteSettings } from "@/types/siteSettings";
 
 interface FooterProps {

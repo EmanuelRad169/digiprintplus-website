@@ -1,56 +1,34 @@
 "use client";
 
-import { VisualEditing as SanityVisualEditing } from "@sanity/visual-editing/react";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+
+/**
+ * Sanity's visual editing overlay, loaded only for editors.
+ *
+ * This used to `import { VisualEditing } from "@sanity/visual-editing/react"`
+ * at module scope. The component lives in the root layout, so that static
+ * import put the whole overlay — @sanity/visual-editing, @sanity/ui, the
+ * client mutation API and lodash — into the shared layout chunk: 361 KB that
+ * every visitor downloaded and spent ~2.8s evaluating on the main thread,
+ * to render nothing at all unless a draft-mode cookie was present.
+ *
+ * next/dynamic defers the import to render time, and this only renders in
+ * draft mode, so ordinary visitors never fetch it.
+ */
+const SanityVisualEditing = dynamic(
+  () => import("@sanity/visual-editing/react").then((m) => m.VisualEditing),
+  { ssr: false },
+);
 
 export function VisualEditing() {
   const [isDraftMode, setIsDraftMode] = useState(false);
 
   useEffect(() => {
-    // Only enable visual editing if explicitly in draft mode via the API route
-    const hasBypassCookie = document.cookie.includes("__prerender_bypass");
-
-    console.log("🎯 Visual editing check:", {
-      hasBypassCookie,
-      cookies: document.cookie.includes("__prerender_bypass")
-        ? "Draft mode cookie present"
-        : "No draft mode cookie",
-      url: window.location.href,
-    });
-
-    setIsDraftMode(hasBypassCookie);
-
-    if (hasBypassCookie) {
-      console.log("✅ Visual editing component activated (draft mode enabled)");
-      // Add a visual indicator in development
-      if (process.env.NODE_ENV === "development") {
-        const indicator = document.createElement("div");
-        indicator.style.cssText = `
-          position: fixed;
-          top: 10px;
-          right: 10px;
-          background: #2196F3;
-          color: white;
-          padding: 8px 12px;
-          border-radius: 4px;
-          font-family: monospace;
-          font-size: 12px;
-          z-index: 999999;
-          pointer-events: none;
-        `;
-        indicator.textContent = "👁️ Draft Mode Active";
-        document.body.appendChild(indicator);
-
-        // Remove after 3 seconds
-        setTimeout(() => {
-          if (document.body.contains(indicator)) {
-            document.body.removeChild(indicator);
-          }
-        }, 3000);
-      }
-    }
+    // The API route sets this cookie when draft mode is enabled.
+    setIsDraftMode(document.cookie.includes("__prerender_bypass"));
   }, []);
 
-  // Only render the Sanity Visual Editing component when explicitly in draft mode
-  return isDraftMode ? <SanityVisualEditing portal={true} /> : null;
+  if (!isDraftMode) return null;
+  return <SanityVisualEditing portal={true} />;
 }

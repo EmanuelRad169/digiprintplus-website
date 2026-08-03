@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
-import { getCTASectionById, CTASection } from "@/lib/sanity/contentFetchers";
+import type { CTASection } from "@/lib/sanity/contentFetchers";
 import { useSiteSettings } from "../../hooks/useSiteSettings";
 
 interface CallToActionSanityProps {
@@ -57,6 +57,9 @@ export function CallToActionSanity({
     if (!fallbackData) {
       const fetchCTAData = async () => {
         try {
+          const { getCTASectionById } = await import(
+            "@/lib/sanity/contentFetchers"
+          );
           const data = await getCTASectionById(sectionId);
           if (data) {
             setCTAData(data);

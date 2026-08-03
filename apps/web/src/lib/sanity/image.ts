@@ -1,8 +1,14 @@
 import imageUrlBuilder from "@sanity/image-url";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { client as sanityClient } from "./contentFetchers";
-
-const builder = imageUrlBuilder(sanityClient);
+// imageUrlBuilder only needs a project id and dataset — it never issues a
+// request. Handing it the live client from ./contentFetchers pulled
+// @sanity/client, get-it and rxjs, plus every GROQ query in that module, into
+// the browser bundle: this file is used by <SanityImage>, which the root
+// navigation renders, so the cost landed on every page of the site.
+const builder = imageUrlBuilder({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "as5tildt",
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+});
 
 export function urlFor(source: SanityImageSource) {
   return builder.image(source);
