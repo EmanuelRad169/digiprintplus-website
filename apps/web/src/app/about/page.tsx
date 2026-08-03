@@ -19,6 +19,49 @@ import { CallToActionSanity } from "../../components/sections/call-to-action-san
 
 export const revalidate = 60;
 
+// Maps the icon/colour option lists defined on the aboutPage schema to actual
+// components and classes. Anything unrecognised falls back to a sane default
+// rather than rendering nothing.
+const ICONS = {
+  award: Award,
+  star: Star,
+  shield: Shield,
+  checkCircle: CheckCircle,
+  users: Users,
+  clock: Clock,
+} as const;
+
+const VALUE_COLORS = {
+  magenta: { wrap: "bg-magenta-100", icon: "text-magenta-600" },
+  blue: { wrap: "bg-blue-100", icon: "text-blue-600" },
+  green: { wrap: "bg-green-100", icon: "text-green-600" },
+  purple: { wrap: "bg-purple-100", icon: "text-purple-600" },
+} as const;
+
+const DEFAULT_VALUES = [
+  {
+    title: "Customer First",
+    description:
+      "Every decision we make is guided by what's best for our customers and their success.",
+    icon: "users",
+    color: "magenta",
+  },
+  {
+    title: "Quality Promise",
+    description:
+      "We stand behind every project with our commitment to exceptional quality and craftsmanship.",
+    icon: "shield",
+    color: "blue",
+  },
+  {
+    title: "Timely Delivery",
+    description:
+      "Meeting deadlines is crucial to your success, and we take that responsibility seriously.",
+    icon: "clock",
+    color: "green",
+  },
+];
+
 export default async function AboutPage() {
   const { isEnabled } = await draftMode();
   const [pageData, enhancedData] = await Promise.all([
@@ -29,7 +72,7 @@ export default async function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Hero Section */}
-      <section className="relative w-full bg-slate-900 overflow-hidden min-h-[220px] sm:min-h-[260px] lg:min-h-[300px] flex items-center">
+      <section className="relative w-full bg-slate-800 overflow-hidden min-h-[400px] flex items-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -41,8 +84,9 @@ export default async function AboutPage() {
                 : "url('https://images.pexels.com/photos/3962294/pexels-photo-3962294.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
           }}
         >
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+          {/* Scrim — dark enough for white text on the left, light enough
+              that the photo still reads across the rest of the band. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20"></div>
         </div>
 
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-12 relative z-10 pt-10 sm:pt-12">
@@ -79,10 +123,22 @@ export default async function AboutPage() {
           {/* About Story Section */}
           <div className="grid lg:grid-cols-2 gap-12 items-center py-14">
             <div>
-              <div className="inline-flex items-center bg-yellow-300 text-black px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                <Award className="w-4 h-4 mr-2" />
-                Trusted Since 2008
-              </div>
+              {(() => {
+                const badge = enhancedData?.badge;
+                const BadgeIcon =
+                  ICONS[badge?.icon as keyof typeof ICONS] || Award;
+                return (
+                  <div className="inline-flex items-center bg-yellow-300 text-black px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                    <BadgeIcon className="w-4 h-4 mr-2 shrink-0" />
+                    <span>{badge?.title || "Trusted Since 2008"}</span>
+                    {badge?.subtitle && (
+                      <span className="ml-2 border-l border-black/25 pl-2 font-medium">
+                        {badge.subtitle}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
               <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-gray-900">
                 Your Trusted Printing Partner
               </h2>
@@ -120,14 +176,19 @@ export default async function AboutPage() {
                     { text: "Fast Turnaround", icon: "checkCircle" },
                     { text: "Competitive Pricing", icon: "checkCircle" },
                   ]
-                ).map((achievement, index) => (
-                  <div key={index} className="flex items-center">
-                    <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
-                    <span className="text-gray-700 font-medium">
-                      {achievement.text}
-                    </span>
-                  </div>
-                ))}
+                ).map((achievement, index) => {
+                  const Icon =
+                    ICONS[achievement.icon as keyof typeof ICONS] ||
+                    CheckCircle;
+                  return (
+                    <div key={index} className="flex items-center">
+                      <Icon className="w-5 h-5 text-green-500 mr-3 shrink-0" />
+                      <span className="text-gray-700 font-medium">
+                        {achievement.text}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -168,45 +229,31 @@ export default async function AboutPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-magenta-100 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                  <Users className="w-8 h-8 text-magenta-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-900">
-                  Customer First
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Every decision we make is guided by what&apos;s best for our
-                  customers and their success.
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                  <Shield className="w-8 h-8 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-900">
-                  Quality Promise
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  We stand behind every project with our commitment to
-                  exceptional quality and craftsmanship.
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                  <Clock className="w-8 h-8 text-green-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-gray-900">
-                  Timely Delivery
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Meeting deadlines is crucial to your success, and we take that
-                  responsibility seriously.
-                </p>
-              </div>
+            <div className="grid gap-8 md:grid-cols-3">
+              {(enhancedData?.values?.length
+                ? enhancedData.values
+                : DEFAULT_VALUES
+              ).map((value, index) => {
+                const Icon = ICONS[value.icon as keyof typeof ICONS] || Award;
+                const theme =
+                  VALUE_COLORS[value.color as keyof typeof VALUE_COLORS] ||
+                  VALUE_COLORS.magenta;
+                return (
+                  <div key={index} className="text-center">
+                    <div
+                      className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl ${theme.wrap}`}
+                    >
+                      <Icon className={`h-8 w-8 ${theme.icon}`} />
+                    </div>
+                    <h3 className="mb-4 text-xl font-bold text-gray-900">
+                      {value.title}
+                    </h3>
+                    <p className="leading-relaxed text-gray-600">
+                      {value.description}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
