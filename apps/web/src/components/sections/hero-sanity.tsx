@@ -294,7 +294,7 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
             </div>
 
             {/* Stats/Info Column */}
-            <div className="relative flex justify-center lg:justify-end mt-8 lg:mt-0 pointer-events-auto w-full">
+            <div className="relative flex justify-center lg:justify-end mt-6 md:mt-8 lg:mt-0 pointer-events-auto w-full">
               {/* Large Stat Display */}
               <motion.div
                 key={`stat-${currentSlide}`}
@@ -303,21 +303,25 @@ export function HeroSanity({ initialSlides }: HeroSanityProps) {
                 transition={{ delay: 0.5 }}
                 className="relative w-full lg:max-w-md"
               >
-                <div className="bg-white/95 backdrop-blur-sm text-slate-900 p-6 sm:p-8 rounded-none shadow-2xl border-l-4 sm:border-l-8 border-magenta-500 w-full">
-                  <div className="text-center">
-                    <div className="text-5xl sm:text-6xl font-bold text-magenta-500 mb-2">
-                      {slide.stats.number}
-                    </div>
-                    <div className="text-lg sm:text-xl font-bold text-slate-700 uppercase tracking-wide">
-                      {slide.stats.text}
-                    </div>
+                {/* On a phone these two cards stacked into a pair of slabs
+                    taller than the headline they were meant to support, so the
+                    hero no longer read as a hero. Below md they collapse into
+                    one compact row; from md up the original layout is intact. */}
+                <div className="flex items-center gap-3 border-l-4 border-magenta-500 bg-white/95 p-4 text-slate-900 shadow-2xl backdrop-blur-sm md:block md:border-l-8 md:p-8 md:text-center">
+                  <div className="text-3xl font-bold leading-none text-magenta-500 md:mb-2 md:text-6xl">
+                    {slide.stats.number}
+                  </div>
+                  <div className="text-sm font-bold uppercase leading-tight tracking-wide text-slate-700 md:text-xl">
+                    {slide.stats.text}
                   </div>
                 </div>
 
-                {/* Additional Info Cards - Mobile Optimized */}
-                <div className="mt-4 md:absolute md:mt-0 md:-bottom-10 md:left-0 lg:-bottom-16 lg:-left-16 bg-slate-800 text-white p-5 lg:p-6 rounded-none shadow-xl border-t-4 border-magenta-500 w-full md:w-auto">
-                  <div className="flex items-center space-x-4 justify-center md:justify-start">
-                    <Printer className="w-8 h-8 text-magenta-500" />
+                {/* Secondary stat — desktop only. It is hardcoded rather than
+                    coming from Sanity, so it is also the least trustworthy
+                    thing on the page to give a phone screen to. */}
+                <div className="mt-4 hidden border-t-4 border-magenta-500 bg-slate-800 p-5 text-white shadow-xl md:absolute md:-bottom-10 md:left-0 md:mt-0 md:block md:w-auto lg:-bottom-16 lg:-left-16 lg:p-6">
+                  <div className="flex items-center justify-center space-x-4 md:justify-start">
+                    <Printer className="h-8 w-8 text-magenta-500" />
                     <div>
                       <div className="text-2xl font-bold">50K+</div>
                       <div className="text-sm text-slate-300">
