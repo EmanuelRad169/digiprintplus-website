@@ -7,8 +7,15 @@
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./",
-    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
     "paths": {
+      "@/components/*": [
+        "./*"
+      ],
+      "@/lib/utils": [
+        "../utils/src/utils.ts"
+      ],
       "@workspace/utils": [
         "../utils/src"
       ],
@@ -24,8 +31,20 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "index.ts",
+    "ui/alert-dialog.tsx",
+    "ui/aspect-ratio.tsx",
+    "ui/button.tsx",
+    "ui/card.tsx",
+    "ui/error-boundary.tsx",
+    "ui/input.tsx",
+    "ui/pagination.tsx",
+    "ui/popover.tsx",
+    "ui/progress.tsx",
+    "ui/slider.tsx",
+    "ui/tabs.tsx",
+    "ui/textarea.tsx",
+    "ui/toast.tsx"
   ],
   "exclude": [
     "node_modules",

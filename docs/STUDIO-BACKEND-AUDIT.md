@@ -1,7 +1,7 @@
 # Sanity Studio (Backend) — Audit & Modernization
 
 **Date:** July 30, 2026
-**Target:** DigiPrintPlus Admin — `localhost:3333` (dev) / `dppadmin.sanity.studio` (prod), project `as5tildt`, dataset `production`, Sanity Studio v5
+**Target:** DigiPrintPlus Admin — `localhost:3333` (dev) / `digiprint-admin-cms.netlify.app` (prod), project `as5tildt`, dataset `production`, Sanity Studio v5
 **Method:** Live click-through of the running Studio via browser automation + desk-structure/schema code review + direct GROQ queries against the production dataset.
 
 ---
@@ -76,7 +76,7 @@ You linked the Sanity **Dashboard** intro. Two different things share that name 
 ### A) The Sanity org Dashboard (`sanity.io/welcome`)
 A newer **organization-level hub**: it lists your deployed studios and official apps (Canvas, Media Library, Content Agent), plus notifications, favorites, an org switcher, and a light/dark/system theme. It is **not where brand identity lives** — customization is limited to pinning studios/apps and the theme. Good as a launcher; it won't make the admin feel like *your* printshop.
 
-### B) Your Studio itself (`dppadmin.sanity.studio`) — this is where "slick" happens
+### B) Your Studio itself (`digiprint-admin-cms.netlify.app`) — this is where "slick" happens
 You already have a `dashboardConfig.tsx` scaffolded, so you're part-way there. Highest-impact upgrades, roughly in order:
 
 1. **Brand it.** Add a Studio **logo component** (your DigiPrintPlus mark, not the default "DA" tile), a custom **navbar title**, and a **brand theme** (Studio v5 `theme`/`@sanity/ui` — set the primary to your brand color, tune light/dark). This single change is what makes it read as "our tool."

@@ -30,7 +30,8 @@
     "fix:deploy": "tsx scripts/auto-fix-deploy.ts",
     "verify:deployment": "tsx scripts/verify-deployment.ts",
     "prepare:deploy": "bash scripts/deployment/prepare-deploy.sh",
-    "test:build": "tsx scripts/test-local-build.ts"
+    "test:build": "tsx scripts/test-local-build.ts",
+    "verify:secrets": "node scripts/verify-no-secrets.mjs"
   },
   "devDependencies": {
     "@types/react": "^18.2.79",

@@ -9,17 +9,21 @@
     "./sanity/*": "./sanity/*"
   },
   "scripts": {
+    "build": "tsc --build",
     "type-check": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\"",
     "clean": "rm -rf .turbo"
   },
   "dependencies": {
+    "@sanity/client": "^7.13.2",
+    "@sanity/image-url": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.2.0",
     "@workspace/types": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^24.0.7",
     "typescript": "^5.0.0"
   }
 }

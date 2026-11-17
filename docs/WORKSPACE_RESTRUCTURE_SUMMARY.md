@@ -100,7 +100,7 @@ docs/
 │   ├── QUICK_DEPLOY_GUIDE.md
 │   ├── README_DEPLOYMENT.md
 │   ├── local-netlify-deploy.sh
-│   └── vercel-build.sh
+│   └── production verification guides
 ├── optimization/                # Performance guides
 │   ├── BUNDLE_OPTIMIZATION_GUIDE.md
 │   └── UNUSED_DEPENDENCIES.md

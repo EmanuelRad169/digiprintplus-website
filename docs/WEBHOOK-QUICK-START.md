@@ -30,8 +30,8 @@ Automatically trigger Netlify rebuilds when templates are published in Sanity St
 5. **Important**: Trigger a manual deploy to apply the env variable
 
 ### 3️⃣ Configure Webhook in Sanity Studio
-<https://dppadmin.sanity.studio>
-1. **Go to**: <https://dppadmin.sanity.studio>
+<https://digiprint-admin-cms.netlify.app>
+1. **Go to**: <https://digiprint-admin-cms.netlify.app>
 2. Click **Manage** (top right) → **API** → **Webhooks**
 3. Click **Create webhook**
 4. Enter these details:
@@ -89,8 +89,8 @@ Updated content live! ✨
 
 ## 🔗 Useful Links
 <https://app.netlify.com>
-- **Netlify Dashboard<https://dppadmin.sanity.studio>
-- **Sanity Studio**: <https://dppadmin.sanity.studio>
+- **Netlify Dashboard**
+- **Sanity Studio**: <https://digiprint-admin-cms.netlify.app>
 - **Detailed Docs**: `/docs/sanity-webhook-setup.md`
 
 ---

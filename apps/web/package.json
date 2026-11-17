@@ -24,6 +24,7 @@
     "deploy:prod": "netlify deploy --build --prod",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "test": "vitest run",
     "verify:env": "tsx scripts/verify-netlify-env.ts",
     "verify:toolchain": "node scripts/verify-build-toolchain.js",
     "verify:exports": "tsx scripts/verify-exports.ts",

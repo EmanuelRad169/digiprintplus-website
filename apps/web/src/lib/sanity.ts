@@ -35,7 +35,7 @@ function validateSanityConfig(): SanityConfig {
   const token = process.env.SANITY_API_TOKEN;
   const studioUrl =
     process.env.NEXT_PUBLIC_SANITY_STUDIO_URL ||
-    "https://dppadmin.sanity.studio";
+    "https://digiprint-admin-cms.netlify.app";
 
   // During build process, use fallbacks to prevent build failures
   if (!projectId && process.env.NODE_ENV === "development") {

@@ -12,7 +12,7 @@ Deployment guides, production setup, and infrastructure documentation:
 - [Production Audit](./deployment/PRODUCTION_AUDIT_COMPLETE.md) - Production readiness audit
 - [Production Hardening](./deployment/PRODUCTION-HARDENING-NOTES.md) - Security hardening notes
 - [Production Verification](./deployment/PRODUCTION-VERIFICATION-REPORT.md) - Verification report
-- Scripts: `local-netlify-deploy.sh`, `vercel-build.sh`
+- Deployment scripts target Netlify only.
 
 ### [optimization/](./optimization/)
 Performance and bundle optimization guides:

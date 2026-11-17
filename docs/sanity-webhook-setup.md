@@ -34,7 +34,7 @@ The `SANITY_WEBHOOK_SECRET` is already set in the config file, but you should ad
 
 ## Step 3: Configure Sanity Webhook
 
-1. Open Sanity Studio: https://dppadmin.sanity.studio
+1. Open Sanity Studio: https://digiprint-admin-cms.netlify.app
 2. Go to **Manage** (top right) → **API** → **Webhooks**
 3. Click **Create webhook**
 4. Configure the webhook:

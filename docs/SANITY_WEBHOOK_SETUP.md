@@ -61,7 +61,7 @@ Before starting, ensure you have completed:
 3. **Set the Secret**:
    - In the "Secret" field, paste the value of your `SANITY_WEBHOOK_SECRET`
    - This MUST match the value in Netlify environment variables
-   - Example: `K8x2Jz9mP3vN7wQ4rT6yU8sA1bC5dE0f...`
+   - Example: `YOUR_WEBHOOK_SECRET`
 
 4. **API Version**:
    - Set to: `2024-01-01` (matches your config)

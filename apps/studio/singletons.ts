@@ -75,12 +75,17 @@ export const SINGLETONS = [
 ] as const;
 
 /** Set of singleton type names — used to hide create/delete/duplicate actions. */
-export const SINGLETON_TYPES = new Set(SINGLETONS.map((s) => s.type));
+export const SINGLETON_TYPES: ReadonlySet<string> = new Set(
+  SINGLETONS.map((s) => s.type),
+);
 
 const byType = Object.fromEntries(SINGLETONS.map((s) => [s.type, s]));
 
 /** Build a structure list item that opens the single document for `type`. */
-export const singletonListItem = (S: StructureBuilder, type: string) => {
+export const singletonListItem = (
+  S: StructureBuilder,
+  type: string,
+): ReturnType<StructureBuilder["listItem"]> => {
   const s = byType[type];
   return S.listItem()
     .title(s.title)

@@ -80,11 +80,16 @@ async function run() {
   loadEnv();
 
   const folderArg = process.argv[2];
-  const dryRun = process.argv.includes("--dry-run");
+  const commit = process.argv.includes("--commit");
+  const confirmProduction = process.argv.includes("--confirm-production");
+  const datasetArg = process.argv
+    .find((arg) => arg.startsWith("--dataset="))
+    ?.split("=")[1];
+  const dryRun = !commit;
 
   if (!folderArg) {
     console.error(
-      "Usage: npx ts-node scripts/media/import-template-files.ts <folder-path> [--dry-run]",
+      "Usage: npx ts-node scripts/media/import-template-files.ts <folder-path> [--dataset=development] [--commit] [--confirm-production]",
     );
     process.exit(1);
   }
@@ -113,7 +118,14 @@ async function run() {
   }
 
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "as5tildt";
-  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+  const dataset = datasetArg || "development";
+
+  if (dataset === "production" && !confirmProduction) {
+    console.error(
+      "Production writes require --dataset=production --commit --confirm-production",
+    );
+    process.exit(1);
+  }
   const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-01-01";
   const token =
     process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_TOKEN;

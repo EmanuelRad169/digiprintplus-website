@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "sanity dev",
     "build": "sanity build",
+    "type-check": "tsc --noEmit",
     "deploy": "sanity deploy",
     "seed:blog": "sanity exec scripts/seedBlogCJS.js --with-user-token",
     "import:products": "ts-node scripts/import-products.ts",
@@ -25,7 +26,8 @@
   "dependencies": {
     "@sanity/client": "^7.13.2",
     "@sanity/icons": "^3.7.4",
-    "@sanity/vision": "^3.95.0",
+    "@sanity/ui": "^3.1.11",
+    "@sanity/vision": "^5.1.0",
     "@sanity/visual-editing": "^2.15.0",
     "react": "^19.2.2",
     "react-dom": "^19.2.2",

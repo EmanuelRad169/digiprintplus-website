@@ -273,7 +273,7 @@ echo ""
 echo "  NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt"
 echo "  NEXT_PUBLIC_SANITY_DATASET=production"
 echo "  NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01"
-echo "  NEXT_PUBLIC_SANITY_STUDIO_URL=https://dppadmin.sanity.studio"
+echo "  NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app"
 echo "  SANITY_API_TOKEN=<your-token-here>"
 echo ""
 

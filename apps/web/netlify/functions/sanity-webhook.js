@@ -1,4 +1,7 @@
-const crypto = require("crypto");
+const {
+  isValidSignature,
+  SIGNATURE_HEADER_NAME,
+} = require("@sanity/webhook");
 
 function getHeader(headers, name) {
   if (!headers) return undefined;
@@ -10,47 +13,6 @@ function getHeader(headers, name) {
     (k) => k.toLowerCase() === name.toLowerCase(),
   );
   return foundKey ? headers[foundKey] : undefined;
-}
-
-function timingSafeEqual(a, b) {
-  const aBuf = Buffer.from(a);
-  const bBuf = Buffer.from(b);
-  if (aBuf.length !== bBuf.length) return false;
-  return crypto.timingSafeEqual(aBuf, bBuf);
-}
-
-function verifySanitySignature({ body, signature, secret }) {
-  if (!secret)
-    return {
-      ok: true,
-      reason: "SANITY_WEBHOOK_SECRET not set; skipping verification",
-    };
-  if (!signature) {
-    return {
-      ok: false,
-      reason:
-        "Missing Sanity signature header (expected one of: X-Sanity-Webhook-Signature, X-Sanity-Signature, Sanity-Signature)",
-    };
-  }
-
-  const rawSig = String(signature).trim();
-  const normalized = rawSig.includes("=") ? rawSig.split("=")[1] : rawSig;
-
-  const hmac = crypto
-    .createHmac("sha256", secret)
-    .update(body || "")
-    .digest();
-  const hex = hmac.toString("hex");
-  const base64 = hmac.toString("base64");
-
-  const matchesHex =
-    normalized.length === hex.length && timingSafeEqual(normalized, hex);
-  const matchesBase64 =
-    normalized.length === base64.length && timingSafeEqual(normalized, base64);
-
-  return matchesHex || matchesBase64
-    ? { ok: true }
-    : { ok: false, reason: "Invalid webhook signature" };
 }
 
 exports.handler = async (event) => {
@@ -67,24 +29,26 @@ exports.handler = async (event) => {
       return { statusCode: 405, body: "Method Not Allowed" };
     }
 
-    const signature =
-      getHeader(event.headers, "X-Sanity-Webhook-Signature") ||
-      getHeader(event.headers, "X-Sanity-Signature") ||
-      getHeader(event.headers, "Sanity-Signature");
     const secret = process.env.SANITY_WEBHOOK_SECRET;
-    const verify = verifySanitySignature({
-      body: event.body || "",
-      signature,
-      secret,
-    });
-
-    if (!verify.ok) {
-      return { statusCode: 401, body: `Unauthorized: ${verify.reason}` };
+    if (!secret) {
+      return {
+        statusCode: 503,
+        body: "Webhook verification is not configured",
+      };
     }
 
-    const hookUrl =
-      process.env.NETLIFY_BUILD_HOOK_URL ||
-      "https://api.netlify.com/build_hooks/698eefc2e469f49360946364";
+    const signature = getHeader(event.headers, SIGNATURE_HEADER_NAME);
+    const signatureIsValid = await isValidSignature(
+      event.body || "",
+      signature,
+      secret,
+    );
+
+    if (!signatureIsValid) {
+      return { statusCode: 401, body: "Unauthorized: Invalid webhook signature" };
+    }
+
+    const hookUrl = process.env.NETLIFY_BUILD_HOOK_URL;
 
     if (!hookUrl) {
       return { statusCode: 500, body: "Missing NETLIFY_BUILD_HOOK_URL" };

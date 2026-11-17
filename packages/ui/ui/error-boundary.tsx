@@ -59,7 +59,7 @@ export function DefaultErrorFallback({ error, retry }: ErrorFallbackProps) {
         <p className="text-gray-600 mb-6">
           We&apos;re sorry, but there was an error loading this content. Please try again.
         </p>
-        {error && process.env.NODE_ENV === 'development' && (
+        {error && (
           <details className="text-left mb-6 p-4 bg-gray-100 rounded-lg">
             <summary className="cursor-pointer font-medium">Error details</summary>
             <pre className="mt-2 text-sm text-red-600 overflow-auto">

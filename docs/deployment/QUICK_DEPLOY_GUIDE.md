@@ -31,34 +31,9 @@ Required variables:
 NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
-NEXT_PUBLIC_SANITY_STUDIO_URL=https://dppadmin.sanity.studio
-SANITY_API_TOKEN=skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU
+NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app
+SANITY_API_TOKEN=SET_IN_PLATFORM_UI_DO_NOT_COMMIT
 ```
-
----
-
-## Deploy to Vercel (Alternative)
-
-### 1. Install Vercel CLI (if not already installed)
-```bash
-npm i -g vercel
-```
-
-### 2. Deploy from project root
-```bash
-vercel --prod
-```
-
-### 3. Set Environment Variables
-```bash
-vercel env add NEXT_PUBLIC_SANITY_PROJECT_ID production
-vercel env add NEXT_PUBLIC_SANITY_DATASET production
-vercel env add NEXT_PUBLIC_SANITY_API_VERSION production
-vercel env add NEXT_PUBLIC_SANITY_STUDIO_URL production
-vercel env add SANITY_API_TOKEN production
-```
-
-Or via Vercel dashboard: **Settings** → **Environment Variables**
 
 ---
 
@@ -66,7 +41,7 @@ Or via Vercel dashboard: **Settings** → **Environment Variables**
 
 ### Test ISR (5-minute cache)
 ```bash
-1. Edit template in Sanity Studio: https://dppadmin.sanity.studio
+1. Edit template in Sanity Studio: https://digiprint-admin-cms.netlify.app
 2. Publish changes
 3. Wait 5 minutes
 4. Visit: https://digiprint-main-web.netlify.app/templates
@@ -142,7 +117,7 @@ npx sanity dataset import backups/sanity-datasets/production-backup-YYYYMMDD_HHM
 
 ## Support Contacts
 - **Netlify Deploy Status:** https://app.netlify.com/sites/digiprint-main-web/deploys
-- **Sanity Studio:** https://dppadmin.sanity.studio
+- **Sanity Studio:** https://digiprint-admin-cms.netlify.app
 - **Sanity Manage:** https://www.sanity.io/manage/personal/project/as5tildt
 
 ---

@@ -14,13 +14,25 @@ import * as dotenv from 'dotenv'
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') })
 
+const args = process.argv.slice(2)
+const commit = args.includes('--commit')
+const confirmProduction = args.includes('--confirm-production')
+const datasetArg = args.find((arg) => arg.startsWith('--dataset='))?.split('=')[1]
+const targetDataset = datasetArg || 'development'
+
+if (targetDataset === 'production' && !confirmProduction) {
+  throw new Error(
+    'Production writes require --dataset=production --commit --confirm-production',
+  )
+}
+
 // Initialize Sanity client
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'as5tildt',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  dataset: targetDataset,
   useCdn: false,
   apiVersion: '2024-01-01',
-  token: process.env.SANITY_API_TOKEN || 'skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU',
+  token: process.env.SANITY_API_TOKEN,
 })
 
 // Helper function to slugify text
@@ -182,11 +194,15 @@ async function importProducts() {
         updatedAt: row.updatedAt || new Date().toISOString(),
       }
 
-      // Create or update product in Sanity
-      await client.createOrReplace(product)
+      // Default to a safe dry run; writes require an explicit --commit.
+      if (commit) {
+        await client.createOrReplace(product)
+      }
       
       successCount++
-      console.log(`✅ Row ${i + 1}: Imported "${product.name}" (${product.sku})`)
+      console.log(
+        `${commit ? '✅' : '[DRY RUN]'} Row ${i + 1}: ${commit ? 'Imported' : 'Would import'} "${product.name}" (${product.sku})`,
+      )
       
     } catch (error) {
       errorCount++

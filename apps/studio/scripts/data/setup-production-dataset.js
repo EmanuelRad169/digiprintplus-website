@@ -7,22 +7,25 @@
 
 const { createClient } = require("@sanity/client");
 
+const args = process.argv.slice(2);
+if (!args.includes("--commit") || !args.includes("--confirm-production")) {
+  throw new Error(
+    "Production setup requires --commit --confirm-production after a verified backup",
+  );
+}
+
 const client = createClient({
   projectId: "as5tildt",
   dataset: "development", // source dataset
   useCdn: false,
-  token:
-    process.env.SANITY_API_TOKEN ||
-    "skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU",
+  token: process.env.SANITY_API_TOKEN,
 });
 
 const prodClient = createClient({
   projectId: "as5tildt",
   dataset: "production", // target dataset
   useCdn: false,
-  token:
-    process.env.SANITY_API_TOKEN ||
-    "skurOFO8xH6eqvNmmOMR0SySJmHaQeCo8jcXUFKVKJllsaOk7uCztTDbez0VmGuhxtrWWC6MauEMpbyiU",
+  token: process.env.SANITY_API_TOKEN,
 });
 
 async function setupProductionDataset() {

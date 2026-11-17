@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SANITY_PROJECT_ID: as5tildt
+      NEXT_PUBLIC_SANITY_DATASET: production
+      NEXT_PUBLIC_SANITY_API_VERSION: 2024-01-01
+      NEXT_PUBLIC_SANITY_STUDIO_URL: https://digiprint-admin-cms.netlify.app
+      SANITY_STUDIO_PROJECT_ID: as5tildt
+      SANITY_STUDIO_DATASET: production
+      SANITY_STUDIO_PRODUCTION_URL: https://digiprint-main-web.netlify.app
+      NEXT_PUBLIC_SITE_URL: https://digiprint-main-web.netlify.app
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.5
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check for committed credentials
+        run: pnpm verify:secrets
+
+      - name: Type-check workspaces
+        run: pnpm type-check
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Verify Netlify forms
+        run: pnpm --filter digiprintplus-web verify:forms
+
+      - name: Build web app
+        run: pnpm build:web
+
+      - name: Build Sanity Studio
+        run: pnpm build:studio

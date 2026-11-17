@@ -7,7 +7,7 @@ const client = createClient({
   dataset: 'development',
   useCdn: false,
   apiVersion: '2023-05-03',
-  token: 'ski57HbdFyLtWwXmQVSv8yHYAaualTGelXvLaupzfVsBpWY6KTmKVNamVUOhb517Z16fD39I9aFBtW3pL',
+  token: process.env.SANITY_API_TOKEN,
 })
 
 async function validatePublishedProducts() {

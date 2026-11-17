@@ -54,29 +54,24 @@ const REQUIRED_ENV_VARS: EnvVar[] = [
   },
   {
     name: "SANITY_API_TOKEN",
-    required: true,
-    description: "Sanity read token for fetching content at build time",
+    required: false,
+    description: "Server-only Sanity write token used by quote submissions",
+  },
+  {
+    name: "SANITY_PRIVATE_DATASET",
+    required: false,
+    description: "Private dataset used for quote requests",
+    defaultValue: "development",
+    validateFormat: (v) => v === "development",
   },
   {
     name: "SANITY_WEBHOOK_SECRET",
-    required: true,
+    required: false,
     description: "Secret for validating Sanity webhook signatures",
   },
   {
-    // Warn, do not block. Draft preview is an editor convenience; a missing or
-    // weak value degrades /api/draft to a 503 but leaves the public site fully
-    // functional. Failing the build here takes the whole site down to protect a
-    // preview link, which is the wrong trade.
-    name: "SANITY_PREVIEW_SECRET",
-    required: false,
-    description:
-      "Secret gating /api/draft. Must equal SANITY_STUDIO_PREVIEW_SECRET in the Studio. No fallback exists — /api/draft returns 503 without it.",
-    validateFormat: (v) =>
-      v.length >= 24 && v !== "sanity-preview-secret" && !/^your[-_]/i.test(v),
-  },
-  {
     name: "NETLIFY_BUILD_HOOK_URL",
-    required: true,
+    required: false,
     description: "Netlify build hook URL for triggering rebuilds from Sanity",
     validateFormat: (v) => v.includes("netlify.com/build_hooks/"),
   },
@@ -164,8 +159,11 @@ function validateEnvironment(): ValidationResult {
       } else {
         // Mask sensitive values in output
         const displayValue =
-          envVar.name.includes("SECRET") || envVar.name.includes("TOKEN")
-            ? `${value.substring(0, 8)}...`
+          envVar.name.includes("SECRET") ||
+          envVar.name.includes("TOKEN") ||
+          envVar.name.includes("HOOK") ||
+          envVar.name.includes("KEY")
+            ? "<redacted>"
             : value;
 
         result.info[envVar.name] = displayValue;
@@ -182,8 +180,12 @@ function validateEnvironment(): ValidationResult {
   for (const envVar of OPTIONAL_ENV_VARS) {
     const value = process.env[envVar.name];
     if (value) {
-      const displayValue = envVar.name.includes("SECRET")
-        ? `${value.substring(0, 8)}...`
+      const displayValue =
+        envVar.name.includes("SECRET") ||
+        envVar.name.includes("TOKEN") ||
+        envVar.name.includes("HOOK") ||
+        envVar.name.includes("KEY")
+        ? "<redacted>"
         : value;
       console.log(`✓  ${envVar.name}: ${displayValue}`);
       result.info[envVar.name] = displayValue;

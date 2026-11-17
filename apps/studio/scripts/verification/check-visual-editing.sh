@@ -24,7 +24,7 @@ echo
 
 # Test API endpoints
 echo "🌐 Testing API endpoints..."
-echo "- Draft mode API: $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3001/api/draft-mode/enable?secret=preview-secret-key-2024")"
+echo "- Draft mode API: $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3001/api/draft-mode/enable?secret=YOUR_PREVIEW_SECRET")"
 echo
 
 # Run a visual editing check
@@ -59,7 +59,7 @@ export function VisualEditingTest() {
         }
         
         // Test API connection
-        const response = await fetch('/api/draft-mode/enable?secret=preview-secret-key-2024')
+        const response = await fetch('/api/draft-mode/enable?secret=YOUR_PREVIEW_SECRET')
         const success = response.ok
         
         if (success) {

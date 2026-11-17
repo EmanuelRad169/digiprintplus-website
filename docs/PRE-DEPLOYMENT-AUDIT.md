@@ -63,7 +63,7 @@ const previewSecret = process.env.SANITY_PREVIEW_SECRET || "sanity-preview-secre
 - `SANITY_PREVIEW_SECRET` is **not set** in `apps/web/.env.local`, `.env.production`, or the Netlify env list in `netlify.toml` → the route accepts the hardcoded fallback `sanity-preview-secret`, which is also in the public git history.
 - Compounding it, there's a **name mismatch**: Studio's `sanity.config.ts` reads `SANITY_STUDIO_PREVIEW_SECRET` while web reads `SANITY_PREVIEW_SECRET`. Even if you set one, the other side won't match unless both are configured.
 
-Anyone can hit `/api/draft?secret=sanity-preview-secret&slug=/` and put their session into draft mode, exposing unpublished content (25 draft documents currently in the dataset).
+Anyone with the retired weak value could hit `/api/draft?secret=YOUR_PREVIEW_SECRET&slug=/` and put their session into draft mode, exposing unpublished content (25 draft documents at the time of that audit).
 
 **Fix:** Generate one strong secret, set it as `SANITY_PREVIEW_SECRET` in Netlify and `SANITY_STUDIO_PREVIEW_SECRET` in the Studio deploy env, and remove both hardcoded fallbacks (fail closed with a 500/401 if unset).
 
@@ -77,9 +77,9 @@ No schema validation (zod is installed but unused here), no rate limiting, no ho
 ### 5. CORS wildcard on all `/api/*` routes
 `middleware.ts` answers preflights with `Access-Control-Allow-Origin: *` plus `Allow-Credentials: true` for every API route. Tighten to your own origins.
 
-### 6. Split-brain deploy targets: Netlify vs Vercel
-- `netlify.toml` deploys to Netlify; `.github/workflows/deploy-vercel.yml` + `vercel-check.yml` deploy to Vercel; `apps/web/.env.production` sets `NEXT_PUBLIC_SITE_URL=https://digiprintplus.vercel.app`.
-- If a production build ever runs without Netlify's UI override, canonical URLs, sitemap, robots, and OG tags will point at the Vercel domain. Pick one platform, delete the other's config, and align `NEXT_PUBLIC_SITE_URL` everywhere. Also: no custom domain (digiprintplus.com) is configured anywhere — the site canonicalizes to `digiprint-main-web.netlify.app`. Intentional?
+### 6. Deployment target consolidated on Netlify — resolved November 17, 2026
+- Obsolete deployment workflows, local production settings, and deployment routes for the previous platform were removed.
+- Netlify is the only supported deployment target. Until a custom domain is approved, canonical URLs use `digiprint-main-web.netlify.app`.
 
 ### 7. Analytics are placeholders
 `NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX`, `NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX` in local env (and the build accepted them as "valid"). Verify real IDs exist in Netlify UI env, otherwise production has no analytics. The env validator should reject `XXXX` patterns.
@@ -131,5 +131,5 @@ README promises "email automation"; `SENDGRID_API_KEY` sits in env — but no co
 3. Set a real `SANITY_PREVIEW_SECRET` (web + studio names) and delete hardcoded fallbacks.
 4. Review + commit + push the 39 pending files.
 5. Verify Netlify UI env: real GA4/GTM IDs, correct `NEXT_PUBLIC_SITE_URL`, forms notifications enabled.
-6. Deploy → then confirm: new chunks contain no `skt` token, `/api/draft?secret=sanity-preview-secret` returns 401, placeholder phone gone from homepage.
-7. (Post-deploy) zod validation + rate limiting on `/api/submit-quote`; decide Netlify vs Vercel and delete the loser.
+6. Deploy → then confirm: new chunks contain no `skt` token, `/api/draft?secret=YOUR_PREVIEW_SECRET` returns 401, placeholder phone gone from homepage.
+7. (Post-deploy) Add zod validation and rate limiting on `/api/submit-quote`.

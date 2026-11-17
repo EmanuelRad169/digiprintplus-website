@@ -1,4 +1,4 @@
-import { sanityClient } from '@/lib/sanity'
+import { sanityClient } from '../sanity'
 import imageUrlBuilder from '@sanity/image-url'
 
 // Type definitions for site settings
@@ -75,11 +75,7 @@ export const getSiteSettings = async (): Promise<SiteSettings | null> => {
         },
         social
       }`,
-      {},
-      {
-        // Enable ISR with 5 minute revalidation
-        next: { revalidate: 300 },
-      }
+      {}
     )
   } catch (error) {
     console.error('Error fetching site settings:', error)
@@ -88,7 +84,9 @@ export const getSiteSettings = async (): Promise<SiteSettings | null> => {
 }
 
 // Real-time site settings updates hook
-export const subscribeToSiteSettings = (callback: () => void) => {
+export const subscribeToSiteSettings = (
+  callback: () => void,
+): { unsubscribe(): void } => {
   return sanityClient
     .listen('*[_type == "siteSettings"]')
     .subscribe({
@@ -96,7 +94,7 @@ export const subscribeToSiteSettings = (callback: () => void) => {
         console.log('Site settings updated, refreshing...')
         callback()
       },
-      error: (error) => {
+      error: (error: unknown) => {
         console.error('Site settings subscription error:', error)
       }
     })

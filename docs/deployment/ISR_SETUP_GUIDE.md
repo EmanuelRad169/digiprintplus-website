@@ -44,14 +44,14 @@ Go to **Netlify Dashboard** → **Site Settings** → **Environment Variables** 
 NEXT_PUBLIC_SANITY_PROJECT_ID="as5tildt"
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
-SANITY_API_TOKEN=skiHFAHXZ8LXn7ouA5eW6IaCUqjdYoTL2NR6hjW51ljZNzxYVzsf8FLheiBOiK3TtYASCy58Zq3CsKUxyR6yZhGiKAjxT3cWhHs2q1vIb1KScOUoWSMvy5cz2KrcRp5RGquVQQuunI4pYBry3hkDRUgWamrhugMQ8JLe3pRsl2UAQhOxVSsG
+SANITY_API_TOKEN=SET_IN_PLATFORM_UI_DO_NOT_COMMIT
 
 # New Required Variable for Preview Mode
 SANITY_PREVIEW_SECRET="D0Mpx6k/4rW0Rl8fVhEOlmQYP5sUBY0wr44QDJHsKuM="
 
 # Keep existing webhook variables
 SANITY_WEBHOOK_SECRET="so26GsMt0Fr9|1puбeUQ"
-NETLIFY_BUILD_HOOK_URL=https://api.netlify.com/build_hooks/698eefc2e469f49360946364
+NETLIFY_BUILD_HOOK_URL=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
 ```
 
 **To generate a secure preview secret:**

@@ -1,6 +1,7 @@
 [build]
   command = "pnpm build"
   publish = "dist"
+  ignore = "git diff --quiet HEAD^ HEAD apps/studio packages config package.json pnpm-lock.yaml"
 
 [build.environment]
   # sanity build requires >=20.19.1 <22 or >=22.12. This was pinned to 20.11.1,
@@ -8,7 +9,8 @@
   # and to the pnpm version the rest of the monorepo uses.
   NODE_VERSION = "20.19.5"
   PNPM_VERSION = "9.15.4"
-  # Studio uses same Sanity config as web
+  SANITY_STUDIO_PROJECT_ID = "as5tildt"
+  SANITY_STUDIO_DATASET = "production"
   SANITY_STUDIO_PRODUCTION_URL = "https://digiprint-main-web.netlify.app"
 
 [[redirects]]

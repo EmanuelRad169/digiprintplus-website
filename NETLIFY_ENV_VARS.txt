@@ -1,32 +1,35 @@
-# Netlify Environment Variables
-# Copy these to your Netlify dashboard:
-# Settings → Environment variables → Add a variable
+# Netlify Environment Variables Template
+#
+# This file is documentation only. Never paste real tokens, secrets, or build
+# hook URLs into this tracked file. Configure sensitive values directly in the
+# Netlify project UI or with `netlify env:set`.
 
-## Required for digiprint-main-web (Frontend)
-
-# Sanity Configuration
+## Public Sanity configuration
 NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
-SANITY_API_TOKEN=***get-from-sanity-dashboard***
+NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app
 
-# Site Configuration
+## Public site configuration
 NEXT_PUBLIC_SITE_URL=https://digiprint-main-web.netlify.app
 
-# Webhook Security
-SANITY_REVALIDATE_SECRET=***set-a-strong-secret***
+## Server-side secrets: configure in Netlify, never in Git
+SANITY_API_TOKEN=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+SANITY_PREVIEW_SECRET=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+SANITY_REVALIDATE_SECRET=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+SANITY_WEBHOOK_SECRET=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+NETLIFY_BUILD_HOOK_URL=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+RESEND_API_KEY=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
 
-# Optional: Analytics
+## Quote notification settings
+QUOTE_NOTIFY_FROM=orders@digiprintplus.com
+QUOTE_NOTIFY_TO=orders@digiprintplus.com
+
+## Optional analytics identifiers (public, not secrets)
 NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 
-## Build Settings
-# Build command: npm run build
-# Publish directory: .next
-# Node version: 18 or higher
-
-## Important Notes:
-# 1. Get SANITY_API_TOKEN from Sanity dashboard (needs read permissions)
-# 2. Update NEXT_PUBLIC_SITE_URL to your actual Netlify URL
-# 3. Ensure NEXT_PUBLIC_SANITY_DATASET is set to "production"
-# 4. After setting variables, trigger a new deploy
+## Build settings
+NODE_VERSION=20.19.5
+PNPM_VERSION=9.15.4
+NETLIFY_USE_PNPM=true

@@ -223,13 +223,16 @@ function fix4_createNetlifyEnvTemplate() {
 NEXT_PUBLIC_SANITY_PROJECT_ID=${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "your-project-id"}
 NEXT_PUBLIC_SANITY_DATASET=${process.env.NEXT_PUBLIC_SANITY_DATASET || "production"}
 NEXT_PUBLIC_SANITY_API_VERSION=${process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-01-01"}
-SANITY_API_TOKEN=${process.env.SANITY_API_TOKEN ? "***get-from-sanity-dashboard***" : "your-token-here"}
+SANITY_API_TOKEN=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
 
 # Site Configuration
 NEXT_PUBLIC_SITE_URL=${siteUrl}
 
 # Optional: Sanity Preview
-SANITY_REVALIDATE_SECRET=${process.env.SANITY_REVALIDATE_SECRET || "your-secret-here"}
+SANITY_PREVIEW_SECRET=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+SANITY_REVALIDATE_SECRET=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+SANITY_WEBHOOK_SECRET=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
+NETLIFY_BUILD_HOOK_URL=SET_IN_NETLIFY_UI_DO_NOT_COMMIT
 
 # Optional: Analytics
 NEXT_PUBLIC_GA4_ID=${process.env.NEXT_PUBLIC_GA4_ID || ""}
@@ -252,7 +255,7 @@ NEXT_PUBLIC_GTM_ID=${process.env.NEXT_PUBLIC_GTM_ID || ""}
   logFix({
     name: "Create Netlify template",
     status: "applied",
-    message: "Created NETLIFY_ENV_VARS.txt with your current config",
+    message: "Created NETLIFY_ENV_VARS.txt with placeholders only",
   });
 }
 

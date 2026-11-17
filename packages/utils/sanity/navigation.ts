@@ -1,4 +1,4 @@
-import { sanityClient } from '@/lib/sanity'
+import { sanityClient } from '../sanity'
 
 interface ProductCategory {
   _id: string
@@ -44,11 +44,7 @@ export const getNavigation = async () => {
           }
         }[isVisible == true] | order(order asc)
       }`,
-      {},
-      {
-        // Enable ISR with 60 second revalidation
-        next: { revalidate: 60 },
-      }
+      {}
     )
 
     if (manualNav && manualNav.items && manualNav.items.length > 0) {
@@ -211,7 +207,9 @@ export const getProductCategories = async () => {
 }
 
 // Real-time navigation updates hook
-export const subscribeToNavigationUpdates = (callback: () => void) => {
+export const subscribeToNavigationUpdates = (
+  callback: () => void,
+): { unsubscribe(): void } => {
   return sanityClient
     .listen('*[_type == "navigationMenu" && _id == "mainNav"] || *[_type == "productCategory"]')
     .subscribe({
@@ -219,7 +217,7 @@ export const subscribeToNavigationUpdates = (callback: () => void) => {
         console.log('Navigation or categories updated, refreshing...')
         callback()
       },
-      error: (error) => {
+      error: (error: unknown) => {
         console.error('Navigation subscription error:', error)
       }
     })

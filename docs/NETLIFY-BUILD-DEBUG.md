@@ -77,7 +77,7 @@ NEXT_PUBLIC_SANITY_PROJECT_ID=as5tildt
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
 SANITY_API_TOKEN=[your_token]
-NEXT_PUBLIC_SANITY_STUDIO_URL=https://dppadmin.sanity.studio
+NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app
 NETLIFY=true
 ```
 

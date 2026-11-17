@@ -1,4 +1,4 @@
-import { sanityClient } from "@/lib/sanity";
+import { sanityClient } from "../sanity";
 
 export interface FooterSocialLink {
   platform: string;
@@ -122,10 +122,6 @@ export const getFooter = async (): Promise<Footer> => {
         copyright
       }`,
       {},
-      {
-        // Enable ISR with 5 minute revalidation
-        next: { revalidate: 300 },
-      },
     );
 
     return footer || DEFAULT_FOOTER;
@@ -138,13 +134,15 @@ export const getFooter = async (): Promise<Footer> => {
 /**
  * Subscribe to real-time updates to the footer
  */
-export const subscribeToFooterUpdates = (callback: () => void) => {
+export const subscribeToFooterUpdates = (
+  callback: () => void,
+): { unsubscribe(): void } => {
   return sanityClient.listen('*[_type == "footer"]').subscribe({
     next: () => {
       console.log("Footer updated, refreshing...");
       callback();
     },
-    error: (error) => {
+    error: (error: unknown) => {
       console.error("Footer subscription error:", error);
     },
   });

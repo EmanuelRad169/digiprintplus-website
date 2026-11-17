@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@sanity/client";
+import { z } from "zod";
 import { sendQuoteNotifications } from "../../../lib/notifications/quote-emails";
 
 const sanityClient = createClient({
@@ -8,9 +9,7 @@ const sanityClient = createClient({
     process.env.SANITY_STUDIO_PROJECT_ID ||
     "",
   dataset:
-    process.env.NEXT_PUBLIC_SANITY_DATASET ||
-    process.env.SANITY_STUDIO_DATASET ||
-    "production",
+    process.env.SANITY_PRIVATE_DATASET || "development",
   token: process.env.SANITY_API_TOKEN || "",
   apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-01-01",
   useCdn: false,
@@ -25,6 +24,40 @@ interface IncomingLineItem {
   finish?: string;
   additionalNotes?: string;
 }
+
+const incomingLineItemSchema = z.object({
+  productType: z.string().trim().min(1).max(160),
+  productSlug: z.string().trim().max(200).optional(),
+  quantity: z.string().trim().max(80).optional(),
+  size: z.string().trim().max(120).optional(),
+  paperType: z.string().trim().max(160).optional(),
+  finish: z.string().trim().max(160).optional(),
+  additionalNotes: z.string().trim().max(5000).optional(),
+});
+
+const quotePayloadSchema = z
+  .object({
+    firstName: z.string().trim().max(100).optional(),
+    lastName: z.string().trim().max(100).optional(),
+    email: z.string().trim().email().max(320),
+    phone: z.string().trim().max(50).optional(),
+    company: z.string().trim().max(200).optional(),
+    turnaround: z.string().trim().max(120).optional(),
+    additionalNotes: z.string().trim().max(5000).optional(),
+    needsDesignAssistance: z.union([z.boolean(), z.literal("true"), z.literal("false")]).optional(),
+    fileCount: z.coerce.number().int().min(0).max(20).optional(),
+    lineItems: z.union([
+      z.array(incomingLineItemSchema).min(1).max(25),
+      z.string().max(50_000),
+    ]).optional(),
+    productType: z.string().trim().max(160).optional(),
+    productSlug: z.string().trim().max(200).optional(),
+    quantity: z.string().trim().max(80).optional(),
+    size: z.string().trim().max(120).optional(),
+    paperType: z.string().trim().max(160).optional(),
+    finish: z.string().trim().max(160).optional(),
+  })
+  .passthrough();
 
 function parseLineItems(payload: any) {
   const turnaround = payload.turnaround || "";
@@ -87,7 +120,14 @@ function isDuplicate(key: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json();
+    const parsedPayload = quotePayloadSchema.safeParse(await request.json());
+    if (!parsedPayload.success) {
+      return NextResponse.json(
+        { success: false, message: "Invalid quote request" },
+        { status: 400 },
+      );
+    }
+    const payload = parsedPayload.data;
 
     // Reject empty submissions outright. Two records in the dataset have blank
     // emails because nothing validated server-side.
@@ -195,7 +235,6 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         message: "Failed to process quote submission",
-        error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

@@ -1,8 +1,10 @@
-import { defineCliConfig } from 'sanity/cli'
+import { defineCliConfig } from "sanity/cli";
 
 export default defineCliConfig({
   api: {
-    projectId: 'as5tildt',
-    dataset: 'development'
-  }
-})
+    projectId: process.env.SANITY_STUDIO_PROJECT_ID || "as5tildt",
+    dataset:
+      process.env.SANITY_STUDIO_DATASET ||
+      (process.env.NODE_ENV === "production" ? "production" : "development"),
+  },
+});

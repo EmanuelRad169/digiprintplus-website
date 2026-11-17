@@ -7,7 +7,7 @@ require('dotenv').config({ path: path.join(__dirname, '../apps/web/.env.local') 
 const client = createClient({
   projectId: process.env.SANITY_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'as5tildt',
   dataset: process.env.SANITY_DATASET || process.env.NEXT_PUBLIC_SANITY_DATASET || 'development',
-  token: process.env.SANITY_API_TOKEN || 'ski57HbdFyLtWwXmQVSv8yHYAaualTGelXvLaupzfVsBpWY6KTmKVNamVUOhb517Z16fD39I9aFBtW3pL',
+  token: process.env.SANITY_API_TOKEN,
   useCdn: false,
   apiVersion: '2024-01-01',
 });

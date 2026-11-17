@@ -18,8 +18,13 @@ const crypto = require("crypto");
 // Configuration
 const SITE_URL =
   process.env.SITE_URL || "https://digiprint-main-web.netlify.app";
-const WEBHOOK_SECRET =
-  process.env.SANITY_REVALIDATE_SECRET || "so26GsMt0Fr9|1puбeUQ";
+const WEBHOOK_SECRET = process.env.SANITY_REVALIDATE_SECRET;
+
+if (!WEBHOOK_SECRET) {
+  throw new Error(
+    "SANITY_REVALIDATE_SECRET must be set before testing revalidation",
+  );
+}
 
 // Get command line arguments
 const [, , documentType, slug] = process.argv;

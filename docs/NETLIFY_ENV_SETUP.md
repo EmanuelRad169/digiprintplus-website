@@ -122,7 +122,7 @@ SANITY_WEBHOOK_SECRET=$(openssl rand -base64 32)
 - **How to generate**:
   ```bash
   openssl rand -base64 32
-  # Example output: K8x2Jz9mP3vN7wQ4rT6yU8sA1bC5dE0f...
+  # Example output: YOUR_WEBHOOK_SECRET
   ```
 - **Impact if missing**: Webhook validation fails, security risk
 - **Visibility**: SECRET (used in webhook function)
@@ -141,7 +141,7 @@ SANITY_REVALIDATE_SECRET=$(openssl rand -base64 32)
 - **How to generate**:
   ```bash
   openssl rand -base64 32
-  # Example output: M5a9Lk3Pq7RtYu2Wv8Zx1Bn4Cd6Fg0Hi...
+  # Example output: YOUR_REVALIDATE_SECRET
   ```
 - **Impact if missing**: Falls back to full rebuild (slower updates)
 - **Visibility**: SECRET (used in webhook + revalidate endpoint)
@@ -360,8 +360,8 @@ NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
 NEXT_PUBLIC_SANITY_STUDIO_URL=https://digiprint-admin-cms.netlify.app
 NEXT_PUBLIC_SITE_URL=https://digiprint-main-web.netlify.app
 SANITY_API_TOKEN=skXXXXXXXXXXXXXXXXXXXXXXXX
-SANITY_WEBHOOK_SECRET=K8x2Jz9mP3vN7wQ4rT6yU8sA1bC5dE0f
-SANITY_REVALIDATE_SECRET=M5a9Lk3Pq7RtYu2Wv8Zx1Bn4Cd6Fg0Hi
+SANITY_WEBHOOK_SECRET=YOUR_WEBHOOK_SECRET
+SANITY_REVALIDATE_SECRET=YOUR_REVALIDATE_SECRET
 NETLIFY_BUILD_HOOK_URL=https://api.netlify.com/build_hooks/XXXXXXXXXXXXX
 
 # Optional

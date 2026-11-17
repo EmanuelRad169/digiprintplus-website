@@ -20,10 +20,23 @@ dist/
 .env
 .env*.local
 .env.production
+.env.development
+**/.env.development
+
+# Local deployment credential notes (use platform environment settings)
+NETLIFY_ENV_VARS.local.txt
 
 # Logs
 logs
 *.log
+
+# Backup files
+*.tar.gz
+*.zip
+*backup*.tar.gz
+
+# Quarantine folder
+junk/
 
 # OS generated files
 .DS_Store
@@ -102,3 +115,10 @@ storybook-static/
 *.db
 *.sqlite
 *.sqlite3
+.vercel
+
+# Local Netlify folder
+.netlify
+_to_delete/
+scripts/audit/shots/
+/backups/

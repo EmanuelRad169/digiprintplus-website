@@ -5,8 +5,8 @@
 ### Removed from Repository
 
 - **Build Artifacts**: `.turbo/`, `.DS_Store`, `out/` folders
-- **Vercel Files**: All vercel.json, .vercelignore, .vercel folders, Vercel env vars
-- **Legacy Scripts**: sync-vercel-env.sh, cleanup-phase1.sh, vercel-build.sh
+- **Legacy Platform Files**: All obsolete hosting configuration and environment files
+- **Legacy Scripts**: Obsolete hosting sync and build scripts
 - **Backup Archives**: 3 old studio backup files (2.5GB saved)
 - **Documentation**: 13 redundant audit/deployment docs → moved to `docs/archive/`
 
@@ -23,7 +23,7 @@
 
 ### 1. ✅ Code Quality
 
-- [x] All Vercel dependencies removed (35 files)
+- [x] All obsolete hosting configuration removed
 - [x] Environment variables use NEXT_PUBLIC_SITE_URL (no hardcoded URLs)
 - [x] Jest tests passing (2/2)
 - [x] Local build verified (301 product pages, robots.txt, sitemap.xml)
@@ -155,7 +155,7 @@ All audit reports, security fixes, and legacy guides archived for reference.
 - No hardcoded tokens in repository
 - Environment variables in Netlify only
 - Secure Sanity API token handling
-- No Vercel remnants
+- No obsolete hosting configuration remnants
 
 ### SEO Ready ✅
 
@@ -173,7 +173,7 @@ All audit reports, security fixes, and legacy guides archived for reference.
 
 ### Build Stability ✅
 
-- No Vercel dependencies
+- No obsolete hosting dependencies
 - Clean build process
 - Consistent output structure
 - Reproducible builds
